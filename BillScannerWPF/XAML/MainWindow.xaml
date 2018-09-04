@@ -1,0 +1,51 @@
+﻿<Window x:Class="BillScannerWPF.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:BillScannerWPF"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="500" Width="1000">
+	<Grid>
+		<Grid>
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="3*"></ColumnDefinition>
+				<ColumnDefinition Width="3*"></ColumnDefinition>
+				<ColumnDefinition Width="3*"></ColumnDefinition>
+			</Grid.ColumnDefinitions>
+			<Image x:Name="IH_previewImg" Grid.Column="0" MouseDown="PreviewImgMouse" Stretch="Fill" Source="Resources/Transparent.png" Margin="10"/>
+			<Label Content="Matched Products" Grid.Column="1" />
+			<Label Content="Unknown Products" Grid.Column="2" />
+			<StackPanel x:Name="IH_matchedProducts" Grid.Column="1" Margin="0,30,0,70">
+				<StackPanel.Resources>
+					<Style TargetType="{x:Type local:MatchedProduct}">
+						<Setter Property="Margin" Value="0,5"/>
+					</Style>
+				</StackPanel.Resources>
+			</StackPanel>
+			<StackPanel x:Name="IH_unknownProducts" Grid.Column="2" Margin="0,30,0,70">
+				<StackPanel.Resources>
+					<Style TargetType="{x:Type local:MatchedProduct}">
+						<Setter Property="Margin" Value="0,5"/>
+					</Style>
+				</StackPanel.Resources>
+			</StackPanel>
+		</Grid>
+		<Grid HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="10,0,10,10" Height="50">
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="Auto" ></ColumnDefinition>
+				<ColumnDefinition Width="Auto"></ColumnDefinition>
+				<ColumnDefinition Width="Auto"></ColumnDefinition>
+			</Grid.ColumnDefinitions>
+			<Button x:Name="IH_finalizeBtn" Content="Finalize" Grid.Column="2" MinWidth="120" Margin="20,0,0,0"/>
+			<Button x:Name="IH_newEntryBtn" Content="Create new entry" Grid.Column="1" MinWidth="120" Margin="10,0,0,0"/>
+			<Button x:Name="IH_freeBtn" Content="Analyze" Grid.Column="0" MinWidth="120" Margin="10,0,0,0"/>
+		</Grid>
+
+		<Grid x:Name="Overlay" Panel.ZIndex="1000" Visibility="Hidden">
+			<Grid.Background>
+				<SolidColorBrush Color="Black" Opacity=".8"/>
+			</Grid.Background>
+		</Grid>
+	</Grid>
+</Window>
