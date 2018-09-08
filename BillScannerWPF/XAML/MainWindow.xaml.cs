@@ -16,7 +16,6 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Resources;
 using System.Windows.Shapes;
-using Tesseract;
 using System.Drawing;
 using System.Threading;
 
@@ -32,54 +31,30 @@ namespace BillScannerWPF {
 		public static TCPClient client;
 		public static TCPServer server;
 
+		internal ImageProcessor imgProcessing;
+
 		public string currentImageSource;
+
+
 
 		public MainWindow() {
 			InitializeComponent();
-			IH_freeBtn.Click += Analyze;
-			access = DatabaseAccess.LoadDatabase(Shop.Albert);
+
+			access = DatabaseAccess.LoadDatabase(Shop.Albert); //TODO
 			//client = new TCPClient("192.168.0.133", PORT);
-			server = new TCPServer();
-			engine = new TesseractEngine("Resources" + System.IO.Path.DirectorySeparatorChar + "tessdata", "ces");
-			server.Start(PORT);
-			server.OnConnectionEstablished += Server_OnConnectionEstablished;
 			//client.Connect();
 			//client.getConnection.dataIDs.DefineCustomDataTypeForID<byte[]>(1, OnImageDataReceived);
+			//imgProcessing = new ImageProcessor(client, access);
+
+			server = new TCPServer();
+			server.Start(PORT);
+			imgProcessing = new ImageProcessor(server, access);
+
+			IH_freeBtn.Click += imgProcessing.Analyze;
 		}
 
-		private TesseractEngine engine;
 
-		private void Analyze(object sender, RoutedEventArgs e) {
-			IH_matchedProducts.Children.Add(new TextBlock() { Text = "Processing image..." });
-			Thread t = new Thread(new ThreadStart(delegate () {
-				using (Tesseract.Page p = engine.Process((Bitmap)Bitmap.FromFile(currentImageSource), PageSegMode.Auto)) {
-					string[] text = p.GetText().Split('\n');
-					foreach (string s in text) {
-						if (string.IsNullOrWhiteSpace(s)) {
-							continue;
-						}
-						Dispatcher.Invoke(delegate () {
-							MatchedProduct matchedP = new MatchedProduct(s);
-							IH_matchedProducts.Children.Add(matchedP);
-						});
-					}
-				}
-			}));
-			t.SetApartmentState(ApartmentState.STA);
-			t.Start();
-		}
-
-		private void Server_OnConnectionEstablished(object sender, ClientConnectedEventArgs e) {
-			server.GetConnection(e.clientInfo.clientID).dataIDs.DefineCustomDataTypeForID<byte[]>(1, OnImageDataReceived);
-		}
-
-		private void OnImageDataReceived(byte[] imageData, byte sender) {
-			this.Dispatcher.Invoke(delegate () {
-				SetPrevImage(imageData);
-			});
-		}
-
-		private void PreviewImgMouse(object sender, MouseButtonEventArgs e) {
+		internal void PreviewImgMouse(object sender, MouseButtonEventArgs e) {
 			OpenFileDialog dialog = new OpenFileDialog();
 			dialog.DefaultExt = "png";
 			dialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);
@@ -88,7 +63,7 @@ namespace BillScannerWPF {
 			}
 		}
 
-		private void SetPrevImage(Uri imgUri) {
+		internal void SetPrevImage(Uri imgUri) {
 			BitmapImage image = new BitmapImage();
 			image.BeginInit();
 			image.UriSource = imgUri;
@@ -99,11 +74,16 @@ namespace BillScannerWPF {
 			IH_previewImg.Stretch = Stretch.Uniform;
 			IH_previewImg.Source = image;
 		}
+
 		private int attempt = -1;
-		private void SetPrevImage(byte[] imgData) {
-			File.WriteAllBytes(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + System.IO.Path.DirectorySeparatorChar + "BillScanner" + System.IO.Path.DirectorySeparatorChar + "current" + ++attempt + ".jpg", imgData);
-			currentImageSource = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + System.IO.Path.DirectorySeparatorChar + "BillScanner" + System.IO.Path.DirectorySeparatorChar + "current" + attempt + ".jpg";
+		internal void SetPrevImage(byte[] imgData) {
+			File.WriteAllBytes(WPFHelper.dataPath + "current" + ++attempt + ".jpg", imgData);
+			currentImageSource = WPFHelper.dataPath + "current" + attempt + ".jpg";
 			SetPrevImage(new Uri(currentImageSource));
+		}
+
+		private void Button_Click(object sender, RoutedEventArgs e) {
+			itemInfoOverlay.Visibility = Visibility.Hidden;
 		}
 	}
 }

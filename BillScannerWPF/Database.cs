@@ -1,64 +1,63 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Runtime.Serialization.Formatters.Binary;
-using System.Text;
+using Newtonsoft.Json.Linq;
+using Newtonsoft.Json;
 
 namespace BillScannerWPF {
-	[Serializable]
 	public class Database {
 
-		protected Dictionary<char, Dictionary<string, Dictionary<string, Item>>> items;
+		protected Dictionary<string, Item> itemDatabase;
+		protected JArray itemDatabaseJson;
+		protected Dictionary<DateTime, Shopping> purchaseDatabase;
+		protected JToken shoppingDatabaseJson;
 
+		protected FileInfo itemDatabaseFile;
+		protected FileInfo selectedShopDBFile;
 
-		protected DirectoryInfo appData;
-		protected FileInfo databaseFile;
+		private Shop selectedShop;
 
+		internal Database(Shop shop) {
+			FolderInit.Initialize(shop);
+			selectedShopDBFile = new FileInfo(WPFHelper.dataPath + selectedShop.ToString() + "db.json");
+			itemDatabaseFile = new FileInfo(WPFHelper.dataPath + "itemsdb.json");
+			selectedShop = shop;
+			LoadItemDatabase();
+			LoadPurchaseDatabase();
+		}
 
-		internal Database() {
-			appData = new DirectoryInfo(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData));
-			databaseFile = new FileInfo(appData.FullName + Path.DirectorySeparatorChar + "BillScanner" + Path.DirectorySeparatorChar + "database.datab");
-			if (!InitFiles()) {
-				using (FileStream fs = File.OpenRead(databaseFile.FullName)) {
-					BinaryFormatter bf = new BinaryFormatter();
-					items = (Dictionary<char, Dictionary<string, Dictionary<string, Item>>>)bf.Deserialize(fs);
+		private void LoadItemDatabase() {
+			itemDatabase = new Dictionary<string, Item>();
+			using (StreamReader sr = File.OpenText(itemDatabaseFile.FullName)) {
+				using (JsonTextReader jr = new JsonTextReader(sr)) {
+					itemDatabaseJson = JArray.Load(jr);
+					for (int i = 0; i < itemDatabaseJson.Count; i++) {
+						Item item = itemDatabaseJson[i].ToObject<Item>();
+						AddToDB(item);
+					}
 				}
 			}
 		}
 
-		private bool InitFiles() {
-			DirectoryInfo billScanner = new DirectoryInfo(appData.FullName + Path.DirectorySeparatorChar + "BillScanner");
-			if (!billScanner.Exists) {
-				items = new Dictionary<char, Dictionary<string, Dictionary<string, Item>>>();
-				Directory.CreateDirectory(appData.FullName + Path.DirectorySeparatorChar + "BillScanner");
-				using (FileStream fs = File.Create(databaseFile.FullName)) {
-					BinaryFormatter bf = new BinaryFormatter();
-					bf.Serialize(fs, items);
-					return true;
+		private void LoadPurchaseDatabase() {
+			purchaseDatabase = new Dictionary<DateTime, Shopping>();
+			using (StreamReader sr = File.OpenText(selectedShopDBFile.FullName)) {
+				using (JsonTextReader jr = new JsonTextReader(sr)) {
+					shoppingDatabaseJson = JToken.ReadFrom(jr);
+					JArray array = ((JArray)shoppingDatabaseJson["purchases"]);
+					for (int i = 0; i < array.Count; i++) {
+						Shopping item = array[i].ToObject<Shopping>();
+						purchaseDatabase.Add(item.date, item);
+					}
 				}
 			}
-			return false;
 		}
 
-		[Serializable]
-		public class Item {
-			public Item(string mainName, decimal currentPrice) {
-				this.mainName = mainName;
-				this.currentPrice = currentPrice;
-				ocrNames = new string[1] {
-					mainName
-				};
-
-				pricesInThePast = new decimal[1] {
-					currentPrice
-				};
+		private void AddToDB(Item item) {
+			if (itemDatabase.ContainsKey(item.mainName)) {
+				return;
 			}
-
-			public string mainName { get; }
-			public string[] ocrNames { get; }
-			public decimal currentPrice { get; }
-			public decimal[] pricesInThePast { get; }
+			itemDatabase.Add(item.mainName, item);
 		}
 	}
 

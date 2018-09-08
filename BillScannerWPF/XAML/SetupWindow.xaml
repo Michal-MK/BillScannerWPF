@@ -5,8 +5,25 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:BillScannerWPF"
         mc:Ignorable="d"
-        Title="SetupWindow" Height="450" Width="800">
-    <Grid>
-        
-    </Grid>
+        Title="SetupWindow" Height="940" Width="1092.5">
+	<Grid>
+		<Button Content="LoadItems" HorizontalAlignment="Left" Margin="810,686,0,0" VerticalAlignment="Top" Width="82" Click="Button_Click" Height="25"/>
+		<Button Content="RefreshW" HorizontalAlignment="Left" Margin="673,701,0,0" VerticalAlignment="Top" Width="83" Click="Button_Click_2" Height="25"/>
+		<Button Content="Define New" HorizontalAlignment="Left" Margin="524,726,0,0" VerticalAlignment="Top" Width="82" Click="Button_Click_1" Height="26"/>
+		<TextBox x:Name="s_itemName" HorizontalAlignment="Left" Height="29" Margin="386,723,0,0" TextWrapping="Wrap" Text="Enter Item Name..." VerticalAlignment="Top" Width="132" PreviewMouseDown="itemName_MouseDown"/>
+		<ScrollViewer HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Height="706" Width="596">
+			<TextBlock x:Name="json"/>
+		</ScrollViewer>
+		<CheckBox x:Name="s_final" Content="Final" HorizontalAlignment="Left" Margin="524,758,0,0" VerticalAlignment="Top" Height="19" Width="49"/>
+		<Button Content="Add Alt N." HorizontalAlignment="Left" Margin="872,858,0,0" VerticalAlignment="Top" Width="75" Click="Button_Click_3"/>
+		<TextBox x:Name="s_origName" HorizontalAlignment="Left" Height="23" Margin="737,855,0,0" TextWrapping="Wrap" Text="Orig Name" VerticalAlignment="Top" Width="120"/>
+		<TextBox x:Name="s_altName" HorizontalAlignment="Left" Height="23" Margin="737,883,0,0" TextWrapping="Wrap" Text="Alt Name" VerticalAlignment="Top" Width="120"/>
+		<Button Content="Purchase" HorizontalAlignment="Left" Margin="610,858,0,0" VerticalAlignment="Top" Width="75" Click="Button_Click_4"/>
+		<TextBox x:Name="s_amount" HorizontalAlignment="Left" Height="23" Margin="475,855,0,0" TextWrapping="Wrap" Text="Amount" VerticalAlignment="Top" Width="120" />
+		<TextBox x:Name="s_price" HorizontalAlignment="Left" Height="23" Margin="475,883,0,0" TextWrapping="Wrap" Text="Price" VerticalAlignment="Top" Width="120"/>
+		<Button Content="WriteShopp" HorizontalAlignment="Left" Margin="928,607,0,0" VerticalAlignment="Top" Width="75" Click="Button_Click_5"/>
+		<Button Content="Switch Scene" HorizontalAlignment="Left" Margin="872,443,0,0" VerticalAlignment="Top" Width="168" Height="64" Click="Button_Click_6"/>
+		<ComboBox x:Name="s_shopSelect" HorizontalAlignment="Left" Margin="685,176,0,0" VerticalAlignment="Top" Width="120"/>
+
+	</Grid>
 </Window>

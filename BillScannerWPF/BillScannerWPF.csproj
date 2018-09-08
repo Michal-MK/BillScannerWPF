@@ -34,6 +34,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.11.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="SimpleTCP">
       <HintPath>D:\SimpleTCP\bin\Debug\SimpleTCP.dll</HintPath>
     </Reference>
@@ -63,7 +66,14 @@
     </ApplicationDefinition>
     <Compile Include="Database.cs" />
     <Compile Include="DatabaseAccess.cs" />
+    <Compile Include="FolderInit.cs" />
+    <Compile Include="ImageProcessor.cs" />
+    <Compile Include="Item.cs" />
     <Compile Include="ItemNotDefinedException.cs" />
+    <Compile Include="MeassurementUnit.cs" />
+    <Compile Include="PurchaseHistory.cs" />
+    <Compile Include="Shopping.cs" />
+    <Compile Include="WPFHelper.cs" />
     <Compile Include="XAML\MatchedProduct.xaml.cs">
       <DependentUpon>MatchedProduct.xaml</DependentUpon>
     </Compile>
@@ -112,18 +122,23 @@
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <None Include="Configurations\packages.config" />
+    <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
+    <None Include="Resources\PurchaseHistoryTemplate.json" />
     <None Include="Resources\tessdata\ces.traineddata">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Configurations\App.config" />
+    <None Include="Configurations\App.config">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <ItemGroup>
+    <None Include="Resources\DatabaseItemTemplate.json" />
     <Content Include="x64\liblept172.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -141,4 +156,5 @@
     <Resource Include="Resources\Transparent.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <ProjectExtensions />
 </Project>

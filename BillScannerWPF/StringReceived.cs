@@ -8,13 +8,13 @@ using System.Threading.Tasks;
 namespace BillScannerWPF {
 	class StringReceived {
 		private void GetConnection_OnStringReceived(object sender, PacketReceivedEventArgs<string> e) {
-			List<Database.Item> items = new List<Database.Item>();
+			List<Item> items = new List<Item>();
 			System.Console.WriteLine("Parsed text here!");
 			string[] split = e.data.Split('|');
 			foreach (string s in split) {
 				int lowestD = int.MaxValue;
-				Database.Item lowestItem;
-				foreach (Database.Item product in MainWindow.access.GetItems()) {
+				Item lowestItem;
+				foreach (Item product in MainWindow.access.GetItems()) {
 					int distance = WordSimilarity.Compute(s, product.mainName);
 					if (distance < lowestD) {
 						lowestD = distance;
@@ -30,7 +30,7 @@ namespace BillScannerWPF {
 					//Found a almost match
 				}
 				else {
-					foreach (Database.Item product in MainWindow.access.GetItems()) {
+					foreach (Item product in MainWindow.access.GetItems()) {
 						bool matched = false;
 						foreach (string ss in product.ocrNames) {
 							int dist = WordSimilarity.Compute(s, ss);
