@@ -18,6 +18,7 @@ using System.Windows.Resources;
 using System.Windows.Shapes;
 using System.Drawing;
 using System.Threading;
+using System.Diagnostics;
 
 namespace BillScannerWPF {
 	/// <summary>
@@ -33,14 +34,13 @@ namespace BillScannerWPF {
 
 		internal ImageProcessor imgProcessing;
 
-		public string currentImageSource;
-
-
+		public string currentImageSource { get; set; }
+		public UIItem currentItemBeingInspected { get; set; }
 
 		public MainWindow() {
 			InitializeComponent();
 
-			access = DatabaseAccess.LoadDatabase(Shop.Albert); //TODO
+			access = DatabaseAccess.LoadDatabase(SetupWindow.selectedShop); //TODO
 			//client = new TCPClient("192.168.0.133", PORT);
 			//client.Connect();
 			//client.getConnection.dataIDs.DefineCustomDataTypeForID<byte[]>(1, OnImageDataReceived);
@@ -48,11 +48,24 @@ namespace BillScannerWPF {
 
 			server = new TCPServer();
 			server.Start(PORT);
-			imgProcessing = new ImageProcessor(server, access);
+			imgProcessing = new ImageProcessor(server, access, GetRuleset(SetupWindow.selectedShop));
 
 			IH_freeBtn.Click += imgProcessing.Analyze;
 		}
 
+		private Rules.IRuleset GetRuleset(Shop selectedShop) {
+			switch (selectedShop) {
+				case Shop.Lidl: {
+					return new Rules.LidlRuleset();
+				}
+
+				case Shop.McDonalds: {
+					return new Rules.McDonaldsRuleset();
+				}
+				default:
+				throw new NotImplementedException();
+			}
+		}
 
 		internal void PreviewImgMouse(object sender, MouseButtonEventArgs e) {
 			OpenFileDialog dialog = new OpenFileDialog();
@@ -82,8 +95,37 @@ namespace BillScannerWPF {
 			SetPrevImage(new Uri(currentImageSource));
 		}
 
-		private void Button_Click(object sender, RoutedEventArgs e) {
+
+
+		//Open Selected image in default image viewer
+		private void IH_previewImg_MouseRightButtonDown(object sender, MouseButtonEventArgs e) {
+			if (string.IsNullOrEmpty(currentImageSource)) {
+				return;
+			}
+			Process p = new Process();
+			p.StartInfo = new ProcessStartInfo(currentImageSource);
+			p.Start();
+		}
+
+		private void info_RegisterItem_Button(object sender, RoutedEventArgs e) {
+			access.RegsiterItem(currentItemBeingInspected);
+			IH_unknownProducts.Children.RemoveAt(currentItemBeingInspected.index);
+			IH_matchedProducts.Children.Add(currentItemBeingInspected);
+		}
+
+		private void info_Back_Button(object sender, RoutedEventArgs e) {
 			itemInfoOverlay.Visibility = Visibility.Hidden;
+			currentItemBeingInspected = null;
+		}
+
+		private void newDefinition_Back_Button(object sender, RoutedEventArgs e) {
+			itemInfoOverlay.Visibility = Visibility.Hidden;
+			currentItemBeingInspected = null;
+		}
+		private void newDefinition_RegisterItem_Button(object sender, RoutedEventArgs e) {
+
+			itemInfoOverlay.Visibility = Visibility.Hidden;
+			currentItemBeingInspected = null;
 		}
 	}
 }

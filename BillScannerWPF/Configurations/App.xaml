@@ -4,6 +4,8 @@
              xmlns:local="clr-namespace:BillScannerWPF"
              StartupUri="XAML/SetupWindow.xaml">
     <Application.Resources>
-         
-    </Application.Resources>
+		<!--<Style x:Key="test" TargetType="Button">
+			<Setter Property="Background" Value="Aqua"></Setter>
+		</Style>-->
+	</Application.Resources>
 </Application>

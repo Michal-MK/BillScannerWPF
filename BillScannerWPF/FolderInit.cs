@@ -12,22 +12,24 @@ namespace BillScannerWPF {
 					sw.WriteLine("[]");
 				}
 			}
-			if(!File.Exists(WPFHelper.dataPath + shop.ToString() + "db.json")) {
-				InitNewShop(shop.ToString());
+			string shopName = shop.ToString();
+			if(!File.Exists(WPFHelper.dataPath + shopName + "db.json")) {
+				InitNewShop(shopName);
 			}
 		}
 
 		internal static FileInfo InitNewShop(string shopName) {
-			if (File.Exists(WPFHelper.dataPath + shopName + "db.json")) {
+			string shopPath = WPFHelper.dataPath + shopName + "db.json";
+			if (File.Exists(shopPath)) {
 				throw new IOException("File already exists!");
 			}
-			using (StreamWriter sw = File.CreateText(WPFHelper.dataPath + shopName + "db.json")) {
+			using (StreamWriter sw = File.CreateText(shopPath)) {
 				sw.WriteLine("{");
 				sw.WriteLine("\"shopName\": \"{0}\",", shopName);
 				sw.WriteLine("\"purchases\": []");
 				sw.WriteLine("}");
 			}
-			return new FileInfo(WPFHelper.dataPath + shopName + "db.json");
+			return new FileInfo(shopPath);
 		}
 	}
 }

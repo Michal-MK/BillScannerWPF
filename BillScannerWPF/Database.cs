@@ -65,6 +65,7 @@ namespace BillScannerWPF {
 		Lidl,
 		Albert,
 		Penny,
-		Billa
+		Billa,
+		McDonalds
 	}
 }

@@ -38,7 +38,7 @@ namespace BillScannerWPF {
 
 		//Define new item
 		private void Button_Click_1(object sender, RoutedEventArgs e) {
-			access.WriteItemDefinitionToDatabase(s_itemName.Text, s_final.IsChecked.Value);
+			access.WriteItemDefinitionToDatabase(s_itemName.Text);
 		}
 
 		// Update json view
@@ -72,9 +72,9 @@ namespace BillScannerWPF {
 		}
 
 		private void Button_Click_6(object sender, RoutedEventArgs e) {
+			selectedShop = (Shop)s_shopSelect.SelectedItem;
 			MainWindow main = new MainWindow();
 			Application.Current.MainWindow = main;
-			selectedShop = (Shop)s_shopSelect.SelectedItem;
 			main.Show();
 			Close();
 		}

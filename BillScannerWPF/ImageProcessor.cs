@@ -22,8 +22,10 @@ namespace BillScannerWPF {
 
 		private TesseractEngine engine;
 
+		private Rules.IRuleset ruleset;
 
-		public ImageProcessor(TCPClient client, DatabaseAccess access) {
+
+		public ImageProcessor(TCPClient client, DatabaseAccess access, Rules.IRuleset ruleset) {
 			instance = this;
 			this.client = client;
 			this.access = access;
@@ -31,14 +33,16 @@ namespace BillScannerWPF {
 			client.Connect();
 			client.getConnection.dataIDs.DefineCustomDataTypeForID<byte[]>(1, OnImageDataReceived);
 			engine = new TesseractEngine("Resources" + System.IO.Path.DirectorySeparatorChar + "tessdata", "ces");
-
+			this.ruleset = ruleset;
 		}
-		public ImageProcessor(TCPServer server, DatabaseAccess access) {
+
+		public ImageProcessor(TCPServer server, DatabaseAccess access, Rules.IRuleset ruleset) {
 			instance = this;
 			this.server = server;
 			this.access = access;
 			server.OnConnectionEstablished += Server_OnConnectionEstablished;
 			engine = new TesseractEngine("Resources" + System.IO.Path.DirectorySeparatorChar + "tessdata", "ces");
+			this.ruleset = ruleset;
 		}
 
 		private void Server_OnConnectionEstablished(object sender, ClientConnectedEventArgs e) {
@@ -46,41 +50,35 @@ namespace BillScannerWPF {
 		}
 
 		private void OnImageDataReceived(byte[] imageData, byte sender) {
-			WPFHelper.GetMainWindow().Dispatcher.Invoke(delegate () {
-				WPFHelper.GetMainWindow().SetPrevImage(imageData);
+			WPFHelper.GetCurrentMainWindow().Dispatcher.Invoke(delegate () {
+				WPFHelper.GetCurrentMainWindow().SetPrevImage(imageData);
 			});
 		}
 
-		internal void Analyze(object sender, RoutedEventArgs e) {
-			MainWindow main = WPFHelper.GetMainWindow();
+		internal async void Analyze(object sender, RoutedEventArgs e) {
+			MainWindow main = WPFHelper.GetCurrentMainWindow();
 			main.IH_matchedProducts.Children.Clear();
 			main.IH_matchedProducts.Children.Add(new TextBlock() { Text = "Processing image..." });
-			Thread t = new Thread(new ThreadStart(delegate () {
-				using (Tesseract.Page p = engine.Process((Bitmap)Bitmap.FromFile(main.currentImageSource), PageSegMode.Auto)) {
-					string[] text = p.GetText().Split('\n');
-					foreach (string s in text) {
-						if (string.IsNullOrWhiteSpace(s)) {
-							continue;
-						}
-						try {
-							Item i = access.GetItem(s);
-							main.Dispatcher.Invoke(delegate () {
-								MatchedProduct matchedP = new MatchedProduct(s);
-								main.IH_matchedProducts.Children.Add(matchedP);
-							});
-						}
-						catch (ItemNotDefinedException ex) {
-							Console.WriteLine(ex.Message);
-							main.Dispatcher.Invoke(delegate () {
-								MatchedProduct matchedP = new MatchedProduct(s);
-								main.IH_unknownProducts.Children.Add(matchedP);
-							});
-						}
-					}
+			using (Tesseract.Page p = engine.Process((Bitmap)Bitmap.FromFile(main.currentImageSource), PageSegMode.Auto)) {
+				StringParser instance = new StringParser(ruleset);
+				ParsingResult result = await Task.Run(() => { return instance.Parse(p.GetText()); });
+				for (int i = 0; i < result.unknown.Length; i++) {
+					main.Dispatcher.Invoke(delegate () {
+						UIItem uiItem = new UIItem(result.unknown[i].item, result.unknown[i].index, result.unknown[i].quality);
+
+						main.IH_unknownProducts.Children.Add(uiItem);
+						uiItem.SetMatchRatingImage();
+					});
 				}
-			}));
-			t.SetApartmentState(ApartmentState.STA);
-			t.Start();
+
+				for (int i = 0; i < result.parsed.Length; i++) {
+					main.Dispatcher.Invoke(delegate () {
+						UIItem uiItem = new UIItem(result.parsed[i].item, result.parsed[i].index, result.parsed[i].quality);
+						main.IH_matchedProducts.Children.Add(uiItem);
+						uiItem.SetMatchRatingImage();
+					});
+				}
+			}
 		}
 	}
 }

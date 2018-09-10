@@ -1,10 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.IO;
-using System.Runtime.Serialization.Formatters.Binary;
-using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 namespace BillScannerWPF {
@@ -48,65 +45,75 @@ namespace BillScannerWPF {
 		}
 
 
-		public Item WriteItemDefinitionToDatabase(string name, bool finalItem = false) {
+		public Item WriteItemDefinitionToDatabase(string name) {
 			Item i = new Item(name, (decimal)new Random().NextDouble() * 100);
 			itemDatabase.Add(name, i);
 			itemDatabaseJson.Add(JObject.FromObject(i));
-			File.WriteAllText(WPFHelper.dataPath + "itemsdb.json", itemDatabaseJson.ToString());
+			File.WriteAllText(WPFHelper.itemsFullPath, itemDatabaseJson.ToString());
+			return null;
+		}
+
+		public Item WriteItemDefinitionToDatabase(Item newItemDefinition) {
+			itemDatabaseJson.Add(JObject.FromObject(newItemDefinition));
+			File.WriteAllText(WPFHelper.itemsFullPath, itemDatabaseJson.ToString());
 			return null;
 		}
 
 		public void WriteAlternativeOCRNameForItemToDatabase(string originalName, string altName) {
 			foreach (JToken tok in itemDatabaseJson) {
-				if (tok["mainName"].Value<string>() == originalName) {
-					((JArray)tok["ocrNames"]).Add(altName);
+				if (tok[nameof(Item.mainName)].Value<string>() == originalName) {
+					((JArray)tok[nameof(Item.ocrNames)]).Add(altName);
 					break;
 				}
 			}
 			itemDatabase[originalName].ocrNames.Add(altName);
-			File.WriteAllText(WPFHelper.dataPath + "itemsdb.json", itemDatabaseJson.ToString());
+			File.WriteAllText(WPFHelper.itemsFullPath, itemDatabaseJson.ToString());
 		}
 
 
 		public void WriteNewPurchaseForItemToDatabase(string itemName, PurchaseHistory history) {
 			foreach (JToken tok in itemDatabaseJson) {
-				if (tok["mainName"].Value<string>() == itemName) {
-					tok["totalPurchased"] = tok["totalPurchased"].Value<long>() + history.amount;
+				if (tok[nameof(Item.mainName)].Value<string>() == itemName) {
+					tok[nameof(Item.totalPurchased)] = tok[nameof(Item.totalPurchased)].Value<long>() + history.amount;
 					itemDatabase[itemName].AddAmount(history.amount);
 					itemDatabase[itemName].purchaseHistory.Add(history);
-					((JArray)tok["purchaseHistory"]).Add(JObject.FromObject(history));
+					((JArray)tok[nameof(Item.purchaseHistory)]).Add(JObject.FromObject(history));
 					bool priceRecorded = false;
 
-					foreach (JToken price in ((JArray)tok["pricesInThePast"])) {
+					foreach (JToken price in ((JArray)tok[nameof(Item.pricesInThePast)])) {
 						if (price.Value<decimal>() == history.price) {
 							priceRecorded = true;
 							break;
 						}
 					}
 					if (!priceRecorded) {
-						((JArray)tok["pricesInThePast"]).Add(history.price);
+						((JArray)tok[nameof(Item.pricesInThePast)]).Add(history.price);
 						itemDatabase[itemName].pricesInThePast.Add(history.price);
 					}
-					tok["currentPrice"] = history.price;
+					tok[nameof(Item.currentPrice)] = history.price;
 					itemDatabase[itemName].SetNewCurrentPrice(history.price);
 					break;
 				}
 			}
-			File.WriteAllText(WPFHelper.dataPath + "itemsdb.json", itemDatabaseJson.ToString());
+			File.WriteAllText(WPFHelper.itemsFullPath, itemDatabaseJson.ToString());
+		}
+
+		internal void RegsiterItem(UIItem currentItemBeingInspected) {
+			itemDatabase.Add(currentItemBeingInspected.asociatedItem.mainName, WriteItemDefinitionToDatabase(currentItemBeingInspected.asociatedItem.mainName));
 		}
 
 		public void WriteUnitOfMeassureForItemToDatabase(string itemName, MeassurementUnit unit) {
 			foreach (JToken tok in itemDatabaseJson) {
-				if (tok["mainName"].Value<string>() == itemName) {
-					tok["unitOfMeassure"] = unit.ToString();
+				if (tok[nameof(Item.mainName)].Value<string>() == itemName) {
+					tok[nameof(Item.unitOfMeassure)] = unit.ToString();
 				}
 			}
-			File.WriteAllText(WPFHelper.dataPath + "itemsdb.json", itemDatabaseJson.ToString());
+			File.WriteAllText(WPFHelper.itemsFullPath, itemDatabaseJson.ToString());
 		}
 
 		public void WriteNewShoppingInstance(Shopping purchaseInstance) {
 			purchaseInstance.FinalizePurchase();
-			((JArray)shoppingDatabaseJson["purchases"]).Add(JObject.FromObject(purchaseInstance));
+			((JArray)shoppingDatabaseJson[nameof(Shopping.purchasedItems)]).Add(JObject.FromObject(purchaseInstance));
 			purchaseDatabase.Add(purchaseInstance.date, purchaseInstance);
 			File.WriteAllText(WPFHelper.dataPath + current.ToString() + "db.json", shoppingDatabaseJson.ToString());
 		}

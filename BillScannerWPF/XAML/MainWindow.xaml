@@ -6,30 +6,37 @@
         xmlns:local="clr-namespace:BillScannerWPF"
         mc:Ignorable="d"
         Title="MainWindow" Height="500" Width="1000">
+	
 	<Grid>
+
+		<!--Base-->
 		<Grid>
 			<Grid.ColumnDefinitions>
 				<ColumnDefinition Width="3*"></ColumnDefinition>
 				<ColumnDefinition Width="3*"></ColumnDefinition>
 				<ColumnDefinition Width="3*"></ColumnDefinition>
 			</Grid.ColumnDefinitions>
-			<Image x:Name="IH_previewImg" Grid.Column="0" MouseDown="PreviewImgMouse" Stretch="Fill" Margin="10" Source="/BillScannerWPF;component/Resources/Transparent.png"/>
+			<Image x:Name="IH_previewImg" Grid.Column="0" MouseLeftButtonDown="PreviewImgMouse" MouseRightButtonDown="IH_previewImg_MouseRightButtonDown" Stretch="Fill" Margin="10" Source="/BillScannerWPF;component/Resources/Transparent.png"/>
 			<Label Content="Matched Products" Grid.Column="1" />
 			<Label Content="Unknown Products" Grid.Column="2" />
-			<StackPanel x:Name="IH_matchedProducts" Grid.Column="1" Margin="0,30,0,70">
-				<StackPanel.Resources>
-					<Style TargetType="{x:Type local:MatchedProduct}">
-						<Setter Property="Margin" Value="0,5"/>
-					</Style>
-				</StackPanel.Resources>
-			</StackPanel>
-			<StackPanel x:Name="IH_unknownProducts" Grid.Column="2" Margin="0,30,0,70">
-				<StackPanel.Resources>
-					<Style TargetType="{x:Type local:MatchedProduct}">
-						<Setter Property="Margin" Value="0,5"/>
-					</Style>
-				</StackPanel.Resources>
-			</StackPanel>
+			<ScrollViewer Grid.Column="1" Margin="0,30,0,70">
+				<StackPanel x:Name="IH_matchedProducts" >
+					<StackPanel.Resources>
+						<Style TargetType="{x:Type local:UIItem}">
+							<Setter Property="Margin" Value="0,5"/>
+						</Style>
+					</StackPanel.Resources>
+				</StackPanel>
+			</ScrollViewer>
+			<ScrollViewer Grid.Column="2" Margin="0,30,0,70">
+				<StackPanel x:Name="IH_unknownProducts" >
+					<StackPanel.Resources>
+						<Style TargetType="{x:Type local:UIItem}">
+							<Setter Property="Margin" Value="0,5"/>
+						</Style>
+					</StackPanel.Resources>
+				</StackPanel>
+			</ScrollViewer>
 		</Grid>
 		<Grid HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="10,0,10,10" Height="50">
 			<Grid.ColumnDefinitions>
@@ -42,11 +49,59 @@
 			<Button x:Name="IH_freeBtn" Content="Analyze" Grid.Column="0" MinWidth="120" Margin="10,0,0,0"/>
 		</Grid>
 
-		<Grid x:Name="itemInfoOverlay" Panel.ZIndex="1" Visibility="Visible">
+
+		<!--Item information-->
+		<Grid x:Name="itemInfoOverlay" Panel.ZIndex="1" Visibility="Hidden">
 			<Grid.Background>
 				<SolidColorBrush Color="Black" Opacity=".8"/>
 			</Grid.Background>
-			<Grid x:Name="panel" Panel.ZIndex="2" Margin="100,50" Background="Wheat">
+			<Grid Panel.ZIndex="2" Margin="100,50" Background="WhiteSmoke">
+				<Grid Margin="10">
+					<Grid.RowDefinitions>
+						<RowDefinition Height="10"></RowDefinition>
+						<RowDefinition Height="auto"></RowDefinition>
+						<RowDefinition Height="auto"></RowDefinition>
+						<RowDefinition Height="auto"></RowDefinition>
+						<RowDefinition Height="auto"></RowDefinition>
+						<RowDefinition Height="*"></RowDefinition>
+						<RowDefinition Height="80"></RowDefinition>
+					</Grid.RowDefinitions>
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition Width="auto"></ColumnDefinition>
+						<ColumnDefinition Width="auto"></ColumnDefinition>
+						<ColumnDefinition Width="auto"></ColumnDefinition>
+						<ColumnDefinition Width="auto"></ColumnDefinition>
+						<ColumnDefinition Width="auto"></ColumnDefinition>
+						<ColumnDefinition Width="*"></ColumnDefinition>
+					</Grid.ColumnDefinitions>
+					<TextBlock x:Name="info_mainName" Grid.Row="1" Text="Main Name: ____________"></TextBlock>
+					<TextBlock x:Name="info_ocrNames" Grid.Row="2" Text="OCR Names: ____________"></TextBlock>
+					<TextBlock x:Name="info_currentValue" Grid.Row="3" Text="Current item value: ____________"></TextBlock>
+					<TextBlock x:Name="info_pastPrices" Grid.Row="4" Text="Prices previously: ____________"></TextBlock>
+					<TextBlock x:Name="info_bought" Grid.Row="5" Text="Bought total: ____________"></TextBlock>
+
+				</Grid>
+				<Grid VerticalAlignment="Bottom" HorizontalAlignment="Right">
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition Width="20"></ColumnDefinition>
+						<ColumnDefinition Width="auto"></ColumnDefinition>
+						<ColumnDefinition Width="auto"></ColumnDefinition>
+					</Grid.ColumnDefinitions>
+					<Grid.Background>
+						<SolidColorBrush Color="Azure" Opacity="1"></SolidColorBrush>
+					</Grid.Background>
+					<Button Grid.Column="2" Content="Back" Click="info_Back_Button" Margin="10" Padding="20,5"></Button>
+					<Button Grid.Column="1" Content="Register Item" Click="info_RegisterItem_Button" Margin="10"></Button>
+				</Grid>
+			</Grid>
+		</Grid>
+
+		<!--Unmatched Item Editing-->
+		<Grid x:Name="newOverlay" Panel.ZIndex="1" Visibility="Hidden">
+			<Grid.Background>
+				<SolidColorBrush Color="Black" Opacity=".8"/>
+			</Grid.Background>
+			<Grid x:Name="x_panel" Panel.ZIndex="2" Margin="100,50" Background="WhiteSmoke">
 				<Grid Margin="10,0,10,0">
 					<Grid.RowDefinitions>
 						<RowDefinition Height="10"></RowDefinition>
@@ -65,13 +120,52 @@
 						<ColumnDefinition Width="auto"></ColumnDefinition>
 						<ColumnDefinition Width="*"></ColumnDefinition>
 					</Grid.ColumnDefinitions>
-					<TextBlock Grid.Row="1" Text="Main Name: "></TextBlock>
-					<TextBlock Grid.Row="2" Text="OCR Names: "></TextBlock>
-					<TextBlock Grid.Row="3" Text="Current item value: "></TextBlock>
-					<TextBlock Grid.Row="4" Text="Prices previously: "></TextBlock>
-					<TextBlock Grid.Row="5" Text="Bought total: "></TextBlock>
+				</Grid>
+			</Grid>
+		</Grid>
 
-					<Button Grid.Row="6" Grid.Column="5" Content="Back" Width="120" MaxHeight="40" HorizontalAlignment="Right" Click="Button_Click"></Button>
+
+		<!--New Item Definition-->
+		<Grid x:Name="newItemDefinition" Panel.ZIndex="1" Visibility="Visible">
+			<Grid.Background>
+				<SolidColorBrush Color="Black" Opacity=".8"/>
+			</Grid.Background>
+			<Grid x:Name="aa" Panel.ZIndex="2" Margin="300,25" Background="WhiteSmoke">
+				<Grid Margin="10,0,10,0">
+					<Grid.RowDefinitions>
+						<RowDefinition Height="10"></RowDefinition>
+						<RowDefinition Height="22"></RowDefinition>
+						<RowDefinition Height="22"></RowDefinition>
+						<RowDefinition Height="22"></RowDefinition>
+						<RowDefinition Height="22"></RowDefinition>
+						<RowDefinition Height="22"></RowDefinition>
+						<RowDefinition Height="*"></RowDefinition>
+						<RowDefinition Height="80"></RowDefinition>
+					</Grid.RowDefinitions>
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition Width="auto" MinWidth="120"></ColumnDefinition>
+						<ColumnDefinition Width="auto" MinWidth="120"></ColumnDefinition>
+						<ColumnDefinition Width="*"></ColumnDefinition>
+					</Grid.ColumnDefinitions>
+					<TextBlock Grid.Row="1" Grid.Column="0" Text="Main Name:" VerticalAlignment="Center"></TextBlock>
+					<TextBlock Grid.Row="2" Grid.Column="0" Text="OCR Names:" VerticalAlignment="Center"></TextBlock>
+					<TextBlock Grid.Row="3" Grid.Column="0" Text="Current item value:" VerticalAlignment="Center"></TextBlock>
+					<TextBlock Grid.Row="4" Grid.Column="0" Text="Prices previously:" VerticalAlignment="Center"></TextBlock>
+					<TextBlock Grid.Row="5" Grid.Column="0" Text="Bought total:" VerticalAlignment="Center"></TextBlock>
+
+					<TextBox x:Name="newDefinition_mainName" Grid.Row="1"  Grid.Column="1" MaxHeight="20" ></TextBox>
+					<TextBox x:Name="newDefinition_ocrNames" Grid.Row="2"  Grid.Column="1"  MaxHeight="20"></TextBox>
+					<TextBox x:Name="newDefinition_currentValue" Grid.Row="3"  Grid.Column="1" MaxHeight="20"></TextBox>
+					<TextBox x:Name="newDefinition_pastPrices" Grid.Row="4"  Grid.Column="1" MaxHeight="20" ></TextBox>
+					<TextBox x:Name="newDefinition_bought" Grid.Row="5"  Grid.Column="1" MaxHeight="20" ></TextBox>
+				</Grid>
+				<Grid VerticalAlignment="Bottom" HorizontalAlignment="Right">
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition></ColumnDefinition>
+						<ColumnDefinition></ColumnDefinition>
+					</Grid.ColumnDefinitions>
+					<Button Grid.Column="0" Content="Back" Click="newDefinition_Back_Button" Margin="10" Padding="20,5"></Button>
+					<Button Grid.Column="1" Content="Register Item" Click="newDefinition_RegisterItem_Button" Margin="10"></Button>
 				</Grid>
 			</Grid>
 		</Grid>

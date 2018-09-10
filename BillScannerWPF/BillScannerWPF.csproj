@@ -70,8 +70,14 @@
     <Compile Include="ImageProcessor.cs" />
     <Compile Include="Item.cs" />
     <Compile Include="ItemNotDefinedException.cs" />
+    <Compile Include="MatchRating.cs" />
     <Compile Include="MeassurementUnit.cs" />
+    <Compile Include="ParsingResult.cs" />
     <Compile Include="PurchaseHistory.cs" />
+    <Compile Include="Rules\BaseRuleset.cs" />
+    <Compile Include="Rules\IRuleset.cs" />
+    <Compile Include="Rules\LidlRuleset.cs" />
+    <Compile Include="Rules\McDonaldsRuleset.cs" />
     <Compile Include="Shopping.cs" />
     <Compile Include="WPFHelper.cs" />
     <Compile Include="XAML\MatchedProduct.xaml.cs">
@@ -80,7 +86,7 @@
     <Compile Include="XAML\SetupWindow.xaml.cs">
       <DependentUpon>SetupWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="StringReceived.cs" />
+    <Compile Include="StringParser.cs" />
     <Compile Include="WordSimilarity.cs" />
     <Page Include="XAML\MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -139,6 +145,14 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\DatabaseItemTemplate.json" />
+    <Resource Include="Resources\MatchRating\Five.png" />
+    <Resource Include="Resources\MatchRating\FivePlus.png" />
+    <Resource Include="Resources\MatchRating\Four.png" />
+    <Resource Include="Resources\MatchRating\One.png" />
+    <Resource Include="Resources\MatchRating\Success.png" />
+    <Resource Include="Resources\MatchRating\Three.png" />
+    <Resource Include="Resources\MatchRating\Two.png" />
+    <Resource Include="Resources\MatchRating\Fail.png" />
     <Content Include="x64\liblept172.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -155,6 +169,7 @@
   <ItemGroup>
     <Resource Include="Resources\Transparent.png" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ProjectExtensions />
 </Project>

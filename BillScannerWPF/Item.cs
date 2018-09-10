@@ -29,6 +29,8 @@ namespace BillScannerWPF {
 		public long totalPurchased { get; private set; }
 		public List<PurchaseHistory> purchaseHistory { get; }
 
+		internal string tirggerForMatch { get; set; }
+
 		internal void AddAmount(int amount) {
 			totalPurchased += amount;
 		}
