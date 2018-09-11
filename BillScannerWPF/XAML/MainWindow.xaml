@@ -45,7 +45,7 @@
 				<ColumnDefinition Width="Auto"></ColumnDefinition>
 			</Grid.ColumnDefinitions>
 			<Button x:Name="IH_finalizeBtn" Content="Finalize" Grid.Column="2" MinWidth="120" Margin="20,0,0,0"/>
-			<Button x:Name="IH_newEntryBtn" Content="Create new entry" Grid.Column="1" MinWidth="120" Margin="10,0,0,0"/>
+			<Button x:Name="IH_newEntryBtn" Content="Create new entry"  Grid.Column="1" MinWidth="120" Margin="10,0,0,0"/>
 			<Button x:Name="IH_freeBtn" Content="Analyze" Grid.Column="0" MinWidth="120" Margin="10,0,0,0"/>
 		</Grid>
 
@@ -91,7 +91,7 @@
 						<SolidColorBrush Color="Azure" Opacity="1"></SolidColorBrush>
 					</Grid.Background>
 					<Button Grid.Column="2" Content="Back" Click="info_Back_Button" Margin="10" Padding="20,5"></Button>
-					<Button Grid.Column="1" Content="Register Item" Click="info_RegisterItem_Button" Margin="10"></Button>
+					<Button Grid.Column="1" Content="Register Item" Click="info_RegisterItem_Button" Margin="10" Visibility="Hidden"></Button>
 				</Grid>
 			</Grid>
 		</Grid>
@@ -126,7 +126,7 @@
 
 
 		<!--New Item Definition-->
-		<Grid x:Name="newItemDefinition" Panel.ZIndex="1" Visibility="Visible">
+		<Grid x:Name="newItemDefinition" Panel.ZIndex="1" Visibility="Hidden">
 			<Grid.Background>
 				<SolidColorBrush Color="Black" Opacity=".8"/>
 			</Grid.Background>
@@ -136,9 +136,7 @@
 						<RowDefinition Height="10"></RowDefinition>
 						<RowDefinition Height="22"></RowDefinition>
 						<RowDefinition Height="22"></RowDefinition>
-						<RowDefinition Height="22"></RowDefinition>
-						<RowDefinition Height="22"></RowDefinition>
-						<RowDefinition Height="22"></RowDefinition>
+						<RowDefinition Height="auto"></RowDefinition>
 						<RowDefinition Height="*"></RowDefinition>
 						<RowDefinition Height="80"></RowDefinition>
 					</Grid.RowDefinitions>
@@ -148,16 +146,12 @@
 						<ColumnDefinition Width="*"></ColumnDefinition>
 					</Grid.ColumnDefinitions>
 					<TextBlock Grid.Row="1" Grid.Column="0" Text="Main Name:" VerticalAlignment="Center"></TextBlock>
-					<TextBlock Grid.Row="2" Grid.Column="0" Text="OCR Names:" VerticalAlignment="Center"></TextBlock>
-					<TextBlock Grid.Row="3" Grid.Column="0" Text="Current item value:" VerticalAlignment="Center"></TextBlock>
-					<TextBlock Grid.Row="4" Grid.Column="0" Text="Prices previously:" VerticalAlignment="Center"></TextBlock>
-					<TextBlock Grid.Row="5" Grid.Column="0" Text="Bought total:" VerticalAlignment="Center"></TextBlock>
-
+					<TextBlock Grid.Row="2" Grid.Column="0" Text="Current item value:" VerticalAlignment="Center"></TextBlock>
 					<TextBox x:Name="newDefinition_mainName" Grid.Row="1"  Grid.Column="1" MaxHeight="20" ></TextBox>
-					<TextBox x:Name="newDefinition_ocrNames" Grid.Row="2"  Grid.Column="1"  MaxHeight="20"></TextBox>
-					<TextBox x:Name="newDefinition_currentValue" Grid.Row="3"  Grid.Column="1" MaxHeight="20"></TextBox>
-					<TextBox x:Name="newDefinition_pastPrices" Grid.Row="4"  Grid.Column="1" MaxHeight="20" ></TextBox>
-					<TextBox x:Name="newDefinition_bought" Grid.Row="5"  Grid.Column="1" MaxHeight="20" ></TextBox>
+					<TextBox x:Name="newDefinition_currentValue" Grid.Row="2"  Grid.Column="1" MaxHeight="20"></TextBox>
+					<ScrollViewer Grid.Row="3">
+						<StackPanel x:Name="newDefinition_selectProduct_Stack" ></StackPanel>
+					</ScrollViewer>
 				</Grid>
 				<Grid VerticalAlignment="Bottom" HorizontalAlignment="Right">
 					<Grid.ColumnDefinitions>
@@ -165,7 +159,7 @@
 						<ColumnDefinition></ColumnDefinition>
 					</Grid.ColumnDefinitions>
 					<Button Grid.Column="0" Content="Back" Click="newDefinition_Back_Button" Margin="10" Padding="20,5"></Button>
-					<Button Grid.Column="1" Content="Register Item" Click="newDefinition_RegisterItem_Button" Margin="10"></Button>
+					<Button Grid.Column="1" Content="Register Item" Click="newDefinition_RegisterItem_Button" Margin="10" Visibility="Visible"></Button>
 				</Grid>
 			</Grid>
 		</Grid>

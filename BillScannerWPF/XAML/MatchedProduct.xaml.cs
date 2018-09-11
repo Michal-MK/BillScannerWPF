@@ -31,7 +31,7 @@ namespace BillScannerWPF {
 			w.info_currentValue.Text = "Current item value: " + asociatedItem.currentPrice.ToString();
 			w.info_pastPrices.Text = "Previous values: " + asociatedItem.pricesInThePast.Merge(',');
 			w.info_bought.Text = "Total items bought: " + asociatedItem.totalPurchased.ToString();
-			//w.itemInfoOverlay.Visibility = Visibility.Visible;
+			w.itemInfoOverlay.Visibility = Visibility.Visible;
 			w.currentItemBeingInspected = this;
 		}
 	}

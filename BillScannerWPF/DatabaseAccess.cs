@@ -98,8 +98,14 @@ namespace BillScannerWPF {
 			File.WriteAllText(WPFHelper.itemsFullPath, itemDatabaseJson.ToString());
 		}
 
-		internal void RegsiterItem(UIItem currentItemBeingInspected) {
-			itemDatabase.Add(currentItemBeingInspected.asociatedItem.mainName, WriteItemDefinitionToDatabase(currentItemBeingInspected.asociatedItem.mainName));
+		internal void RegisterItem(UIItem currentItemBeingInspected) {
+			itemDatabase.Add(currentItemBeingInspected.asociatedItem.mainName, WriteItemDefinitionToDatabase(currentItemBeingInspected.asociatedItem));
+		}
+
+		internal void RegisterItem(string itemName, decimal currentPrice, string[] ambiguous) {
+			Item item = new Item(itemName, currentPrice);
+			item.ocrNames.AddRange(ambiguous);
+			itemDatabase.Add(itemName, WriteItemDefinitionToDatabase(item));
 		}
 
 		public void WriteUnitOfMeassureForItemToDatabase(string itemName, MeassurementUnit unit) {

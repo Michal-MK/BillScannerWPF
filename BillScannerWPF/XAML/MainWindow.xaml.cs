@@ -19,6 +19,8 @@ using System.Windows.Shapes;
 using System.Drawing;
 using System.Threading;
 using System.Diagnostics;
+using System.Globalization;
+using System.Collections.ObjectModel;
 
 namespace BillScannerWPF {
 	/// <summary>
@@ -51,6 +53,32 @@ namespace BillScannerWPF {
 			imgProcessing = new ImageProcessor(server, access, GetRuleset(SetupWindow.selectedShop));
 
 			IH_freeBtn.Click += imgProcessing.Analyze;
+			IH_newEntryBtn.Click += ShowRegisterWindow;
+		}
+
+
+		private string selectedProduct;
+		private TextBlock previousSelected = null;
+		private void ShowRegisterWindow(object sender, RoutedEventArgs e) {
+			if(IH_unknownProducts.Children.Count == 0){
+				return;
+			}
+			newItemDefinition.Visibility = Visibility.Visible;
+			foreach (UIItem item in IH_unknownProducts.Children) {
+				TextBlock block = new TextBlock();
+				block.Text = item.IH_originalName.Text;
+				block.MouseLeftButtonDown += Block_MouseLeftButtonDown;
+				newDefinition_selectProduct_Stack.Children.Add(block);
+			}
+		}
+
+		private void Block_MouseLeftButtonDown(object sender, MouseButtonEventArgs e) {
+			((TextBlock)e.Source).Background = System.Windows.Media.Brushes.Green;
+			if (previousSelected != null) {
+				previousSelected.Background = System.Windows.Media.Brushes.White;
+			}
+			previousSelected = ((TextBlock)e.Source);
+			selectedProduct = ((TextBlock)e.Source).Text;
 		}
 
 		private Rules.IRuleset GetRuleset(Shop selectedShop) {
@@ -95,8 +123,6 @@ namespace BillScannerWPF {
 			SetPrevImage(new Uri(currentImageSource));
 		}
 
-
-
 		//Open Selected image in default image viewer
 		private void IH_previewImg_MouseRightButtonDown(object sender, MouseButtonEventArgs e) {
 			if (string.IsNullOrEmpty(currentImageSource)) {
@@ -108,9 +134,8 @@ namespace BillScannerWPF {
 		}
 
 		private void info_RegisterItem_Button(object sender, RoutedEventArgs e) {
-			access.RegsiterItem(currentItemBeingInspected);
+			access.RegisterItem(currentItemBeingInspected);
 			IH_unknownProducts.Children.RemoveAt(currentItemBeingInspected.index);
-			IH_matchedProducts.Children.Add(currentItemBeingInspected);
 		}
 
 		private void info_Back_Button(object sender, RoutedEventArgs e) {
@@ -119,13 +144,16 @@ namespace BillScannerWPF {
 		}
 
 		private void newDefinition_Back_Button(object sender, RoutedEventArgs e) {
-			itemInfoOverlay.Visibility = Visibility.Hidden;
+			newItemDefinition.Visibility = Visibility.Hidden;
 			currentItemBeingInspected = null;
 		}
 		private void newDefinition_RegisterItem_Button(object sender, RoutedEventArgs e) {
-
-			itemInfoOverlay.Visibility = Visibility.Hidden;
-			currentItemBeingInspected = null;
+			string new_mainName = newDefinition_mainName.Text;
+			if(decimal.TryParse(newDefinition_currentValue.Text, NumberStyles.Currency, CultureInfo.InvariantCulture, out decimal new_result)) {
+				newItemDefinition.Visibility = Visibility.Hidden;
+				currentItemBeingInspected = null;
+				access.RegisterItem(new_mainName, new_result, new string[] { previousSelected.Text });
+			}
 		}
 	}
 }
