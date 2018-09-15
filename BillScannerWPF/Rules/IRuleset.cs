@@ -7,12 +7,11 @@ using System.Threading.Tasks;
 namespace BillScannerWPF.Rules {
 	interface IRuleset {
 		long GetQuantity(string[] ocrText, int index);
-
+		string Name(string line);
 		decimal PriceOfOne(string[] ocrText, int index);
 
 		string[] endMarkers { get; }
 		string[] startMarkers { get; }
 		char costPlusQuantitySeparator { get; }
-
 	}
 }

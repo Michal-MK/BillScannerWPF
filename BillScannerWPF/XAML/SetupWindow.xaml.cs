@@ -21,7 +21,15 @@ namespace BillScannerWPF {
 	/// </summary>
 	public partial class SetupWindow : Window {
 
-		public static Shop selectedShop { get; private set; }
+		public static Shop selectedShop { get;
+#if !DEBUG
+			private
+#endif
+			set;
+		}
+
+		private DatabaseAccess access;
+
 
 		public SetupWindow() {
 			InitializeComponent();
@@ -30,7 +38,6 @@ namespace BillScannerWPF {
 				s_shopSelect.Items.Add(shops[i]);
 			}
 		}
-		private DatabaseAccess access;
 		//Setup
 		private void Button_Click(object sender, RoutedEventArgs e) {
 			access = DatabaseAccess.LoadDatabase(Shop.Lidl);
@@ -38,7 +45,7 @@ namespace BillScannerWPF {
 
 		//Define new item
 		private void Button_Click_1(object sender, RoutedEventArgs e) {
-			access.WriteItemDefinitionToDatabase(s_itemName.Text);
+			access.AddItemDefinitionToDatabase(s_itemName.Text);
 		}
 
 		// Update json view
@@ -54,20 +61,20 @@ namespace BillScannerWPF {
 		private void Button_Click_3(object sender, RoutedEventArgs e) {
 			string orig = s_origName.Text;
 			string alt = s_altName.Text;
-			access.WriteAlternativeOCRNameForItemToDatabase(orig, alt);
+			access.AddAlternativeOCRNameForItemToDatabase(orig, alt);
 		}
 
 		private void Button_Click_4(object sender, RoutedEventArgs e) {
 			int bamount = int.Parse(s_amount.Text);
 			string priceee = s_price.Text.Replace(',', '.');
 			decimal pricee = decimal.Parse(priceee, CultureInfo.InvariantCulture);
-			access.WriteNewPurchaseForItemToDatabase(s_origName.Text, new PurchaseHistory(DateTime.Now, bamount, pricee));
+			access.AddNewPurchaseForItemToDatabase(s_origName.Text, new PurchaseHistory(DateTime.Now, bamount, pricee));
 		}
 
 		private void Button_Click_5(object sender, RoutedEventArgs e) {
-			List<SimpleItem> items = new List<SimpleItem>();
-			items.Add(new SimpleItem("Whatever", 20, 59.86m));
-			items.Add(new SimpleItem("AAA", 2, 111.99m));
+			List<ItemSlim> items = new List<ItemSlim>();
+			items.Add(new ItemSlim("Whatever", 20, 59.86m));
+			items.Add(new ItemSlim("AAA", 2, 111.99m));
 			access.WriteNewShoppingInstance(new Shopping(DateTime.Now, items));
 		}
 

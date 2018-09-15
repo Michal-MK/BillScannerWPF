@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BillScannerWPF {
 	[Serializable]
@@ -10,25 +7,21 @@ namespace BillScannerWPF {
 		public Item(string mainName, decimal currentPrice) {
 			this.mainName = mainName;
 			this.currentPrice = currentPrice;
-			ocrNames = new List<string>() {
-				mainName
-			};
-
-			pricesInThePast = new List<decimal>() {
-				currentPrice
-			};
-			totalPurchased = 0;
+			ocrNames = new List<string>();
+			pricesInThePast = new List<decimal>();
 			purchaseHistory = new List<PurchaseHistory>();
 		}
 
 		public string mainName { get; }
 		public List<string> ocrNames { get; }
-		public string unitOfMeassure { get; }
+		public MeassurementUnit unitOfMeassure { get; private set; }
 		public decimal currentPrice { get; private set; }
 		public List<decimal> pricesInThePast { get; }
 		public long totalPurchased { get; private set; }
 		public List<PurchaseHistory> purchaseHistory { get; }
 
+
+		internal bool isRegistered { get; set; }
 		internal string tirggerForMatch { get; set; }
 
 		internal void AddAmount(int amount) {
@@ -38,26 +31,28 @@ namespace BillScannerWPF {
 		internal void SetNewCurrentPrice(decimal price) {
 			currentPrice = price;
 		}
+		internal void SetUnitOfMeassure(MeassurementUnit unit) {
+			unitOfMeassure = unit;
+		}
 
-		public static implicit operator SimpleItem (Item item) {
-			return new SimpleItem(item.mainName, 0, item.currentPrice);
+		public static implicit operator ItemSlim(Item item) {
+			return new ItemSlim(item.mainName, 0, item.currentPrice);
 		}
 	}
 
-	public class SimpleItem {
-		public SimpleItem(string name, long amountPurchased, decimal price) {
+	public class ItemSlim {
+		public ItemSlim(string name, long amountPurchased, decimal price) {
 			this.name = name;
 			this.amountPurchased = amountPurchased;
 			this.price = price;
 		}
-
 
 		public string name { get; }
 		public long amountPurchased { get; }
 		public decimal price { get; }
 
 
-		public static implicit operator Item(SimpleItem item) {
+		public static implicit operator Item(ItemSlim item) {
 			return new Item(item.name, item.price);
 		}
 	}

@@ -1,6 +1,7 @@
 ﻿using Igor.TCP;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -15,8 +16,8 @@ namespace BillScannerWPF {
 		}
 
 		public ParsingResult Parse(string OCRText) {
-			List<UItemCreationInfo> matchedItems = new List<UItemCreationInfo>();
-			List<UItemCreationInfo> unmatchedItems = new List<UItemCreationInfo>();
+			ObservableCollection<UItemCreationInfo> matchedItems = new ObservableCollection<UItemCreationInfo>();
+			ObservableCollection<UItemCreationInfo> unmatchedItems = new ObservableCollection<UItemCreationInfo>();
 			string[] split = OCRText.Split('\n');
 
 			//Process line by line
@@ -50,8 +51,7 @@ namespace BillScannerWPF {
 						index = j;
 					}
 					if (mainNameDist == 0) {
-						//Found exact match
-						UItemCreationInfo lowest = new UItemCreationInfo(items[j], j, (MatchRating)mainNameDist);
+						UItemCreationInfo lowest = new UItemCreationInfo(items[j], true, j, (MatchRating)mainNameDist);
 						lowest.item.tirggerForMatch = split[i];
 						matchedItems.Add(lowest);
 						matched = true;
@@ -61,8 +61,10 @@ namespace BillScannerWPF {
 				if (matched) {
 					continue;
 				}
-				if (lowestD <= 1) {
-					//Found a almost match
+				if (lowestD <= 5) {
+					UItemCreationInfo something = new UItemCreationInfo(items[index], true, index, (MatchRating)lowestD);
+					something.item.tirggerForMatch = split[i];
+					unmatchedItems.Add(something);
 				}
 				else {
 					for (int j = 0; j < items.Length; j++) {
@@ -73,27 +75,34 @@ namespace BillScannerWPF {
 								index = j;
 							}
 							if (ocrNamesDist == 0) {
-								//Found match with f*** up word
-								UItemCreationInfo lowest = new UItemCreationInfo(items[j], j, (MatchRating)ocrNamesDist);
+								UItemCreationInfo lowest = new UItemCreationInfo(items[j], true, j, (MatchRating)ocrNamesDist);
 								lowest.item.tirggerForMatch = split[i];
 								matchedItems.Add(lowest);
 								matched = true;
 								break;
 							}
 						}
-						if (matched) {
-							break;
-						}
+
 					}
-					if (lowestD <= 1) {
-						//Found a secondary almost match
+					if (matched) {
+						continue;
+					}
+					if (lowestD <= 5) {
+						UItemCreationInfo something = new UItemCreationInfo(items[index], true, index, (MatchRating)lowestD);
+						something.item.tirggerForMatch = split[i];
+						unmatchedItems.Add(something);
 					}
 				}
-				UItemCreationInfo unknown = new UItemCreationInfo(new Item(split[i], -1), i, MatchRating.Fail);
-				unknown.item.tirggerForMatch = split[i];
-				unmatchedItems.Add(unknown);
+				try {
+					UItemCreationInfo unknown = new UItemCreationInfo(new Item(split[i], rules.PriceOfOne(split, i)), false, i, MatchRating.Fail);
+					unknown.item.tirggerForMatch = split[i];
+					unmatchedItems.Add(unknown);
+				}
+				catch (NotImplementedException e) {
+					Console.WriteLine(e.Message);
+					continue;
+				}
 			}
-			//List all matched, List ~4 closest to unmatched, offer new picture, define new item
 			return new ParsingResult(split, matchedItems, unmatchedItems);
 		}
 
@@ -116,15 +125,18 @@ namespace BillScannerWPF {
 		}
 	}
 
-	internal struct UItemCreationInfo {
-		internal UItemCreationInfo(Item i, int index, MatchRating quality) {
+
+	public struct UItemCreationInfo {
+		internal UItemCreationInfo(Item i, bool isRegistered, int index, MatchRating quality) {
 			item = i;
 			this.index = index;
 			this.quality = quality;
+			this.isRegistered = isRegistered;
 		}
 
 		internal Item item { get; }
 		internal int index { get; }
 		internal MatchRating quality { get; }
+		internal bool isRegistered { get; private set; }
 	}
 }

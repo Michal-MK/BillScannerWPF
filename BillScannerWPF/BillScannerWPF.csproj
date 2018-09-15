@@ -153,6 +153,7 @@
     <Resource Include="Resources\MatchRating\Three.png" />
     <Resource Include="Resources\MatchRating\Two.png" />
     <Resource Include="Resources\MatchRating\Fail.png" />
+    <Resource Include="Resources\RegexTests.txt" />
     <Content Include="x64\liblept172.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

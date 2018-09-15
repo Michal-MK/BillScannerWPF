@@ -9,18 +9,18 @@ namespace BillScannerWPF {
 
 		public DateTime date { get; }
 		public decimal totalCost { get; private set; } = 0;
-		public SimpleItem[] purchasedItems { get; private set; }
+		public ItemSlim[] purchasedItems { get; private set; }
 
 		[NonSerialized]
-		private List<SimpleItem> internalList = new List<SimpleItem>();
+		private List<ItemSlim> internalList = new List<ItemSlim>();
 
 		//public Shopping(DateTime date) {
 		//	this.date = date;
 		//}
 
-		public Shopping(DateTime date, ICollection<SimpleItem> collection) {
+		public Shopping(DateTime date, ICollection<ItemSlim> collection) {
 			this.date = date;
-			internalList = (List<SimpleItem>)collection;
+			internalList = (List<ItemSlim>)collection;
 		}
 
 		//public int itemsPurchased {
@@ -38,7 +38,7 @@ namespace BillScannerWPF {
 
 		public void FinalizePurchase() {
 			purchasedItems = internalList.ToArray();
-			foreach (SimpleItem item in purchasedItems) {
+			foreach (ItemSlim item in purchasedItems) {
 				totalCost += item.price * item.amountPurchased;
 			}
 			//for (int i = 0; i < internalList.Count; i++) { 

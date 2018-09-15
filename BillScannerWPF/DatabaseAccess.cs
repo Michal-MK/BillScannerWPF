@@ -24,7 +24,7 @@ namespace BillScannerWPF {
 		}
 
 		/// <summary>
-		/// Get the actual item from name
+		/// Get the actual item by name
 		/// </summary>
 		/// <exception cref="ItemNotDefinedException"></exception>
 		/// <param name="name">Name of the item</param>
@@ -45,7 +45,7 @@ namespace BillScannerWPF {
 		}
 
 
-		public Item WriteItemDefinitionToDatabase(string name) {
+		public Item AddItemDefinitionToDatabase(string name) {
 			Item i = new Item(name, (decimal)new Random().NextDouble() * 100);
 			itemDatabase.Add(name, i);
 			itemDatabaseJson.Add(JObject.FromObject(i));
@@ -53,13 +53,17 @@ namespace BillScannerWPF {
 			return null;
 		}
 
-		public Item WriteItemDefinitionToDatabase(Item newItemDefinition) {
-			itemDatabaseJson.Add(JObject.FromObject(newItemDefinition));
+		public Item WriteItemDefinitionToDatabase(Item newItemDefinition, string modifiedName) {
+			JObject obj = JObject.FromObject(newItemDefinition);
+			JArray ocrArray = ((JArray)obj[nameof(Item.ocrNames)]);
+			obj[nameof(Item.mainName)] = modifiedName;
+
+			itemDatabaseJson.Add(obj);
 			File.WriteAllText(WPFHelper.itemsFullPath, itemDatabaseJson.ToString());
 			return null;
 		}
 
-		public void WriteAlternativeOCRNameForItemToDatabase(string originalName, string altName) {
+		public void AddAlternativeOCRNameForItemToDatabase(string originalName, string altName) {
 			foreach (JToken tok in itemDatabaseJson) {
 				if (tok[nameof(Item.mainName)].Value<string>() == originalName) {
 					((JArray)tok[nameof(Item.ocrNames)]).Add(altName);
@@ -71,7 +75,7 @@ namespace BillScannerWPF {
 		}
 
 
-		public void WriteNewPurchaseForItemToDatabase(string itemName, PurchaseHistory history) {
+		public void AddNewPurchaseForItemToDatabase(string itemName, PurchaseHistory history) {
 			foreach (JToken tok in itemDatabaseJson) {
 				if (tok[nameof(Item.mainName)].Value<string>() == itemName) {
 					tok[nameof(Item.totalPurchased)] = tok[nameof(Item.totalPurchased)].Value<long>() + history.amount;
@@ -98,14 +102,9 @@ namespace BillScannerWPF {
 			File.WriteAllText(WPFHelper.itemsFullPath, itemDatabaseJson.ToString());
 		}
 
-		internal void RegisterItem(UIItem currentItemBeingInspected) {
-			itemDatabase.Add(currentItemBeingInspected.asociatedItem.mainName, WriteItemDefinitionToDatabase(currentItemBeingInspected.asociatedItem));
-		}
-
-		internal void RegisterItem(string itemName, decimal currentPrice, string[] ambiguous) {
-			Item item = new Item(itemName, currentPrice);
-			item.ocrNames.AddRange(ambiguous);
-			itemDatabase.Add(itemName, WriteItemDefinitionToDatabase(item));
+		internal void RegisterItemFromUI(UIItem currentItemBeingInspected, string modifiedName) {
+			Item asociated = currentItemBeingInspected.asociatedItem;
+			itemDatabase.Add(asociated.mainName, WriteItemDefinitionToDatabase(asociated, modifiedName));
 		}
 
 		public void WriteUnitOfMeassureForItemToDatabase(string itemName, MeassurementUnit unit) {
@@ -115,6 +114,7 @@ namespace BillScannerWPF {
 				}
 			}
 			File.WriteAllText(WPFHelper.itemsFullPath, itemDatabaseJson.ToString());
+			itemDatabase[itemName].SetUnitOfMeassure(unit);
 		}
 
 		public void WriteNewShoppingInstance(Shopping purchaseInstance) {

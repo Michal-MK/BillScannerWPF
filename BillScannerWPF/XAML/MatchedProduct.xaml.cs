@@ -11,27 +11,35 @@ namespace BillScannerWPF {
 
 		internal Item asociatedItem { get; }
 		internal int index { get; }
-		internal MatchRating quality { get; }
+		internal MatchRating quality { get; private set; }
 
 		internal UIItem(Item item, int index, MatchRating quality) {
 			InitializeComponent();
-			IH_originalName.Text = item.tirggerForMatch;
+			UITEM_OriginalName_Text.Text = item.tirggerForMatch;
 			asociatedItem = item;
 			this.quality = quality;
+			SetMatchRatingImage();
 		}
 
 		internal void SetMatchRatingImage() {
-			this.IH_matchQuality.Source = new BitmapImage(new Uri(WPFHelper.imageRatingResourcesPath + quality.ToString() + ".png", UriKind.Absolute));
+			this.UITEM_MatchQuality_Iamge.Source = new BitmapImage(new Uri(WPFHelper.imageRatingResourcesPath + quality.ToString() + ".png", UriKind.Absolute));
 		}
 
-		private void IH_ShowItemDetails_Button(object sender, RoutedEventArgs e) {
+		internal void ProductMatchedSuccess() {
+			quality = MatchRating.Success;
+			this.UITEM_MatchQuality_Iamge.Source = new BitmapImage(new Uri(WPFHelper.imageRatingResourcesPath + MatchRating.Success.ToString() + ".png", UriKind.Absolute));
+		}
+
+		private void UITEM_ShowDetails_Click(object sender, RoutedEventArgs e) {
 			MainWindow w = WPFHelper.GetCurrentMainWindow();
-			w.info_mainName.Text = "Main name: " + asociatedItem.mainName;
-			w.info_ocrNames.Text = "OCR registered names: " + asociatedItem.ocrNames.Merge(',');
-			w.info_currentValue.Text = "Current item value: " + asociatedItem.currentPrice.ToString();
-			w.info_pastPrices.Text = "Previous values: " + asociatedItem.pricesInThePast.Merge(',');
-			w.info_bought.Text = "Total items bought: " + asociatedItem.totalPurchased.ToString();
-			w.itemInfoOverlay.Visibility = Visibility.Visible;
+			w.INFO_MainName_Text.Text = asociatedItem.mainName;
+			w.INFO_ORC_Text.Text = asociatedItem.ocrNames.Merge(',');
+			w.INFO_CurrentValue_Text.Text = asociatedItem.currentPrice.ToString();
+			w.INFO_PricesBefore_Text.Text = asociatedItem.pricesInThePast.Merge(',');
+			w.INFO_AmountBought_Text.Text = asociatedItem.totalPurchased.ToString();
+			w.MAIN_ItemInfoOverlay_Grid.Visibility = Visibility.Visible;
+			w.INFO_RegisterItem_Button.IsEnabled = !asociatedItem.isRegistered;
+			w.INFO_MainName_Text.IsEnabled = !asociatedItem.isRegistered;
 			w.currentItemBeingInspected = this;
 		}
 	}

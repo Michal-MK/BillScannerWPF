@@ -9,17 +9,16 @@
 	<Grid>
 		<Grid.ColumnDefinitions>
 			<ColumnDefinition Width="10"></ColumnDefinition>
-			<ColumnDefinition Width="auto"></ColumnDefinition>
-			<ColumnDefinition Width="auto"></ColumnDefinition>
-			<ColumnDefinition Width="auto"></ColumnDefinition>
-			<ColumnDefinition Width="auto"></ColumnDefinition>
-			<ColumnDefinition Width="*"></ColumnDefinition>
+			<ColumnDefinition Width="10*"></ColumnDefinition>
+			<ColumnDefinition Width="2*"></ColumnDefinition>
+			<ColumnDefinition Width="1*"></ColumnDefinition>
 			<ColumnDefinition Width="10"></ColumnDefinition>
 		</Grid.ColumnDefinitions>
-		<TextBlock x:Name="IH_originalName" Grid.Column="1" Text="Original Name" VerticalAlignment="Center" ></TextBlock>
-		<TextBlock Grid.Column="2" Text="|" Margin="5,0" VerticalAlignment="Center" ></TextBlock>
-		<TextBlock x:Name="IH_productName" Grid.Column="3" Text="Product Name" VerticalAlignment="Center" ></TextBlock>
-		<Button x:Name="IH_showMatched" Grid.Column="4" MinWidth="120" Content="Edit" Margin="10,0,0,0" Click="IH_ShowItemDetails_Button" ></Button>
-		<Image x:Name="IH_matchQuality" Grid.Column="5" MaxHeight="32px"/>
+		<Grid.Background>
+			<SolidColorBrush Color="LightCyan"></SolidColorBrush>
+		</Grid.Background>
+		<TextBlock x:Name="UITEM_OriginalName_Text" Grid.Column="1" Text="Original Name" VerticalAlignment="Center" HorizontalAlignment="Left" ></TextBlock>
+		<Button x:Name="UITEM_ShowDetails_Button" Grid.Column="2" Content="Details" Click="UITEM_ShowDetails_Click" HorizontalAlignment="Stretch"></Button>
+		<Image x:Name="UITEM_MatchQuality_Iamge" Grid.Column="3" Height="32px" HorizontalAlignment="Right"/>
 	</Grid>
 </UserControl>

@@ -5,9 +5,16 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:BillScannerWPF"
         mc:Ignorable="d"
-        Title="MainWindow" Height="500" Width="1000">
-	
+        Title="Bill Scanner" Height="500" Width="1000">
+
 	<Grid>
+		<StackPanel Visibility="Hidden">
+			<StackPanel.Resources>
+				<Style x:Key="ih_stackPanelMargins" TargetType="{x:Type local:UIItem}">
+					<Setter Property="Margin" Value="0,5"/>
+				</Style>
+			</StackPanel.Resources>
+		</StackPanel>
 
 		<!--Base-->
 		<Grid>
@@ -16,42 +23,46 @@
 				<ColumnDefinition Width="3*"></ColumnDefinition>
 				<ColumnDefinition Width="3*"></ColumnDefinition>
 			</Grid.ColumnDefinitions>
-			<Image x:Name="IH_previewImg" Grid.Column="0" MouseLeftButtonDown="PreviewImgMouse" MouseRightButtonDown="IH_previewImg_MouseRightButtonDown" Stretch="Fill" Margin="10" Source="/BillScannerWPF;component/Resources/Transparent.png"/>
+			<Image x:Name="MAIN_PhotoPreview_Image" Grid.Column="0" MouseLeftButtonDown="PreviewImgMouse" MouseRightButtonDown="MAIN_PhotoPreview_RightClick" Stretch="Fill" Margin="10" Source="/BillScannerWPF;component/Resources/Transparent.png"/>
+			
 			<Label Content="Matched Products" Grid.Column="1" />
-			<Label Content="Unknown Products" Grid.Column="2" />
 			<ScrollViewer Grid.Column="1" Margin="0,30,0,70">
-				<StackPanel x:Name="IH_matchedProducts" >
+				<StackPanel>
 					<StackPanel.Resources>
 						<Style TargetType="{x:Type local:UIItem}">
 							<Setter Property="Margin" Value="0,5"/>
 						</Style>
 					</StackPanel.Resources>
+					<ItemsControl x:Name="MAIN_MatchedItems_Stack"></ItemsControl>
 				</StackPanel>
 			</ScrollViewer>
+
+			<Label Content="Unknown Products" Grid.Column="2" />
 			<ScrollViewer Grid.Column="2" Margin="0,30,0,70">
-				<StackPanel x:Name="IH_unknownProducts" >
+				<StackPanel>
 					<StackPanel.Resources>
 						<Style TargetType="{x:Type local:UIItem}">
 							<Setter Property="Margin" Value="0,5"/>
 						</Style>
 					</StackPanel.Resources>
+					<ItemsControl x:Name="MAIN_UnknownProducts_Stack"></ItemsControl>
 				</StackPanel>
 			</ScrollViewer>
+			
 		</Grid>
 		<Grid HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="10,0,10,10" Height="50">
 			<Grid.ColumnDefinitions>
-				<ColumnDefinition Width="Auto" ></ColumnDefinition>
+				<ColumnDefinition Width="Auto"></ColumnDefinition>
 				<ColumnDefinition Width="Auto"></ColumnDefinition>
 				<ColumnDefinition Width="Auto"></ColumnDefinition>
 			</Grid.ColumnDefinitions>
-			<Button x:Name="IH_finalizeBtn" Content="Finalize" Grid.Column="2" MinWidth="120" Margin="20,0,0,0"/>
-			<Button x:Name="IH_newEntryBtn" Content="Create new entry"  Grid.Column="1" MinWidth="120" Margin="10,0,0,0"/>
-			<Button x:Name="IH_freeBtn" Content="Analyze" Grid.Column="0" MinWidth="120" Margin="10,0,0,0"/>
+			<Button x:Name="MAIN_Finalize_Button" Content="Finalize" Grid.Column="2" MinWidth="120" Margin="10,0,0,0"/>
+			<Button x:Name="MAIN_Analyze_Button" Content="Analyze" Grid.Column="0" MinWidth="120" Margin="10,0,0,0"/>
 		</Grid>
 
 
 		<!--Item information-->
-		<Grid x:Name="itemInfoOverlay" Panel.ZIndex="1" Visibility="Hidden">
+		<Grid x:Name="MAIN_ItemInfoOverlay_Grid" Panel.ZIndex="1" Visibility="Hidden">
 			<Grid.Background>
 				<SolidColorBrush Color="Black" Opacity=".8"/>
 			</Grid.Background>
@@ -74,92 +85,27 @@
 						<ColumnDefinition Width="auto"></ColumnDefinition>
 						<ColumnDefinition Width="*"></ColumnDefinition>
 					</Grid.ColumnDefinitions>
-					<TextBlock x:Name="info_mainName" Grid.Row="1" Text="Main Name: ____________"></TextBlock>
-					<TextBlock x:Name="info_ocrNames" Grid.Row="2" Text="OCR Names: ____________"></TextBlock>
-					<TextBlock x:Name="info_currentValue" Grid.Row="3" Text="Current item value: ____________"></TextBlock>
-					<TextBlock x:Name="info_pastPrices" Grid.Row="4" Text="Prices previously: ____________"></TextBlock>
-					<TextBlock x:Name="info_bought" Grid.Row="5" Text="Bought total: ____________"></TextBlock>
+					<TextBlock Grid.Row="1" Grid.Column="0" Text="Main Name:" Grid.ColumnSpan="1"></TextBlock>
+					<TextBlock Grid.Row="2" Grid.Column="0" Text="OCR Names:" Grid.ColumnSpan="1"></TextBlock>
+					<TextBlock Grid.Row="3" Grid.Column="0" Text="Current item value: " Grid.ColumnSpan="1"></TextBlock>
+					<TextBlock Grid.Row="4" Grid.Column="0" Text="Prices previously:" Grid.ColumnSpan="1"></TextBlock>
+					<TextBlock Grid.Row="5" Grid.Column="0" Text="Bought total:" Grid.ColumnSpan="1"></TextBlock>
 
+					<TextBox x:Name="INFO_MainName_Text" Grid.Row="1" Grid.Column="1" Text="____________"></TextBox>
+					<TextBlock x:Name="INFO_ORC_Text" Grid.Row="2" Grid.Column="1" Text="____________"></TextBlock>
+					<TextBlock x:Name="INFO_CurrentValue_Text" Grid.Row="3" Grid.Column="1" Text="____________"></TextBlock>
+					<TextBlock x:Name="INFO_PricesBefore_Text" Grid.Row="4" Grid.Column="1" Text="____________"></TextBlock>
+					<TextBlock x:Name="INFO_AmountBought_Text" Grid.Row="5" Grid.Column="1" Text="____________"></TextBlock>
 				</Grid>
 				<Grid VerticalAlignment="Bottom" HorizontalAlignment="Right">
 					<Grid.ColumnDefinitions>
 						<ColumnDefinition Width="20"></ColumnDefinition>
 						<ColumnDefinition Width="auto"></ColumnDefinition>
 						<ColumnDefinition Width="auto"></ColumnDefinition>
+						<ColumnDefinition Width="auto"></ColumnDefinition>
 					</Grid.ColumnDefinitions>
-					<Grid.Background>
-						<SolidColorBrush Color="Azure" Opacity="1"></SolidColorBrush>
-					</Grid.Background>
-					<Button Grid.Column="2" Content="Back" Click="info_Back_Button" Margin="10" Padding="20,5"></Button>
-					<Button Grid.Column="1" Content="Register Item" Click="info_RegisterItem_Button" Margin="10" Visibility="Hidden"></Button>
-				</Grid>
-			</Grid>
-		</Grid>
-
-		<!--Unmatched Item Editing-->
-		<Grid x:Name="newOverlay" Panel.ZIndex="1" Visibility="Hidden">
-			<Grid.Background>
-				<SolidColorBrush Color="Black" Opacity=".8"/>
-			</Grid.Background>
-			<Grid x:Name="x_panel" Panel.ZIndex="2" Margin="100,50" Background="WhiteSmoke">
-				<Grid Margin="10,0,10,0">
-					<Grid.RowDefinitions>
-						<RowDefinition Height="10"></RowDefinition>
-						<RowDefinition Height="auto"></RowDefinition>
-						<RowDefinition Height="auto"></RowDefinition>
-						<RowDefinition Height="auto"></RowDefinition>
-						<RowDefinition Height="auto"></RowDefinition>
-						<RowDefinition Height="*"></RowDefinition>
-						<RowDefinition Height="80"></RowDefinition>
-					</Grid.RowDefinitions>
-					<Grid.ColumnDefinitions>
-						<ColumnDefinition Width="auto"></ColumnDefinition>
-						<ColumnDefinition Width="auto"></ColumnDefinition>
-						<ColumnDefinition Width="auto"></ColumnDefinition>
-						<ColumnDefinition Width="auto"></ColumnDefinition>
-						<ColumnDefinition Width="auto"></ColumnDefinition>
-						<ColumnDefinition Width="*"></ColumnDefinition>
-					</Grid.ColumnDefinitions>
-				</Grid>
-			</Grid>
-		</Grid>
-
-
-		<!--New Item Definition-->
-		<Grid x:Name="newItemDefinition" Panel.ZIndex="1" Visibility="Hidden">
-			<Grid.Background>
-				<SolidColorBrush Color="Black" Opacity=".8"/>
-			</Grid.Background>
-			<Grid x:Name="aa" Panel.ZIndex="2" Margin="300,25" Background="WhiteSmoke">
-				<Grid Margin="10,0,10,0">
-					<Grid.RowDefinitions>
-						<RowDefinition Height="10"></RowDefinition>
-						<RowDefinition Height="22"></RowDefinition>
-						<RowDefinition Height="22"></RowDefinition>
-						<RowDefinition Height="auto"></RowDefinition>
-						<RowDefinition Height="*"></RowDefinition>
-						<RowDefinition Height="80"></RowDefinition>
-					</Grid.RowDefinitions>
-					<Grid.ColumnDefinitions>
-						<ColumnDefinition Width="auto" MinWidth="120"></ColumnDefinition>
-						<ColumnDefinition Width="auto" MinWidth="120"></ColumnDefinition>
-						<ColumnDefinition Width="*"></ColumnDefinition>
-					</Grid.ColumnDefinitions>
-					<TextBlock Grid.Row="1" Grid.Column="0" Text="Main Name:" VerticalAlignment="Center"></TextBlock>
-					<TextBlock Grid.Row="2" Grid.Column="0" Text="Current item value:" VerticalAlignment="Center"></TextBlock>
-					<TextBox x:Name="newDefinition_mainName" Grid.Row="1"  Grid.Column="1" MaxHeight="20" ></TextBox>
-					<TextBox x:Name="newDefinition_currentValue" Grid.Row="2"  Grid.Column="1" MaxHeight="20"></TextBox>
-					<ScrollViewer Grid.Row="3">
-						<StackPanel x:Name="newDefinition_selectProduct_Stack" ></StackPanel>
-					</ScrollViewer>
-				</Grid>
-				<Grid VerticalAlignment="Bottom" HorizontalAlignment="Right">
-					<Grid.ColumnDefinitions>
-						<ColumnDefinition></ColumnDefinition>
-						<ColumnDefinition></ColumnDefinition>
-					</Grid.ColumnDefinitions>
-					<Button Grid.Column="0" Content="Back" Click="newDefinition_Back_Button" Margin="10" Padding="20,5"></Button>
-					<Button Grid.Column="1" Content="Register Item" Click="newDefinition_RegisterItem_Button" Margin="10" Visibility="Visible"></Button>
+					<Button Grid.Column="3" Content="Back" Click="INFO_Back_Click" Margin="10" Padding="20,5"></Button>
+					<Button x:Name="INFO_RegisterItem_Button" Grid.Column="2" Content="Register Item" Click="INFO_RegisterItem_Click" Margin="10" IsEnabled="False"></Button>
 				</Grid>
 			</Grid>
 		</Grid>

@@ -32,6 +32,10 @@ namespace BillScannerWPF.Rules {
 			throw new NotImplementedException("Unable to get quantity from string " + ocrText[index + 1] + ", subsequently modified " + quantity);
 		}
 
+		public string Name(string line) {
+			throw new NotImplementedException();
+		}
+
 		public decimal PriceOfOne(string[] ocrText, int index) {
 			if (index > ocrText.Length) { throw new IndexOutOfRangeException(nameof(index)); }
 			string quantity = ocrText[index + 1];
