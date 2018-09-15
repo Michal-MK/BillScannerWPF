@@ -11,6 +11,8 @@ namespace BillScannerWPF {
 
 		private Rules.IRuleset rules;
 
+		private bool foundSomeKindOfMatch = false;
+
 		internal StringParser(Rules.IRuleset rules) {
 			this.rules = rules;
 		}
@@ -65,6 +67,7 @@ namespace BillScannerWPF {
 					UItemCreationInfo something = new UItemCreationInfo(items[index], true, index, (MatchRating)lowestD);
 					something.item.tirggerForMatch = split[i];
 					unmatchedItems.Add(something);
+					foundSomeKindOfMatch = true;
 				}
 				else {
 					for (int j = 0; j < items.Length; j++) {
@@ -82,7 +85,6 @@ namespace BillScannerWPF {
 								break;
 							}
 						}
-
 					}
 					if (matched) {
 						continue;
@@ -91,16 +93,20 @@ namespace BillScannerWPF {
 						UItemCreationInfo something = new UItemCreationInfo(items[index], true, index, (MatchRating)lowestD);
 						something.item.tirggerForMatch = split[i];
 						unmatchedItems.Add(something);
+						foundSomeKindOfMatch = true;
 					}
 				}
-				try {
-					UItemCreationInfo unknown = new UItemCreationInfo(new Item(split[i], rules.PriceOfOne(split, i)), false, i, MatchRating.Fail);
-					unknown.item.tirggerForMatch = split[i];
-					unmatchedItems.Add(unknown);
-				}
-				catch (NotImplementedException e) {
-					Console.WriteLine(e.Message);
-					continue;
+				if (!foundSomeKindOfMatch) {
+					try {
+						UItemCreationInfo unknown = new UItemCreationInfo(new Item(split[i], rules.PriceOfOne(split, i)), false, i, MatchRating.Fail);
+						unknown.item.tirggerForMatch = split[i];
+						unknown.item.ocrNames.Add(split[i]);
+						unknown.item.pricesInThePast.Add(unknown.item.currentPrice);
+						unmatchedItems.Add(unknown);
+					}
+					catch (NotImplementedException e) {
+						Console.WriteLine(e.Message);
+					}
 				}
 			}
 			return new ParsingResult(split, matchedItems, unmatchedItems);

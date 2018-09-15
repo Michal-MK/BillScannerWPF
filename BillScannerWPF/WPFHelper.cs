@@ -21,18 +21,15 @@ namespace BillScannerWPF {
 
 		public static string imageRatingResourcesPath { get { return resourcesPath + "MatchRating/"; } }
 
-
-		public const string itemsFile = "itemsdb.json";
-
-		public static string itemsFullPath { get { return dataPath + itemsFile; } }
-
 		public static string Merge<T>(this List<T> list, char connector) {
 			StringBuilder builder = new StringBuilder();
 			for (int i = 0; i < list.Count; i++) {
 				builder.Append(list[i].ToString());
 				builder.Append(connector + " ");
 			}
-			builder.Remove(builder.Length - 2, 2);
+			if (list.Count > 0) {
+				builder.Remove(builder.Length - 2, 2);
+			}
 			return builder.ToString();
 		}
 	}

@@ -49,7 +49,7 @@ namespace BillScannerWPF {
 			Item i = new Item(name, (decimal)new Random().NextDouble() * 100);
 			itemDatabase.Add(name, i);
 			itemDatabaseJson.Add(JObject.FromObject(i));
-			File.WriteAllText(WPFHelper.itemsFullPath, itemDatabaseJson.ToString());
+			File.WriteAllText(itemDatabaseFile.FullName, itemDatabaseJson.ToString());
 			return null;
 		}
 
@@ -59,7 +59,7 @@ namespace BillScannerWPF {
 			obj[nameof(Item.mainName)] = modifiedName;
 
 			itemDatabaseJson.Add(obj);
-			File.WriteAllText(WPFHelper.itemsFullPath, itemDatabaseJson.ToString());
+			File.WriteAllText(itemDatabaseFile.FullName, itemDatabaseJson.ToString());
 			return null;
 		}
 
@@ -71,7 +71,7 @@ namespace BillScannerWPF {
 				}
 			}
 			itemDatabase[originalName].ocrNames.Add(altName);
-			File.WriteAllText(WPFHelper.itemsFullPath, itemDatabaseJson.ToString());
+			File.WriteAllText(itemDatabaseFile.FullName, itemDatabaseJson.ToString());
 		}
 
 
@@ -99,7 +99,7 @@ namespace BillScannerWPF {
 					break;
 				}
 			}
-			File.WriteAllText(WPFHelper.itemsFullPath, itemDatabaseJson.ToString());
+			File.WriteAllText(itemDatabaseFile.FullName, itemDatabaseJson.ToString());
 		}
 
 		internal void RegisterItemFromUI(UIItem currentItemBeingInspected, string modifiedName) {
@@ -113,7 +113,7 @@ namespace BillScannerWPF {
 					tok[nameof(Item.unitOfMeassure)] = unit.ToString();
 				}
 			}
-			File.WriteAllText(WPFHelper.itemsFullPath, itemDatabaseJson.ToString());
+			File.WriteAllText(itemDatabaseFile.FullName, itemDatabaseJson.ToString());
 			itemDatabase[itemName].SetUnitOfMeassure(unit);
 		}
 

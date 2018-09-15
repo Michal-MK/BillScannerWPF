@@ -19,9 +19,9 @@ namespace BillScannerWPF {
 
 		internal Database(Shop shop) {
 			FolderInit.Initialize(shop);
-			selectedShopDBFile = new FileInfo(WPFHelper.dataPath + selectedShop.ToString() + "db.json");
-			itemDatabaseFile = new FileInfo(WPFHelper.dataPath + "itemsdb.json");
 			selectedShop = shop;
+			selectedShopDBFile = new FileInfo(WPFHelper.dataPath + selectedShop.ToString() + "_purchasedb.json");
+			itemDatabaseFile = new FileInfo(WPFHelper.dataPath + selectedShop.ToString() + "_itemsdb.json");
 			LoadItemDatabase();
 			LoadPurchaseDatabase();
 		}

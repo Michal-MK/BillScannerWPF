@@ -128,12 +128,10 @@
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <None Include="Configurations\packages.config" />
-    <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
-    <None Include="Resources\PurchaseHistoryTemplate.json" />
     <None Include="Resources\tessdata\ces.traineddata">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -144,7 +142,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\DatabaseItemTemplate.json" />
     <Resource Include="Resources\MatchRating\Five.png" />
     <Resource Include="Resources\MatchRating\FivePlus.png" />
     <Resource Include="Resources\MatchRating\Four.png" />
