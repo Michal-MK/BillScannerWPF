@@ -43,15 +43,22 @@ namespace BillScannerWPF {
 
 		public MainWindow() {
 			InitializeComponent();
-#if DEBUG
-			SetupWindow.selectedShop = Shop.McDonalds;
-#endif
+
+			if (SetupWindow.selectedShop == Shop.NotSelected) {
+				SetupWindow.selectedShop = Shop.McDonalds;
+			} //TODO force selection
+
 			access = DatabaseAccess.LoadDatabase(SetupWindow.selectedShop);
 			mainShopParseRuleset = GetRuleset(SetupWindow.selectedShop);
 
 			server = new TCPServer();
-			server.Start(PORT);
-			imgProcessing = new ImageProcessor(server, access, mainShopParseRuleset);
+			try {
+				server.Start(PORT);
+			}
+			catch {
+				Console.WriteLine("Starting in offline mode!");
+			}
+			imgProcessing = new ImageProcessor(server, access, mainShopParseRuleset, this);
 
 			MAIN_Analyze_Button.Click += imgProcessing.Analyze;
 		}
@@ -63,6 +70,9 @@ namespace BillScannerWPF {
 				}
 				case Shop.McDonalds: {
 					return new Rules.McDonaldsRuleset();
+				}
+				case Shop.Albert: {
+					return new Rules.AlbertRuleset();
 				}
 				default: {
 					throw new NotImplementedException();

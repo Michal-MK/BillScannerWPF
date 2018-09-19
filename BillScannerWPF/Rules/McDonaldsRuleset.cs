@@ -14,6 +14,7 @@ namespace BillScannerWPF.Rules {
 
 		public char costPlusQuantitySeparator { get { return '\0'; } }
 
+		public Regex correctItemLine { get; } = new Regex(""); //TODO
 
 		public long GetQuantity(string[] ocrText, int index) {
 			string[] split = ocrText[index].Split(null);
@@ -32,7 +33,7 @@ namespace BillScannerWPF.Rules {
 			throw new NotImplementedException("Unable to get quantity from string " + ocrText[index] + ", subsequently modified " + modified);
 		}
 
-		public decimal PriceOfOne(string[] ocrText, int index) {
+		public decimal PriceOfOne(string[] ocrText, ref int index) {
 			Regex r = new Regex(@"(\d+) (.+) (\d+\.\d+) B");
 			string line = ocrText[index].Replace(',', '.');
 			Match m = r.Match(line);

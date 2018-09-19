@@ -9,8 +9,6 @@
 	<Grid>
 		<Button Content="LoadItems" HorizontalAlignment="Left" Margin="875,99,0,0" VerticalAlignment="Top" Width="168" Click="Button_Click" Height="63"/>
 		<Button Content="RefreshW" HorizontalAlignment="Left" Margin="875,167,0,0" VerticalAlignment="Top" Width="168" Click="Button_Click_2" Height="57"/>
-		<Button Content="Define New" HorizontalAlignment="Left" Margin="977,247,0,0" VerticalAlignment="Top" Width="82" Click="Button_Click_1" Height="26"/>
-		<TextBox x:Name="s_itemName" HorizontalAlignment="Left" Height="29" Margin="839,244,0,0" TextWrapping="Wrap" Text="Enter Item Name..." VerticalAlignment="Top" Width="132" PreviewMouseDown="itemName_MouseDown"/>
 		<ScrollViewer HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Height="706" Width="596">
 			<TextBlock x:Name="json"/>
 		</ScrollViewer>

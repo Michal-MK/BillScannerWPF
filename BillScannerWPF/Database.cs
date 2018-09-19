@@ -54,14 +54,15 @@ namespace BillScannerWPF {
 		}
 
 		private void AddToDB(Item item) {
-			if (itemDatabase.ContainsKey(item.mainName)) {
+			if (itemDatabase.ContainsKey(item.userFriendlyName)) {
 				return;
 			}
-			itemDatabase.Add(item.mainName, item);
+			itemDatabase.Add(item.userFriendlyName, item);
 		}
 	}
 
 	public enum Shop {
+		NotSelected,
 		Lidl,
 		Albert,
 		Penny,

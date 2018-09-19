@@ -1,17 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Text.RegularExpressions;
 
 namespace BillScannerWPF.Rules {
 	interface IRuleset {
 		long GetQuantity(string[] ocrText, int index);
 		string Name(string line);
-		decimal PriceOfOne(string[] ocrText, int index);
+		decimal PriceOfOne(string[] ocrText, ref int index);
 
-		string[] endMarkers { get; }
+		Regex correctItemLine { get; }
 		string[] startMarkers { get; }
+		string[] endMarkers { get; }
 		char costPlusQuantitySeparator { get; }
 	}
 }

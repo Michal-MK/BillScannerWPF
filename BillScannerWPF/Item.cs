@@ -4,15 +4,15 @@ using System.Collections.Generic;
 namespace BillScannerWPF {
 	[Serializable]
 	public class Item {
-		public Item(string mainName, decimal currentPrice) {
-			this.mainName = mainName;
+		public Item(string userFriendlyName, decimal currentPrice) {
+			this.userFriendlyName = userFriendlyName;
 			this.currentPrice = currentPrice;
 			ocrNames = new List<string>();
 			pricesInThePast = new List<decimal>();
 			purchaseHistory = new List<PurchaseHistory>();
 		}
 
-		public string mainName { get; }
+		public string userFriendlyName { get; }
 		public List<string> ocrNames { get; }
 		public MeassurementUnit unitOfMeassure { get; private set; }
 		public decimal currentPrice { get; private set; }
@@ -36,7 +36,7 @@ namespace BillScannerWPF {
 		}
 
 		public static implicit operator ItemSlim(Item item) {
-			return new ItemSlim(item.mainName, 0, item.currentPrice);
+			return new ItemSlim(item.userFriendlyName, 0, item.currentPrice);
 		}
 	}
 

@@ -37,24 +37,16 @@ namespace BillScannerWPF {
 			for (int i = 0; i < shops.Length; i++) {
 				s_shopSelect.Items.Add(shops[i]);
 			}
+			s_shopSelect.SelectedItem = Shop.NotSelected;
 		}
 		//Setup
 		private void Button_Click(object sender, RoutedEventArgs e) {
-			access = DatabaseAccess.LoadDatabase(Shop.Lidl);
-		}
-
-		//Define new item
-		private void Button_Click_1(object sender, RoutedEventArgs e) {
-			access.AddItemDefinitionToDatabase(s_itemName.Text);
+			access = DatabaseAccess.LoadDatabase((Shop)s_shopSelect.SelectedItem);
 		}
 
 		// Update json view
 		private void Button_Click_2(object sender, RoutedEventArgs e) {
 			json.Text = File.ReadAllText(WPFHelper.dataPath + "itemsdb.json");
-		}
-
-		private void itemName_MouseDown(object sender, MouseButtonEventArgs e) {
-			s_itemName.Text = "";
 		}
 
 		//Alt name

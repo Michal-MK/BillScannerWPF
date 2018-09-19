@@ -32,7 +32,7 @@ namespace BillScannerWPF {
 
 		private void UITEM_ShowDetails_Click(object sender, RoutedEventArgs e) {
 			MainWindow w = WPFHelper.GetCurrentMainWindow();
-			w.INFO_MainName_Text.Text = asociatedItem.mainName;
+			w.INFO_MainName_Text.Text = asociatedItem.userFriendlyName;
 			w.INFO_ORC_Text.Text = asociatedItem.ocrNames.Merge(',');
 			w.INFO_CurrentValue_Text.Text = asociatedItem.currentPrice.ToString();
 			w.INFO_PricesBefore_Text.Text = asociatedItem.pricesInThePast.Merge(',');

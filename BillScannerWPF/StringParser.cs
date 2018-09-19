@@ -17,10 +17,9 @@ namespace BillScannerWPF {
 			this.rules = rules;
 		}
 
-		public ParsingResult Parse(string OCRText) {
+		public ParsingResult Parse(string[] split) {
 			ObservableCollection<UItemCreationInfo> matchedItems = new ObservableCollection<UItemCreationInfo>();
 			ObservableCollection<UItemCreationInfo> unmatchedItems = new ObservableCollection<UItemCreationInfo>();
-			string[] split = OCRText.Split('\n');
 
 			//Process line by line
 			Item[] items = MainWindow.access.GetItems();
@@ -34,6 +33,9 @@ namespace BillScannerWPF {
 				}
 				if (!initiated) {
 					initiated = IsInitiatingString(split[i].ToLower().Trim());
+					if (initiated) {
+						continue;
+					}
 				}
 				else {
 					finalized = IsFinalizingString(split[i].ToLower().Trim());
@@ -44,13 +46,17 @@ namespace BillScannerWPF {
 				if (finalized) {
 					break;
 				}
-				int lowestD = int.MaxValue;
-				int index = -1;
+				int mainLowestDist = int.MaxValue;
+				int mainLowestIndex = -1;
+
+				int ocrLowestDist = int.MaxValue;
+				int ocrLowestIndex = -1;
+
 				for (int j = 0; j < items.Length; j++) {
-					int mainNameDist = WordSimilarity.Compute(split[i], items[j].mainName);
-					if (mainNameDist < lowestD) {
-						lowestD = mainNameDist;
-						index = j;
+					int mainNameDist = WordSimilarity.Compute(split[i], items[j].userFriendlyName);
+					if (mainNameDist < mainLowestDist) {
+						mainLowestDist = mainNameDist;
+						mainLowestIndex = j;
 					}
 					if (mainNameDist == 0) {
 						UItemCreationInfo lowest = new UItemCreationInfo(items[j], true, j, (MatchRating)mainNameDist);
@@ -63,22 +69,22 @@ namespace BillScannerWPF {
 				if (matched) {
 					continue;
 				}
-				if (lowestD <= 5) {
-					UItemCreationInfo something = new UItemCreationInfo(items[index], true, index, (MatchRating)lowestD);
+				else if (mainLowestDist <= 3) {
+					UItemCreationInfo something = new UItemCreationInfo(items[mainLowestIndex], true, mainLowestIndex, (MatchRating)mainLowestDist);
 					something.item.tirggerForMatch = split[i];
-					unmatchedItems.Add(something);
+					matchedItems.Add(something);
 					foundSomeKindOfMatch = true;
 				}
 				else {
 					for (int j = 0; j < items.Length; j++) {
 						foreach (string ss in items[j].ocrNames) {
-							int ocrNamesDist = WordSimilarity.Compute(split[i], ss);
-							if (ocrNamesDist < lowestD) {
-								lowestD = ocrNamesDist;
-								index = j;
+							int currentOCRNameDist = WordSimilarity.Compute(split[i], ss);
+							if (currentOCRNameDist < ocrLowestDist) {
+								ocrLowestDist = currentOCRNameDist;
+								ocrLowestIndex = j;
 							}
-							if (ocrNamesDist == 0) {
-								UItemCreationInfo lowest = new UItemCreationInfo(items[j], true, j, (MatchRating)ocrNamesDist);
+							if (ocrLowestDist == 0) {
+								UItemCreationInfo lowest = new UItemCreationInfo(items[ocrLowestIndex], true, ocrLowestIndex, (MatchRating)ocrLowestDist);
 								lowest.item.tirggerForMatch = split[i];
 								matchedItems.Add(lowest);
 								matched = true;
@@ -89,25 +95,50 @@ namespace BillScannerWPF {
 					if (matched) {
 						continue;
 					}
-					if (lowestD <= 5) {
-						UItemCreationInfo something = new UItemCreationInfo(items[index], true, index, (MatchRating)lowestD);
+					if (ocrLowestDist <= 3) {
+						UItemCreationInfo something = new UItemCreationInfo(items[ocrLowestIndex], true, ocrLowestIndex, (MatchRating)mainLowestDist);
 						something.item.tirggerForMatch = split[i];
-						unmatchedItems.Add(something);
+						matchedItems.Add(something);
 						foundSomeKindOfMatch = true;
 					}
 				}
 				if (!foundSomeKindOfMatch) {
-					try {
-						UItemCreationInfo unknown = new UItemCreationInfo(new Item(split[i], rules.PriceOfOne(split, i)), false, i, MatchRating.Fail);
+					int min = Math.Min(mainLowestDist, ocrLowestDist);
+					int selectedIndex = -1;
+					if (min == mainLowestDist) {
+						selectedIndex = mainLowestIndex;
+					}
+					else {
+						selectedIndex = ocrLowestIndex;
+					}
+
+					if (min <= 6) {
+						UItemCreationInfo unknown = new UItemCreationInfo(items[selectedIndex], false, selectedIndex, MatchRating.Fail);
 						unknown.item.tirggerForMatch = split[i];
 						unknown.item.ocrNames.Add(split[i]);
 						unknown.item.pricesInThePast.Add(unknown.item.currentPrice);
 						unmatchedItems.Add(unknown);
 					}
-					catch (NotImplementedException e) {
-						Console.WriteLine(e.Message);
+					else {
+						try {
+							int indexCopy = i;
+							UItemCreationInfo unknown = new UItemCreationInfo(new Item(split[i], rules.PriceOfOne(split, ref indexCopy)), false, i, MatchRating.Fail);
+							unknown.item.tirggerForMatch = split[i];
+							unknown.item.ocrNames.Add(split[i]);
+							unknown.item.pricesInThePast.Add(unknown.item.currentPrice);
+							unmatchedItems.Add(unknown);
+							if(indexCopy != i) {
+								i = indexCopy;
+							}
+						}
+						catch (NotImplementedException e) {
+							Console.WriteLine(e.Message);
+						}
 					}
 				}
+			}
+			if (!initiated) {
+				throw new ParsingEntryNotFoundException(rules.startMarkers, split);
 			}
 			return new ParsingResult(split, matchedItems, unmatchedItems);
 		}
@@ -122,6 +153,10 @@ namespace BillScannerWPF {
 		}
 
 		private bool IsInitiatingString(string s) {
+			if (rules.startMarkers.Length == 0) {
+				Console.WriteLine("This shop does not have any start markers, attempting to match immedaitely");
+				return true;
+			}
 			for (int i = 0; i < rules.startMarkers.Length; i++) {
 				if (s.Contains(rules.startMarkers[i])) {
 					return true;

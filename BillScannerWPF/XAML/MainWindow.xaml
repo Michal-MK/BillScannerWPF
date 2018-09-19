@@ -85,7 +85,7 @@
 						<ColumnDefinition Width="auto"></ColumnDefinition>
 						<ColumnDefinition Width="*"></ColumnDefinition>
 					</Grid.ColumnDefinitions>
-					<TextBlock Grid.Row="1" Grid.Column="0" Text="Main Name:" Grid.ColumnSpan="1"></TextBlock>
+					<TextBlock Grid.Row="1" Grid.Column="0" Text="User friendly name:" Grid.ColumnSpan="1"></TextBlock>
 					<TextBlock Grid.Row="2" Grid.Column="0" Text="OCR Names:" Grid.ColumnSpan="1"></TextBlock>
 					<TextBlock Grid.Row="3" Grid.Column="0" Text="Current item value: " Grid.ColumnSpan="1"></TextBlock>
 					<TextBlock Grid.Row="4" Grid.Column="0" Text="Prices previously:" Grid.ColumnSpan="1"></TextBlock>

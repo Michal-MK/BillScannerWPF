@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Text.RegularExpressions;
 
 namespace BillScannerWPF.Rules {
 	class LidlRuleset : BaseRuleset, IRuleset {
@@ -11,6 +8,8 @@ namespace BillScannerWPF.Rules {
 		public string[] endMarkers { get { return new string[] { "číslo", "účtenky", "cislo", " uctenky", "označení", "oznaceni", }; } }
 
 		public char costPlusQuantitySeparator { get { return 'x'; } }
+
+		public Regex correctItemLine { get; } = new Regex(""); //TODO
 
 		public long GetQuantity(string[] ocrText, int index) {
 			if (index > ocrText.Length) { throw new IndexOutOfRangeException(nameof(index)); }
@@ -36,7 +35,7 @@ namespace BillScannerWPF.Rules {
 			throw new NotImplementedException();
 		}
 
-		public decimal PriceOfOne(string[] ocrText, int index) {
+		public decimal PriceOfOne(string[] ocrText, ref int index) {
 			if (index > ocrText.Length) { throw new IndexOutOfRangeException(nameof(index)); }
 			string quantity = ocrText[index + 1];
 			string[] split = quantity.Split(costPlusQuantitySeparator);
@@ -46,11 +45,13 @@ namespace BillScannerWPF.Rules {
 			split[1] = split[1].Replace(',', '.');
 
 			if (decimal.TryParse(split[1], System.Globalization.NumberStyles.Currency, System.Globalization.CultureInfo.InvariantCulture, out decimal result)) {
+				index++;
 				return result;
 			}
 			else {
 				quantity = ReplaceAmbiguous(quantity);
 				if (decimal.TryParse(split[1], System.Globalization.NumberStyles.Currency, System.Globalization.CultureInfo.InvariantCulture, out decimal resultReplaced)) {
+					index++;
 					return resultReplaced;
 				}
 			}

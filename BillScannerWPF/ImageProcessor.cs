@@ -14,21 +14,18 @@ using Tesseract;
 namespace BillScannerWPF {
 	internal class ImageProcessor {
 
-		private TCPServer server;
-		private TCPClient client;
-
-		private DatabaseAccess access;
+		private readonly TCPServer server;
+		private readonly DatabaseAccess access;
 
 		public static ImageProcessor instance { get; private set; }
 
-		private TesseractEngine engine;
-
-		private Rules.IRuleset ruleset;
+		private readonly TesseractEngine engine;
+		private readonly Rules.IRuleset ruleset;
 
 		internal ObservableCollection<UIItem> uiItemsMatched = new ObservableCollection<UIItem>();
 		internal ObservableCollection<UIItem> uiItemsUnknown = new ObservableCollection<UIItem>();
 
-		public ImageProcessor(TCPServer server, DatabaseAccess access, Rules.IRuleset ruleset) {
+		internal ImageProcessor(TCPServer server, DatabaseAccess access, Rules.IRuleset ruleset, MainWindow main) {
 			instance = this;
 			this.server = server;
 			this.access = access;
@@ -36,7 +33,6 @@ namespace BillScannerWPF {
 			engine = new TesseractEngine("Resources" + System.IO.Path.DirectorySeparatorChar + "tessdata", "ces");
 			this.ruleset = ruleset;
 
-			MainWindow main = WPFHelper.GetCurrentMainWindow();
 			main.MAIN_MatchedItems_Stack.ItemsSource = uiItemsMatched;
 			main.MAIN_UnknownProducts_Stack.ItemsSource = uiItemsUnknown;
 		}
@@ -59,9 +55,21 @@ namespace BillScannerWPF {
 			((Button)sender).IsEnabled = false;
 			uiItemsMatched.Clear();
 			uiItemsUnknown.Clear();
+
 			using (Tesseract.Page p = engine.Process((Bitmap)Bitmap.FromFile(WPFHelper.GetCurrentMainWindow().currentImageSource), PageSegMode.Auto)) {
 				StringParser instance = new StringParser(ruleset);
-				ParsingResult result = await Task.Run(() => { return instance.Parse(p.GetText()); });
+				ParsingResult result = null;
+				string[] split = p.GetText().Split('\n');
+				string[] ready = split.Where((s) => { return !string.IsNullOrWhiteSpace(s); }).ToArray();
+				try {
+					result = await Task.Run(() => { return instance.Parse(ready); });
+				}
+				catch (ParsingEntryNotFoundException) {
+					string[] modified = new string[ready.Length + 1];
+					modified[0] = ruleset.startMarkers[0];
+					ready.CopyTo(modified, 1);
+					result = await Task.Run(() => { return instance.Parse(modified); });
+				}
 				ConstructUI(result.parsed, uiItemsMatched);
 				ConstructUI(result.unknown, uiItemsUnknown);
 			}

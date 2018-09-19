@@ -38,7 +38,7 @@
       <HintPath>..\packages\Newtonsoft.Json.11.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="SimpleTCP">
-      <HintPath>D:\SimpleTCP\bin\Debug\SimpleTCP.dll</HintPath>
+      <HintPath>..\packages\SimpleTCP\SimpleTCP.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -72,8 +72,10 @@
     <Compile Include="ItemNotDefinedException.cs" />
     <Compile Include="MatchRating.cs" />
     <Compile Include="MeassurementUnit.cs" />
+    <Compile Include="ParsingEntryNotFoundException.cs" />
     <Compile Include="ParsingResult.cs" />
     <Compile Include="PurchaseHistory.cs" />
+    <Compile Include="Rules\AlbertRuleset.cs" />
     <Compile Include="Rules\BaseRuleset.cs" />
     <Compile Include="Rules\IRuleset.cs" />
     <Compile Include="Rules\LidlRuleset.cs" />

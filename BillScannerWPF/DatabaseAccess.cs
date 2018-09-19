@@ -41,31 +41,22 @@ namespace BillScannerWPF {
 					}
 				}
 			}
-			throw new ItemNotDefinedException("Item not present under this name");
-		}
-
-
-		public Item AddItemDefinitionToDatabase(string name) {
-			Item i = new Item(name, (decimal)new Random().NextDouble() * 100);
-			itemDatabase.Add(name, i);
-			itemDatabaseJson.Add(JObject.FromObject(i));
-			File.WriteAllText(itemDatabaseFile.FullName, itemDatabaseJson.ToString());
-			return null;
+			throw new ItemNotDefinedException("No item with this name exists!");
 		}
 
 		public Item WriteItemDefinitionToDatabase(Item newItemDefinition, string modifiedName) {
 			JObject obj = JObject.FromObject(newItemDefinition);
 			JArray ocrArray = ((JArray)obj[nameof(Item.ocrNames)]);
-			obj[nameof(Item.mainName)] = modifiedName;
+			obj[nameof(Item.userFriendlyName)] = modifiedName;
 
 			itemDatabaseJson.Add(obj);
 			File.WriteAllText(itemDatabaseFile.FullName, itemDatabaseJson.ToString());
-			return null;
+			return newItemDefinition;
 		}
 
 		public void AddAlternativeOCRNameForItemToDatabase(string originalName, string altName) {
 			foreach (JToken tok in itemDatabaseJson) {
-				if (tok[nameof(Item.mainName)].Value<string>() == originalName) {
+				if (tok[nameof(Item.userFriendlyName)].Value<string>() == originalName) {
 					((JArray)tok[nameof(Item.ocrNames)]).Add(altName);
 					break;
 				}
@@ -77,7 +68,7 @@ namespace BillScannerWPF {
 
 		public void AddNewPurchaseForItemToDatabase(string itemName, PurchaseHistory history) {
 			foreach (JToken tok in itemDatabaseJson) {
-				if (tok[nameof(Item.mainName)].Value<string>() == itemName) {
+				if (tok[nameof(Item.userFriendlyName)].Value<string>() == itemName) {
 					tok[nameof(Item.totalPurchased)] = tok[nameof(Item.totalPurchased)].Value<long>() + history.amount;
 					itemDatabase[itemName].AddAmount(history.amount);
 					itemDatabase[itemName].purchaseHistory.Add(history);
@@ -104,12 +95,12 @@ namespace BillScannerWPF {
 
 		internal void RegisterItemFromUI(UIItem currentItemBeingInspected, string modifiedName) {
 			Item asociated = currentItemBeingInspected.asociatedItem;
-			itemDatabase.Add(asociated.mainName, WriteItemDefinitionToDatabase(asociated, modifiedName));
+			itemDatabase.Add(asociated.userFriendlyName, WriteItemDefinitionToDatabase(asociated, modifiedName));
 		}
 
 		public void WriteUnitOfMeassureForItemToDatabase(string itemName, MeassurementUnit unit) {
 			foreach (JToken tok in itemDatabaseJson) {
-				if (tok[nameof(Item.mainName)].Value<string>() == itemName) {
+				if (tok[nameof(Item.userFriendlyName)].Value<string>() == itemName) {
 					tok[nameof(Item.unitOfMeassure)] = unit.ToString();
 				}
 			}
