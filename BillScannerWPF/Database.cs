@@ -28,27 +28,26 @@ namespace BillScannerWPF {
 
 		private void LoadItemDatabase() {
 			itemDatabase = new Dictionary<string, Item>();
-			using (StreamReader sr = File.OpenText(itemDatabaseFile.FullName)) {
-				using (JsonTextReader jr = new JsonTextReader(sr)) {
-					itemDatabaseJson = JArray.Load(jr);
-					for (int i = 0; i < itemDatabaseJson.Count; i++) {
-						Item item = itemDatabaseJson[i].ToObject<Item>();
-						AddToDB(item);
-					}
+			using (StreamReader sr = File.OpenText(itemDatabaseFile.FullName))
+			using (JsonTextReader jr = new JsonTextReader(sr)) {
+				itemDatabaseJson = JArray.Load(jr);
+				for (int i = 0; i < itemDatabaseJson.Count; i++) {
+					Item item = itemDatabaseJson[i].ToObject<Item>();
+					AddToDB(item);
 				}
 			}
+
 		}
 
 		private void LoadPurchaseDatabase() {
 			purchaseDatabase = new Dictionary<DateTime, Shopping>();
-			using (StreamReader sr = File.OpenText(selectedShopDBFile.FullName)) {
-				using (JsonTextReader jr = new JsonTextReader(sr)) {
-					shoppingDatabaseJson = JToken.ReadFrom(jr);
-					JArray array = ((JArray)shoppingDatabaseJson["purchases"]);
-					for (int i = 0; i < array.Count; i++) {
-						Shopping item = array[i].ToObject<Shopping>();
-						purchaseDatabase.Add(item.date, item);
-					}
+			using (StreamReader sr = File.OpenText(selectedShopDBFile.FullName))
+			using (JsonTextReader jr = new JsonTextReader(sr)) {
+				shoppingDatabaseJson = JToken.ReadFrom(jr);
+				JArray array = ((JArray)shoppingDatabaseJson["purchases"]);
+				for (int i = 0; i < array.Count; i++) {
+					Shopping item = array[i].ToObject<Shopping>();
+					purchaseDatabase.Add(item.date, item);
 				}
 			}
 		}

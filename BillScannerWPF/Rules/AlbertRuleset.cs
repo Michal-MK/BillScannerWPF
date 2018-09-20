@@ -5,7 +5,6 @@ using System.Text.RegularExpressions;
 namespace BillScannerWPF.Rules {
 	class AlbertRuleset : BaseRuleset, IRuleset {
 
-
 		private Regex singleLineItem = new Regex(@"(.+)( (\d+)[g0Ll1])? (\d+[,.]\d+) A");
 		private Regex multiLineItems = new Regex(@"(\d+) x (\d+[.,]\d+) .+ A");
 
@@ -28,99 +27,19 @@ namespace BillScannerWPF.Rules {
 				if (split.Length == 2) {
 					if (long.TryParse(split[0], out long result)) {
 						return result;
-					}/*
-					else {
-						string modified = ReplaceAmbiguousToNumber(split[0]);
-						if (long.TryParse(modified, out long resModified)) {
-							return resModified;
-						}
-						else {
-						throw new NotImplementedException("Unable to get quantity from string " + ocrText[index] + ", subsequently modified " + modified);
-						}
-					}*/
+					}
 				}
-				//else {
 				throw new NotImplementedException("Unable to get quantity from string " + ocrText[index]);
-				//}
 			}
 			else {
 				string[] split = ocrText[index + 1].Split(costPlusQuantitySeparator);
 				if (split.Length == 2) {
 					if (long.TryParse(split[0], out long result)) {
 						return result;
-					}/*
-					else {
-						string modified = ReplaceAmbiguousToNumber(split[0]);
-						if (long.TryParse(modified, out long resModified)) {
-							return resModified;
-						}
-						else {
-						throw new NotImplementedException("Unable to get quantity from string " + ocrText[index + 2] + ", subsequently modified " + modified);
-						}
-					}*/
+					}
 				}
-				//else {
 				throw new NotImplementedException("Unable to get quantity from string " + ocrText[index + 2]);
-				//}
 			}
-			/*
-			Match m = singleLineItem.Match(ocrText[index]);
-			if (m.Success) {
-				string[] split = ocrText[index].Split(costPlusQuantitySeparator);
-				if (split.Length == 2) {
-					if (long.TryParse(split[0], out long result)) {
-						return result;
-					}
-					else {
-						string modified = ReplaceAmbiguousToNumber(split[0]);
-						if (long.TryParse(modified, out long resModified)) {
-							return resModified;
-						}
-						else {
-							throw new NotImplementedException("Unable to get quantity from string " + ocrText[index] + ", subsequently modified " + modified);
-						}
-					}
-				}
-				else {
-					throw new NotImplementedException("Unable to get quantity from string " + ocrText[index]);
-				}
-			}
-			else if (index + 2 < ocrText.Length) {
-				m = multiLineItems.Match(ocrText[index + 2]);
-				if (m.Success) {
-					string[] split = ocrText[index + 2].Split(costPlusQuantitySeparator);
-					if (split.Length == 2) {
-						if (long.TryParse(split[0], out long result)) {
-							return result;
-						}
-						else {
-							string modified = ReplaceAmbiguousToNumber(split[0]);
-							if (long.TryParse(modified, out long resModified)) {
-								return resModified;
-							}
-							else {
-								throw new NotImplementedException("Unable to get quantity from string " + ocrText[index + 2] + ", subsequently modified " + modified);
-							}
-						}
-					}
-					else {
-						throw new NotImplementedException("Unable to get quantity from string " + ocrText[index + 2]);
-					}
-				}
-				else {
-					string modified = ReplaceAmbiguousToNumber(ocrText[index + 2]);
-					if (long.TryParse(modified, out long resModified)) {
-						return resModified;
-					}
-					else {
-						throw new NotImplementedException("Unable to get quantity from string " + ocrText[index + 2] + ", subsequently modified " + modified);
-					}
-				}
-			}
-			else {
-				throw new NotImplementedException("Unable to get quantity from string");
-			}
-			*/
 		}
 
 		public string Name(string line) {
@@ -159,63 +78,6 @@ namespace BillScannerWPF.Rules {
 					throw new NotImplementedException();
 				}
 			}
-			/*
-			Match m = singleLineItem.Match(ocrText[index]);
-			if (m.Success) {
-				string final = m.Groups[4].Value.Replace(',', '.');
-				if (decimal.TryParse(final, NumberStyles.Currency, CultureInfo.InvariantCulture, out decimal result)) {
-					return result;
-				}
-				else {
-					throw new NotImplementedException();
-				}
-			}
-			else {
-				string modified = ReplaceAmbiguousToNumber(ocrText[index]);
-				m = singleLineItem.Match(modified);
-				if (m.Success) {
-					string final = m.Groups[4].Value.Replace(',', '.');
-					if (decimal.TryParse(final, NumberStyles.Currency, CultureInfo.InvariantCulture, out decimal result)) {
-						return result;
-					}
-					else {
-						throw new NotImplementedException();
-					}
-				}
-				else {
-					if (index + 2 < ocrText.Length) {
-						m = multiLineItems.Match(ocrText[index + 2]);
-						if (m.Success) {
-							string final = m.Groups[2].Value.Replace(',', '.');
-							if (decimal.TryParse(final, NumberStyles.Currency, CultureInfo.InvariantCulture, out decimal result)) {
-								return result;
-							}
-							else {
-								throw new NotImplementedException();
-							}
-						}
-						else {
-							string modifiedMulti = ReplaceAmbiguousToNumber(ocrText[index + 2]);
-							m = multiLineItems.Match(modifiedMulti);
-							if (m.Success) {
-								string final = m.Groups[2].Value.Replace(',', '.');
-								if (decimal.TryParse(final, NumberStyles.Currency, CultureInfo.InvariantCulture, out decimal result)) {
-									return result;
-								}
-								else {
-									throw new NotImplementedException();
-								}
-							}
-							else {
-								throw new NotImplementedException();
-							}
-						}
-					}
-					else {
-						throw new NotImplementedException();
-					}
-				}
-			}*/
 		}
 
 		private bool IsSingleItem(string[] ocrText, int index) {

@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+﻿using System;
 using System.Text.RegularExpressions;
 
 namespace BillScannerWPF.Rules {
@@ -49,6 +49,23 @@ namespace BillScannerWPF.Rules {
 				original = original.Replace(ambiguousLettersArray[i].resolving, ambiguousLettersArray[i].conflicting);
 			}
 			return original;
+		}
+
+		internal static IRuleset GetRuleset(Shop selectedShop) {
+			switch (selectedShop) {
+				case Shop.Lidl: {
+					return new LidlRuleset();
+				}
+				case Shop.McDonalds: {
+					return new McDonaldsRuleset();
+				}
+				case Shop.Albert: {
+					return new AlbertRuleset();
+				}
+				default: {
+					throw new NotImplementedException();
+				}
+			}
 		}
 	}
 }

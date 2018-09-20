@@ -21,7 +21,8 @@ namespace BillScannerWPF {
 	/// </summary>
 	public partial class SetupWindow : Window {
 
-		public static Shop selectedShop { get;
+		public static Shop selectedShop {
+			get;
 #if !DEBUG
 			private
 #endif
@@ -72,9 +73,19 @@ namespace BillScannerWPF {
 
 		private void Button_Click_6(object sender, RoutedEventArgs e) {
 			selectedShop = (Shop)s_shopSelect.SelectedItem;
-			MainWindow main = new MainWindow();
-			Application.Current.MainWindow = main;
-			main.Show();
+			try {
+				MainWindow main = new MainWindow();
+				Application.Current.MainWindow = main;
+				main.Show();
+			}
+			catch (WindowInitExpection initE) {
+				switch (initE.type) {
+					case InitExpectionType.SHOP_NOT_SELECTED: {
+						MessageBox.Show("No Shop selected, select one from the dropdown menu.", "No Shop Selected!");
+						break;
+					}
+				}
+			}
 			Close();
 		}
 	}

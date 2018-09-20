@@ -14,7 +14,7 @@ namespace BillScannerWPF.Rules {
 
 		public char costPlusQuantitySeparator { get { return '\0'; } }
 
-		public Regex correctItemLine { get; } = new Regex(""); //TODO
+		public Regex correctItemLine { get; } = new Regex(@"(\d+) (.+) (\d+\.\d+) B");
 
 		public long GetQuantity(string[] ocrText, int index) {
 			string[] split = ocrText[index].Split(null);
@@ -34,9 +34,8 @@ namespace BillScannerWPF.Rules {
 		}
 
 		public decimal PriceOfOne(string[] ocrText, ref int index) {
-			Regex r = new Regex(@"(\d+) (.+) (\d+\.\d+) B");
 			string line = ocrText[index].Replace(',', '.');
-			Match m = r.Match(line);
+			Match m = correctItemLine.Match(line);
 			if (decimal.TryParse(m.Groups[3].Value, NumberStyles.Currency, CultureInfo.InvariantCulture, out decimal result)) {
 				return result;
 			}
@@ -45,7 +44,7 @@ namespace BillScannerWPF.Rules {
 				throw new NotImplementedException("Unable to get price from string " + ocrText[index]);
 			}
 			else {
-				Match mm = r.Match(line);
+				Match mm = correctItemLine.Match(modified);
 				if (decimal.TryParse(mm.Groups[3].Value, NumberStyles.Currency, CultureInfo.InvariantCulture, out decimal resultModified)) {
 					return result;
 				}
@@ -55,13 +54,13 @@ namespace BillScannerWPF.Rules {
 
 
 		public string Name(string line) {
-			Regex nameR = new Regex(@"(\d) (\w+) (\d+\.\d+) B");
+			Regex nameR = new Regex(@"(\d+) (\w+) (\d+\.\d+) B");
 			Match m = nameR.Match(line);
 			if(m.Groups.Count < 2) {
 				return m.Groups[2].Value;
 			}
 			else {
-				throw new Exception("No Name");
+				throw new Exception("Unable to get name from line " + line);
 			}
 		}
 	}

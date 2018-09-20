@@ -21,12 +21,13 @@ using System.Threading;
 using System.Diagnostics;
 using System.Globalization;
 using System.Collections.ObjectModel;
+using BillScannerWPF.Rules;
 
 namespace BillScannerWPF {
 	/// <summary>
 	/// Interaction logic for MainWindow.xaml
 	/// </summary>
-	public partial class MainWindow : Window {
+	public partial class MainWindow : Window , IDisposable {
 
 		public const ushort PORT = 6689;
 
@@ -39,17 +40,24 @@ namespace BillScannerWPF {
 		public string currentImageSource { get; set; }
 		public UIItem currentItemBeingInspected { get; set; }
 
-		internal Rules.IRuleset mainShopParseRuleset { get; }
+		internal IRuleset mainShopParseRuleset { get; }
 
 		public MainWindow() {
 			InitializeComponent();
 
 			if (SetupWindow.selectedShop == Shop.NotSelected) {
-				SetupWindow.selectedShop = Shop.McDonalds;
-			} //TODO force selection
+#if !DEBUG
+				throw new WindowInitException(InitExpectionType.SHOP_NOT_SELECTED);
+#endif
+				Shop[] implemented = new Shop[] { Shop.Albert, Shop.McDonalds, Shop.Lidl };
+
+				Shop selected = implemented[new Random().Next(0, implemented.Length)];
+				MessageBox.Show("No Shop selected, automatically selecting " + selected.ToString() + ".", "No Shop Selected!");
+				SetupWindow.selectedShop = selected;
+			}
 
 			access = DatabaseAccess.LoadDatabase(SetupWindow.selectedShop);
-			mainShopParseRuleset = GetRuleset(SetupWindow.selectedShop);
+			mainShopParseRuleset = BaseRuleset.GetRuleset(SetupWindow.selectedShop);
 
 			server = new TCPServer();
 			try {
@@ -61,23 +69,6 @@ namespace BillScannerWPF {
 			imgProcessing = new ImageProcessor(server, access, mainShopParseRuleset, this);
 
 			MAIN_Analyze_Button.Click += imgProcessing.Analyze;
-		}
-
-		private Rules.IRuleset GetRuleset(Shop selectedShop) {
-			switch (selectedShop) {
-				case Shop.Lidl: {
-					return new Rules.LidlRuleset();
-				}
-				case Shop.McDonalds: {
-					return new Rules.McDonaldsRuleset();
-				}
-				case Shop.Albert: {
-					return new Rules.AlbertRuleset();
-				}
-				default: {
-					throw new NotImplementedException();
-				}
-			}
 		}
 
 		internal void PreviewImgMouse(object sender, MouseButtonEventArgs e) {
@@ -132,7 +123,7 @@ namespace BillScannerWPF {
 				currentItemBeingInspected.asociatedItem.isRegistered = true;
 				MAIN_ItemInfoOverlay_Grid.Visibility = Visibility.Hidden;
 			}
-			catch(Exception ex) {
+			catch (Exception ex) {
 				throw new Exception(ex.Message);
 			}
 		}
@@ -141,5 +132,26 @@ namespace BillScannerWPF {
 			MAIN_ItemInfoOverlay_Grid.Visibility = Visibility.Hidden;
 			currentItemBeingInspected = null;
 		}
+
+		#region IDisposable Support
+		private bool disposedValue = false; // To detect redundant calls
+
+		protected virtual void Dispose(bool disposing) {
+			if (!disposedValue) {
+				imgProcessing.Dispose();
+				disposedValue = true;
+			}
+		}
+
+		~MainWindow() {
+			Dispose(false);
+		}
+
+		// This code added to correctly implement the disposable pattern.
+		public void Dispose() {
+			// Do not change this code. Put cleanup code in Dispose(bool disposing) above.
+			Dispose(true);
+		}
+		#endregion
 	}
 }

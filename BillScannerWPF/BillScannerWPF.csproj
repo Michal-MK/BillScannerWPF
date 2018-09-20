@@ -69,10 +69,10 @@
     <Compile Include="FolderInit.cs" />
     <Compile Include="ImageProcessor.cs" />
     <Compile Include="Item.cs" />
-    <Compile Include="ItemNotDefinedException.cs" />
+    <Compile Include="Exceptions\ItemNotDefinedException.cs" />
     <Compile Include="MatchRating.cs" />
     <Compile Include="MeassurementUnit.cs" />
-    <Compile Include="ParsingEntryNotFoundException.cs" />
+    <Compile Include="Exceptions\ParsingEntryNotFoundException.cs" />
     <Compile Include="ParsingResult.cs" />
     <Compile Include="PurchaseHistory.cs" />
     <Compile Include="Rules\AlbertRuleset.cs" />
@@ -90,6 +90,7 @@
     </Compile>
     <Compile Include="StringParser.cs" />
     <Compile Include="WordSimilarity.cs" />
+    <Compile Include="Exceptions\WindowInitExpection.cs" />
     <Page Include="XAML\MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

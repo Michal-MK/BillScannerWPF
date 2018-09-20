@@ -9,7 +9,7 @@ namespace BillScannerWPF.Rules {
 
 		public char costPlusQuantitySeparator { get { return 'x'; } }
 
-		public Regex correctItemLine { get; } = new Regex(""); //TODO
+		public Regex correctItemLine { get; } = new Regex(@"(.+)( \d+[gl%])? (\d+[,.]\d+) B");
 
 		public long GetQuantity(string[] ocrText, int index) {
 			if (index > ocrText.Length) { throw new IndexOutOfRangeException(nameof(index)); }
@@ -32,7 +32,22 @@ namespace BillScannerWPF.Rules {
 		}
 
 		public string Name(string line) {
-			throw new NotImplementedException();
+			Match m = correctItemLine.Match(line);
+			if (m.Success) {
+				string name = m.Groups[1].Value + m.Groups[2];
+				return name;
+			}
+			else {
+				string lineModified = ReplaceAmbiguous(line);
+				m = correctItemLine.Match(lineModified);
+				if (m.Success) {
+					string name = m.Groups[1].Value + m.Groups[2];
+					return name;
+				}
+				else {
+					throw new NotImplementedException("Unable to get name from line " + line);
+				}
+			}
 		}
 
 		public decimal PriceOfOne(string[] ocrText, ref int index) {

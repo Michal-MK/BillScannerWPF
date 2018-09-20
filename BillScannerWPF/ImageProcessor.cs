@@ -12,7 +12,7 @@ using System.Windows.Controls;
 using Tesseract;
 
 namespace BillScannerWPF {
-	internal class ImageProcessor {
+	internal class ImageProcessor : IDisposable {
 
 		private readonly TCPServer server;
 		private readonly DatabaseAccess access;
@@ -83,5 +83,27 @@ namespace BillScannerWPF {
 				destination.Add(item);
 			}
 		}
+
+		#region IDisposable Support
+		private bool disposedValue = false;
+
+		protected virtual void Dispose(bool disposing) {
+			if (!disposedValue) {
+				engine.Dispose();
+				disposedValue = true;
+			}
+		}
+
+		~ImageProcessor() {
+		   // Do not change this code. Put cleanup code in Dispose(bool disposing) above.
+		   Dispose(false);
+		}
+
+		// This code added to correctly implement the disposable pattern.
+		public void Dispose() {
+			Dispose(true);
+			GC.SuppressFinalize(this);
+		}
+		#endregion
 	}
 }

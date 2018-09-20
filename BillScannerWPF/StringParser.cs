@@ -166,7 +166,6 @@ namespace BillScannerWPF {
 		}
 	}
 
-
 	public struct UItemCreationInfo {
 		internal UItemCreationInfo(Item i, bool isRegistered, int index, MatchRating quality) {
 			item = i;
