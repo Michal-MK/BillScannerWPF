@@ -57,7 +57,8 @@
 				<ColumnDefinition Width="Auto"></ColumnDefinition>
 			</Grid.ColumnDefinitions>
 			<Button x:Name="MAIN_Finalize_Button" Content="Finalize" Grid.Column="2" MinWidth="120" Margin="10,0,0,0"/>
-			<Button x:Name="MAIN_Analyze_Button" Content="Analyze" Grid.Column="0" MinWidth="120" Margin="10,0,0,0"/>
+			<Button x:Name="MAIN_Analyze_Button" Content="Analyze" Grid.Column="1" MinWidth="120" Margin="10,0,0,0"/>
+			<Button x:Name="MAIN_OpenDatabaseFile_Button" Content="Open Database File" Grid.Column="0" MinWidth="120" Margin="10,0,0,0"></Button>
 		</Grid>
 
 

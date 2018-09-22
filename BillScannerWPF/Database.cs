@@ -12,8 +12,8 @@ namespace BillScannerWPF {
 		protected Dictionary<DateTime, Shopping> purchaseDatabase;
 		protected JToken shoppingDatabaseJson;
 
-		protected FileInfo itemDatabaseFile;
-		protected FileInfo selectedShopDBFile;
+		internal FileInfo itemDatabaseFile { get; }
+		internal FileInfo selectedShopDBFile { get; }
 
 		private Shop selectedShop;
 
@@ -36,7 +36,6 @@ namespace BillScannerWPF {
 					AddToDB(item);
 				}
 			}
-
 		}
 
 		private void LoadPurchaseDatabase() {

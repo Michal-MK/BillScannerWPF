@@ -27,7 +27,7 @@ namespace BillScannerWPF {
 	/// <summary>
 	/// Interaction logic for MainWindow.xaml
 	/// </summary>
-	public partial class MainWindow : Window , IDisposable {
+	public partial class MainWindow : Window, IDisposable {
 
 		public const ushort PORT = 6689;
 
@@ -69,6 +69,7 @@ namespace BillScannerWPF {
 			imgProcessing = new ImageProcessor(server, access, mainShopParseRuleset, this);
 
 			MAIN_Analyze_Button.Click += imgProcessing.Analyze;
+			MAIN_OpenDatabaseFile_Button.Click += MAIN_OpenDatabaseFile_Click;
 		}
 
 		internal void PreviewImgMouse(object sender, MouseButtonEventArgs e) {
@@ -131,6 +132,13 @@ namespace BillScannerWPF {
 		private void INFO_Back_Click(object sender, RoutedEventArgs e) {
 			MAIN_ItemInfoOverlay_Grid.Visibility = Visibility.Hidden;
 			currentItemBeingInspected = null;
+		}
+
+		private void MAIN_OpenDatabaseFile_Click(object sender, RoutedEventArgs e) {
+			Process p = new Process();
+			ProcessStartInfo info = new ProcessStartInfo(access.itemDatabaseFile.FullName);
+			p.StartInfo = info;
+			p.Start();
 		}
 
 		#region IDisposable Support
