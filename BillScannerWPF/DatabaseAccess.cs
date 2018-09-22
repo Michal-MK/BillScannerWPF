@@ -44,10 +44,12 @@ namespace BillScannerWPF {
 			throw new ItemNotDefinedException("No item with this name exists!");
 		}
 
-		public Item WriteItemDefinitionToDatabase(Item newItemDefinition, string modifiedName) {
+		public Item WriteItemDefinitionToDatabase(Item newItemDefinition, string modifiedName, decimal finalPrice) {
 			JObject obj = JObject.FromObject(newItemDefinition);
 			JArray ocrArray = ((JArray)obj[nameof(Item.ocrNames)]);
 			obj[nameof(Item.userFriendlyName)] = modifiedName;
+			obj[nameof(Item.currentPrice)] = finalPrice;
+			((JArray)obj[nameof(Item.pricesInThePast)]).Add(finalPrice);
 
 			itemDatabaseJson.Add(obj);
 			File.WriteAllText(itemDatabaseFile.FullName, itemDatabaseJson.ToString());
@@ -93,9 +95,9 @@ namespace BillScannerWPF {
 			File.WriteAllText(itemDatabaseFile.FullName, itemDatabaseJson.ToString());
 		}
 
-		internal void RegisterItemFromUI(UIItem currentItemBeingInspected, string modifiedName) {
+		internal void RegisterItemFromUI(UIItem currentItemBeingInspected, string modifiedName, decimal finalPrice) {
 			Item asociated = currentItemBeingInspected.asociatedItem;
-			itemDatabase.Add(asociated.userFriendlyName, WriteItemDefinitionToDatabase(asociated, modifiedName));
+			itemDatabase.Add(asociated.userFriendlyName, WriteItemDefinitionToDatabase(asociated, modifiedName, finalPrice));
 		}
 
 		public void WriteUnitOfMeassureForItemToDatabase(string itemName, MeassurementUnit unit) {

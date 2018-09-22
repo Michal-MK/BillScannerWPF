@@ -10,7 +10,7 @@ using System.Windows.Controls;
 namespace BillScannerWPF {
 	static class WPFHelper {
 
-		public static MainWindow GetCurrentMainWindow() {
+		public static MainWindow GetMainWindow() {
 			return (MainWindow)Application.Current.MainWindow;
 		}
 

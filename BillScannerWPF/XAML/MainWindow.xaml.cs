@@ -111,11 +111,14 @@ namespace BillScannerWPF {
 		}
 
 		private void INFO_RegisterItem_Click(object sender, RoutedEventArgs e) {
-			//Get stuff from input fields
-			string modifiedName = INFO_MainName_Text.Text;
+			string modifiedName = INFO_MainName_Text.Text.Replace(',','.').Trim();
+			if(!decimal.TryParse(INFO_CurrentValue_Text.Text.Replace(',','.').Trim(), NumberStyles.Currency, CultureInfo.InvariantCulture, out decimal finalPrice)){
+				return;
+			}
 
 			try {
-				access.RegisterItemFromUI(currentItemBeingInspected, modifiedName);
+				access.RegisterItemFromUI(currentItemBeingInspected, modifiedName, finalPrice);
+				currentItemBeingInspected.asociatedItem.PurchaseModifications(modifiedName, finalPrice); 
 				((Button)sender).IsEnabled = false;
 				ImageProcessor.instance.uiItemsUnknown.Remove(currentItemBeingInspected);
 				ImageProcessor.instance.uiItemsMatched.Add(currentItemBeingInspected);
@@ -123,6 +126,7 @@ namespace BillScannerWPF {
 				Console.WriteLine("Item Parsed successfully");
 				currentItemBeingInspected.asociatedItem.isRegistered = true;
 				MAIN_ItemInfoOverlay_Grid.Visibility = Visibility.Hidden;
+				currentItemBeingInspected = null;
 			}
 			catch (Exception ex) {
 				throw new Exception(ex.Message);

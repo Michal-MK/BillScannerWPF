@@ -10,5 +10,7 @@ namespace BillScannerWPF.Rules {
 		string[] startMarkers { get; }
 		string[] endMarkers { get; }
 		char costPlusQuantitySeparator { get; }
+		bool skipInitiatingString { get; }
+		int itemLineSpan { get; }
 	}
 }

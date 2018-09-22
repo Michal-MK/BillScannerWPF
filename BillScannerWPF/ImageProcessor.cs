@@ -43,20 +43,20 @@ namespace BillScannerWPF {
 
 		private void OnImageDataReceived(byte[] imageData, byte sender) {
 			Application.Current.Dispatcher.Invoke(() => {
-				MainWindow w = WPFHelper.GetCurrentMainWindow();
+				MainWindow w = WPFHelper.GetMainWindow();
 				w.SetPrevImage(imageData);
 			});
 		}
 
 		internal async void Analyze(object sender, RoutedEventArgs e) {
-			if (WPFHelper.GetCurrentMainWindow().currentImageSource == null) {
+			if (WPFHelper.GetMainWindow().currentImageSource == null) {
 				return;
 			}
 			((Button)sender).IsEnabled = false;
 			uiItemsMatched.Clear();
 			uiItemsUnknown.Clear();
 
-			using (Tesseract.Page p = engine.Process((Bitmap)Bitmap.FromFile(WPFHelper.GetCurrentMainWindow().currentImageSource), PageSegMode.Auto)) {
+			using (Tesseract.Page p = engine.Process((Bitmap)Bitmap.FromFile(WPFHelper.GetMainWindow().currentImageSource), PageSegMode.Auto)) {
 				StringParser instance = new StringParser(ruleset);
 				ParsingResult result = null;
 				string[] split = p.GetText().Split('\n');

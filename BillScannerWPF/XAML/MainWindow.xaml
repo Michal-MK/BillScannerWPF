@@ -86,16 +86,16 @@
 						<ColumnDefinition Width="auto"></ColumnDefinition>
 						<ColumnDefinition Width="*"></ColumnDefinition>
 					</Grid.ColumnDefinitions>
-					<TextBlock Grid.Row="1" Grid.Column="0" Text="User friendly name:" Grid.ColumnSpan="1"></TextBlock>
+					<TextBlock Grid.Row="1" Grid.Column="0" Text="User friendly name:" Grid.ColumnSpan="1" Margin="0,0,10,0"></TextBlock>
 					<TextBlock Grid.Row="2" Grid.Column="0" Text="OCR Names:" Grid.ColumnSpan="1"></TextBlock>
 					<TextBlock Grid.Row="3" Grid.Column="0" Text="Current item value: " Grid.ColumnSpan="1"></TextBlock>
 					<TextBlock Grid.Row="4" Grid.Column="0" Text="Prices previously:" Grid.ColumnSpan="1"></TextBlock>
 					<TextBlock Grid.Row="5" Grid.Column="0" Text="Bought total:" Grid.ColumnSpan="1"></TextBlock>
 
-					<TextBox x:Name="INFO_MainName_Text" Grid.Row="1" Grid.Column="1" Text="____________"></TextBox>
-					<TextBlock x:Name="INFO_ORC_Text" Grid.Row="2" Grid.Column="1" Text="____________"></TextBlock>
-					<TextBlock x:Name="INFO_CurrentValue_Text" Grid.Row="3" Grid.Column="1" Text="____________"></TextBlock>
-					<TextBlock x:Name="INFO_PricesBefore_Text" Grid.Row="4" Grid.Column="1" Text="____________"></TextBlock>
+					<TextBox x:Name="INFO_MainName_Text" Grid.Row="1" Grid.Column="1" Text="____________" MinWidth="120"></TextBox>
+					<TextBlock x:Name="INFO_ORC_Text" Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2" Text="____________"></TextBlock>
+					<TextBox x:Name="INFO_CurrentValue_Text" Grid.Row="3" Grid.Column="1" Text="____________"></TextBox>
+					<TextBlock x:Name="INFO_PricesBefore_Text" Grid.Row="4" Grid.Column="1"  Grid.ColumnSpan="2" Text="____________"></TextBlock>
 					<TextBlock x:Name="INFO_AmountBought_Text" Grid.Row="5" Grid.Column="1" Text="____________"></TextBlock>
 				</Grid>
 				<Grid VerticalAlignment="Bottom" HorizontalAlignment="Right">

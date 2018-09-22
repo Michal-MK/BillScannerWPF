@@ -6,7 +6,7 @@ namespace BillScannerWPF.Rules {
 	class AlbertRuleset : BaseRuleset, IRuleset {
 
 		private Regex singleLineItem = new Regex(@"(.+)( (\d+)[g0Ll1])? (\d+[,.]\d+) A");
-		private Regex multiLineItems = new Regex(@"(\d+) x (\d+[.,]\d+) .+ A");
+		private Regex multiLineItems = new Regex(@"(\d+) x (\d+[., ]?\d+) .+ A");
 
 		public Regex correctItemLine { get { return singleLineItem; } }
 
@@ -20,6 +20,9 @@ namespace BillScannerWPF.Rules {
 
 		public char costPlusQuantitySeparator { get { return 'x'; } }
 
+		public bool skipInitiatingString { get { return true; } }
+
+		public int itemLineSpan { get; } = -1;
 
 		public long GetQuantity(string[] ocrText, int index) {
 			if (IsSingleItem(ocrText, index)) {
@@ -69,7 +72,7 @@ namespace BillScannerWPF.Rules {
 			}
 			else {
 				Match multiL = multiLineItems.Match(ocrText[index + 1]);
-				string final = multiL.Groups[2].Value.Replace(',', '.');
+				string final = multiL.Groups[2].Value.Replace(',', '.').Replace(" ",".");
 				if (decimal.TryParse(final, NumberStyles.Currency, CultureInfo.InvariantCulture, out decimal result)) {
 					index++;
 					return result;
@@ -88,11 +91,11 @@ namespace BillScannerWPF.Rules {
 				ocrText[index] = ReplaceAmbiguous(ocrText[index]);
 				return true;
 			}
-			else if (index + 2 < ocrText.Length && multiLineItems.Match(ocrText[index + 1]).Success) {
+			else if (index + 1 < ocrText.Length && multiLineItems.Match(ocrText[index + 1]).Success) {
 				return false;
 			}
-			else if (index + 2 < ocrText.Length && multiLineItems.Match(ReplaceAmbiguous(ocrText[index + 1])).Success) {
-				ocrText[index + 2] = ReplaceAmbiguous(ocrText[index + 1]);
+			else if (index + 1 < ocrText.Length && multiLineItems.Match(ReplaceAmbiguous(ocrText[index + 1])).Success) {
+				ocrText[index + 1] = ReplaceAmbiguous(ocrText[index + 1]);
 				return false;
 			}
 			throw new NotImplementedException();

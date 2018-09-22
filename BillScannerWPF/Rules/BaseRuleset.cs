@@ -67,5 +67,15 @@ namespace BillScannerWPF.Rules {
 				}
 			}
 		}
+
+		internal string RemoveLetterCharacters(string original, char splitter) {
+			Regex r = new Regex(@"(\d+([,.] ?\d+)?) " + splitter + @" (\d+([,.] ?\d+)?)");
+
+			Match m = r.Match(original.ToLower());
+			if (m.Success) {
+				return m.Value.Replace(" ", "");
+			}
+			throw new NotImplementedException();
+		}
 	}
 }
