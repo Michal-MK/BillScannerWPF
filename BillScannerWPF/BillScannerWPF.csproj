@@ -70,6 +70,9 @@
     <Compile Include="ImageProcessor.cs" />
     <Compile Include="Item.cs" />
     <Compile Include="Exceptions\ItemNotDefinedException.cs" />
+    <Compile Include="XAML\ItemInfoOverlay.xaml.cs">
+      <DependentUpon>ItemInfoOverlay.xaml</DependentUpon>
+    </Compile>
     <Compile Include="MatchRating.cs" />
     <Compile Include="MeassurementUnit.cs" />
     <Compile Include="Exceptions\ParsingEntryNotFoundException.cs" />
@@ -91,6 +94,10 @@
     <Compile Include="StringParser.cs" />
     <Compile Include="WordSimilarity.cs" />
     <Compile Include="Exceptions\WindowInitExpection.cs" />
+    <Page Include="XAML\ItemInfoOverlay.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="XAML\MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

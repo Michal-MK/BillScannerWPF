@@ -20,6 +20,6 @@
 		<TextBox x:Name="s_price" HorizontalAlignment="Left" Height="23" Margin="851,399,0,0" TextWrapping="Wrap" Text="Price" VerticalAlignment="Top" Width="120"/>
 		<Button Content="WriteShopp" HorizontalAlignment="Left" Margin="920,448,0,0" VerticalAlignment="Top" Width="75" Click="Button_Click_5"/>
 		<Button Content="Switch Scene" HorizontalAlignment="Left" Margin="875,31,0,0" VerticalAlignment="Top" Width="168" Height="64" Click="Button_Click_6"/>
-		<ComboBox x:Name="s_shopSelect" HorizontalAlignment="Left" Margin="696,31,0,0" VerticalAlignment="Top" Width="164" Height="47"/>
+		<ComboBox x:Name="s_shopSelect" HorizontalAlignment="Left" Margin="696,53,0,0" VerticalAlignment="Top" Width="164" Height="25"/>
 	</Grid>
 </Window>

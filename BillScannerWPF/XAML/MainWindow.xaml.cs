@@ -110,30 +110,6 @@ namespace BillScannerWPF {
 			p.Start();
 		}
 
-		private void INFO_RegisterItem_Click(object sender, RoutedEventArgs e) {
-			//Get stuff from input fields
-			string modifiedName = INFO_MainName_Text.Text;
-
-			try {
-				access.RegisterItemFromUI(currentItemBeingInspected, modifiedName);
-				((Button)sender).IsEnabled = false;
-				ImageProcessor.instance.uiItemsUnknown.Remove(currentItemBeingInspected);
-				ImageProcessor.instance.uiItemsMatched.Add(currentItemBeingInspected);
-				currentItemBeingInspected.ProductMatchedSuccess();
-				Console.WriteLine("Item Parsed successfully");
-				currentItemBeingInspected.asociatedItem.isRegistered = true;
-				MAIN_ItemInfoOverlay_Grid.Visibility = Visibility.Hidden;
-			}
-			catch (Exception ex) {
-				throw new Exception(ex.Message);
-			}
-		}
-
-		private void INFO_Back_Click(object sender, RoutedEventArgs e) {
-			MAIN_ItemInfoOverlay_Grid.Visibility = Visibility.Hidden;
-			currentItemBeingInspected = null;
-		}
-
 		private void MAIN_OpenDatabaseFile_Click(object sender, RoutedEventArgs e) {
 			Process p = new Process();
 			ProcessStartInfo info = new ProcessStartInfo(access.itemDatabaseFile.FullName);

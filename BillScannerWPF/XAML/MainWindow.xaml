@@ -7,7 +7,7 @@
         mc:Ignorable="d"
         Title="Bill Scanner" Height="500" Width="1000">
 
-	<Grid>
+	<Grid Name="MAIN_Grid">
 		<StackPanel Visibility="Hidden">
 			<StackPanel.Resources>
 				<Style x:Key="ih_stackPanelMargins" TargetType="{x:Type local:UIItem}">
@@ -59,56 +59,6 @@
 			<Button x:Name="MAIN_Finalize_Button" Content="Finalize" Grid.Column="2" MinWidth="120" Margin="10,0,0,0"/>
 			<Button x:Name="MAIN_Analyze_Button" Content="Analyze" Grid.Column="1" MinWidth="120" Margin="10,0,0,0"/>
 			<Button x:Name="MAIN_OpenDatabaseFile_Button" Content="Open Database File" Grid.Column="0" MinWidth="120" Margin="10,0,0,0"></Button>
-		</Grid>
-
-
-		<!--Item information-->
-		<Grid x:Name="MAIN_ItemInfoOverlay_Grid" Panel.ZIndex="1" Visibility="Hidden">
-			<Grid.Background>
-				<SolidColorBrush Color="Black" Opacity=".8"/>
-			</Grid.Background>
-			<Grid Panel.ZIndex="2" Margin="100,50" Background="WhiteSmoke">
-				<Grid Margin="10">
-					<Grid.RowDefinitions>
-						<RowDefinition Height="10"></RowDefinition>
-						<RowDefinition Height="auto"></RowDefinition>
-						<RowDefinition Height="auto"></RowDefinition>
-						<RowDefinition Height="auto"></RowDefinition>
-						<RowDefinition Height="auto"></RowDefinition>
-						<RowDefinition Height="*"></RowDefinition>
-						<RowDefinition Height="80"></RowDefinition>
-					</Grid.RowDefinitions>
-					<Grid.ColumnDefinitions>
-						<ColumnDefinition Width="auto"></ColumnDefinition>
-						<ColumnDefinition Width="auto"></ColumnDefinition>
-						<ColumnDefinition Width="auto"></ColumnDefinition>
-						<ColumnDefinition Width="auto"></ColumnDefinition>
-						<ColumnDefinition Width="auto"></ColumnDefinition>
-						<ColumnDefinition Width="*"></ColumnDefinition>
-					</Grid.ColumnDefinitions>
-					<TextBlock Grid.Row="1" Grid.Column="0" Text="User friendly name:" Grid.ColumnSpan="1"></TextBlock>
-					<TextBlock Grid.Row="2" Grid.Column="0" Text="OCR Names:" Grid.ColumnSpan="1"></TextBlock>
-					<TextBlock Grid.Row="3" Grid.Column="0" Text="Current item value: " Grid.ColumnSpan="1"></TextBlock>
-					<TextBlock Grid.Row="4" Grid.Column="0" Text="Prices previously:" Grid.ColumnSpan="1"></TextBlock>
-					<TextBlock Grid.Row="5" Grid.Column="0" Text="Bought total:" Grid.ColumnSpan="1"></TextBlock>
-
-					<TextBox x:Name="INFO_MainName_Text" Grid.Row="1" Grid.Column="1" Text="____________"></TextBox>
-					<TextBlock x:Name="INFO_ORC_Text" Grid.Row="2" Grid.Column="1" Text="____________"></TextBlock>
-					<TextBlock x:Name="INFO_CurrentValue_Text" Grid.Row="3" Grid.Column="1" Text="____________"></TextBlock>
-					<TextBlock x:Name="INFO_PricesBefore_Text" Grid.Row="4" Grid.Column="1" Text="____________"></TextBlock>
-					<TextBlock x:Name="INFO_AmountBought_Text" Grid.Row="5" Grid.Column="1" Text="____________"></TextBlock>
-				</Grid>
-				<Grid VerticalAlignment="Bottom" HorizontalAlignment="Right">
-					<Grid.ColumnDefinitions>
-						<ColumnDefinition Width="20"></ColumnDefinition>
-						<ColumnDefinition Width="auto"></ColumnDefinition>
-						<ColumnDefinition Width="auto"></ColumnDefinition>
-						<ColumnDefinition Width="auto"></ColumnDefinition>
-					</Grid.ColumnDefinitions>
-					<Button Grid.Column="3" Content="Back" Click="INFO_Back_Click" Margin="10" Padding="20,5"></Button>
-					<Button x:Name="INFO_RegisterItem_Button" Grid.Column="2" Content="Register Item" Click="INFO_RegisterItem_Click" Margin="10" IsEnabled="False"></Button>
-				</Grid>
-			</Grid>
 		</Grid>
 	</Grid>
 </Window>

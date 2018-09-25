@@ -31,16 +31,7 @@ namespace BillScannerWPF {
 		}
 
 		private void UITEM_ShowDetails_Click(object sender, RoutedEventArgs e) {
-			MainWindow w = WPFHelper.GetCurrentMainWindow();
-			w.INFO_MainName_Text.Text = asociatedItem.userFriendlyName;
-			w.INFO_ORC_Text.Text = asociatedItem.ocrNames.Merge(',');
-			w.INFO_CurrentValue_Text.Text = asociatedItem.currentPrice.ToString();
-			w.INFO_PricesBefore_Text.Text = asociatedItem.pricesInThePast.Merge(',');
-			w.INFO_AmountBought_Text.Text = asociatedItem.totalPurchased.ToString();
-			w.MAIN_ItemInfoOverlay_Grid.Visibility = Visibility.Visible;
-			w.INFO_RegisterItem_Button.IsEnabled = !asociatedItem.isRegistered;
-			w.INFO_MainName_Text.IsEnabled = !asociatedItem.isRegistered;
-			w.currentItemBeingInspected = this;
+			ItemInfoOverlay overlay = new ItemInfoOverlay(this);
 		}
 	}
 }
