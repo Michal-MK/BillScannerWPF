@@ -70,6 +70,7 @@ namespace BillScannerWPF {
 
 			MAIN_Analyze_Button.Click += imgProcessing.Analyze;
 			MAIN_OpenDatabaseFile_Button.Click += MAIN_OpenDatabaseFile_Click;
+			MAIN_Finalize_Button.Click += MAIN_FinalizePurchase_Click;
 		}
 
 		internal void PreviewImgMouse(object sender, MouseButtonEventArgs e) {
@@ -115,6 +116,11 @@ namespace BillScannerWPF {
 			ProcessStartInfo info = new ProcessStartInfo(access.itemDatabaseFile.FullName);
 			p.StartInfo = info;
 			p.Start();
+		}
+
+		private void MAIN_FinalizePurchase_Click(object sender, RoutedEventArgs e) {
+			ImageProcessor pr = WPFHelper.GetMainWindow().imgProcessing;
+			Shopping s = new Shopping(pr.currentParsingResult.meta.purchasedAt, pr.uiItemsMatched);
 		}
 
 		#region IDisposable Support

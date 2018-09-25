@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -65,9 +66,9 @@ namespace BillScannerWPF {
 		}
 
 		private void Button_Click_5(object sender, RoutedEventArgs e) {
-			List<ItemSlim> items = new List<ItemSlim>();
-			items.Add(new ItemSlim("Whatever", 20, 59.86m, true));
-			items.Add(new ItemSlim("AAA", 2, 111.99m, false));
+			ObservableCollection<UIItem> items = new ObservableCollection<UIItem>();
+			items.Add(new UIItem(new Item("Whatever", 20),0,MatchRating.Two));
+			items.Add(new UIItem(new Item("Some more Stuff", 9999),0,MatchRating.Success));
 			access.WriteNewShoppingInstance(new Shopping(DateTime.Now, items));
 		}
 

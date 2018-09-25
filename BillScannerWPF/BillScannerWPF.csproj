@@ -70,6 +70,7 @@
     <Compile Include="ImageProcessor.cs" />
     <Compile Include="Item.cs" />
     <Compile Include="Exceptions\ItemNotDefinedException.cs" />
+    <Compile Include="PurchaseMeta.cs" />
     <Compile Include="XAML\ItemInfoOverlay.xaml.cs">
       <DependentUpon>ItemInfoOverlay.xaml</DependentUpon>
     </Compile>

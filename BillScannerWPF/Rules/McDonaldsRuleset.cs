@@ -18,6 +18,8 @@ namespace BillScannerWPF.Rules {
 
 		public bool skipInitiatingString { get { return true; } }
 
+		public Regex dateTimeFormat { get { return genericDateTimeFormat; } }
+
 		public int itemLineSpan { get; } = 1;
 
 		public long GetQuantity(string[] ocrText, int index) {

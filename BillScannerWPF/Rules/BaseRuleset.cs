@@ -7,6 +7,7 @@ namespace BillScannerWPF.Rules {
 		protected Regex strayNumber = new Regex(@"[a-zA-Z]+(\d)[a-zA-Z]+");
 		protected Regex strayLetter = new Regex(@"\d+[.,]?([a-zA-Z])[.,]?\d+");
 		protected Regex genericItemFormat = new Regex(@"(.+) (\d+[.,]\d+) [A-Z]");
+		protected Regex genericDateTimeFormat = new Regex(@"\d+:\d+:\d+");
 
 		protected static (char conflicting, char resolving)[] ambiguousLettersArray = new (char conflicting, char resolving)[] {
 			('9','g'),
@@ -19,7 +20,7 @@ namespace BillScannerWPF.Rules {
 		};
 
 
-		protected string ReplaceAmbiguous(string original) {
+		internal string ReplaceAmbiguous(string original) {
 			Match baseMatch = genericItemFormat.Match(original);
 			if (baseMatch.Success) {
 				Match number = strayNumber.Match(original);
@@ -44,7 +45,7 @@ namespace BillScannerWPF.Rules {
 			return original;
 		}
 
-		protected string ReplaceAmbiguousToNumber(string original) {
+		internal string ReplaceAmbiguousToNumber(string original) {
 			for (int i = 0; i < ambiguousLettersArray.Length; i++) {
 				original = original.Replace(ambiguousLettersArray[i].resolving, ambiguousLettersArray[i].conflicting);
 			}

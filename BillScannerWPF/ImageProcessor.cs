@@ -25,7 +25,10 @@ namespace BillScannerWPF {
 		internal ObservableCollection<UIItem> uiItemsMatched = new ObservableCollection<UIItem>();
 		internal ObservableCollection<UIItem> uiItemsUnknown = new ObservableCollection<UIItem>();
 
+		internal ParsingResult currentParsingResult { get; private set; }
+
 		internal ImageProcessor(TCPServer server, DatabaseAccess access, Rules.IRuleset ruleset, MainWindow main) {
+			
 			instance = this;
 			this.server = server;
 			this.access = access;
@@ -72,6 +75,7 @@ namespace BillScannerWPF {
 				}
 				ConstructUI(result.parsed, uiItemsMatched);
 				ConstructUI(result.unknown, uiItemsUnknown);
+				currentParsingResult = result;
 			}
 			((Button)sender).IsEnabled = true;
 		}

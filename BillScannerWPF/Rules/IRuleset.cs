@@ -7,6 +7,7 @@ namespace BillScannerWPF.Rules {
 		decimal PriceOfOne(string[] ocrText, ref int index);
 
 		Regex correctItemLine { get; }
+		Regex dateTimeFormat { get; }
 		string[] startMarkers { get; }
 		string[] endMarkers { get; }
 		char costPlusQuantitySeparator { get; }

@@ -13,6 +13,8 @@ namespace BillScannerWPF.Rules {
 
 		public Regex correctItemLine { get; } = new Regex(@"(.+)( \d+[gl%])? (\d+[,.]\d+) B");
 
+		public Regex dateTimeFormat { get { return genericDateTimeFormat; } }
+
 		public int itemLineSpan { get; } = 2;
 
 		public long GetQuantity(string[] ocrText, int index) {

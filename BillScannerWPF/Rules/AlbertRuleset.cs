@@ -24,6 +24,8 @@ namespace BillScannerWPF.Rules {
 
 		public int itemLineSpan { get; } = -1;
 
+		public Regex dateTimeFormat { get { return genericDateTimeFormat; } }
+
 		public long GetQuantity(string[] ocrText, int index) {
 			if (IsSingleItem(ocrText, index)) {
 				string[] split = ocrText[index].Split(costPlusQuantitySeparator);

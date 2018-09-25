@@ -4,10 +4,9 @@ using System.Collections.Generic;
 namespace BillScannerWPF {
 	[Serializable]
 	public class Item {
-		public Item(string userFriendlyName, decimal currentPrice, bool isSingleLine) {
+		public Item(string userFriendlyName, decimal currentPrice) {
 			this.userFriendlyName = userFriendlyName;
 			this.currentPrice = currentPrice;
-			this.isSingleLine = isSingleLine;
 			ocrNames = new List<string>();
 			pricesInThePast = new List<decimal>();
 			purchaseHistory = new List<PurchaseHistory>();
@@ -20,8 +19,8 @@ namespace BillScannerWPF {
 		public List<decimal> pricesInThePast { get; }
 		public long totalPurchased { get; private set; }
 		public List<PurchaseHistory> purchaseHistory { get; }
-		public bool isSingleLine { get; private set; }
 
+		internal bool isSingleLine { get; set; }
 		internal bool isRegistered { get; set; }
 		internal string tirggerForMatch { get; set; }
 
@@ -60,7 +59,7 @@ namespace BillScannerWPF {
 		public bool isSingleLine { get; }
 
 		public static implicit operator Item(ItemSlim item) {
-			return new Item(item.name, item.price, item.isSingleLine);
+			return new Item(item.name, item.price);
 		}
 	}
 

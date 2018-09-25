@@ -1,8 +1,10 @@
-﻿using Igor.TCP;
+﻿using BillScannerWPF.Rules;
+using Igor.TCP;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -26,9 +28,11 @@ namespace BillScannerWPF {
 			Item[] items = MainWindow.access.GetItems();
 			bool initiated = false;
 			bool finalized = false;
+			bool purchaseTimeFound = false;
 
 			bool rulesHandleItemLineSpan = rules.itemLineSpan == -1;
 
+			DateTime purchaseTime = DateTime.MinValue;
 
 			for (int i = 0; i < split.Length; i += rulesHandleItemLineSpan ? 1 : rules.itemLineSpan) {
 				bool matched = false;
@@ -41,11 +45,23 @@ namespace BillScannerWPF {
 				else {
 					finalized = IsFinalizingString(split[i].ToLower().Trim());
 				}
+				if (!purchaseTimeFound) {
+					if (rules.dateTimeFormat.IsMatch(split[i])) {
+						if (DateTime.TryParseExact(split[i], "hh:mm:ss", CultureInfo.InvariantCulture, DateTimeStyles.NoCurrentDateDefault, out purchaseTime)) {
+							purchaseTimeFound = true;
+						}
+					}
+					else {
+						if (DateTime.TryParseExact(new BaseRuleset().ReplaceAmbiguousToNumber(split[i]), "hh:mm:ss", CultureInfo.InvariantCulture, DateTimeStyles.NoCurrentDateDefault, out purchaseTime)) {
+							purchaseTimeFound = true;
+						}
+					}
+				}
 				if (!initiated) {
 					continue;
 				}
 				if (finalized) {
-					break;
+					continue;
 				}
 				int mainLowestDist = int.MaxValue;
 				int mainLowestIndex = -1;
@@ -129,7 +145,9 @@ namespace BillScannerWPF {
 					else {
 						try {
 							int indexCopy = i;
-							UItemCreationInfo unknown = new UItemCreationInfo(new Item(split[i], rules.PriceOfOne(split, ref indexCopy), indexCopy == i), false, i, MatchRating.Fail);
+							Item newItem = new Item(split[i], rules.PriceOfOne(split, ref indexCopy));
+							newItem.isSingleLine = indexCopy == i;
+							UItemCreationInfo unknown = new UItemCreationInfo(newItem, false, i, MatchRating.Fail);
 							unknown.item.tirggerForMatch = split[i];
 							unknown.item.ocrNames.Add(split[i]);
 							unmatchedItems.Add(unknown);
@@ -146,7 +164,7 @@ namespace BillScannerWPF {
 			if (!initiated) {
 				throw new ParsingEntryNotFoundException(rules.startMarkers, split);
 			}
-			return new ParsingResult(split, matchedItems, unmatchedItems);
+			return new ParsingResult(split, matchedItems, unmatchedItems, new PurchaseMeta(purchaseTime));
 		}
 
 		private bool IsFinalizingString(string s) {

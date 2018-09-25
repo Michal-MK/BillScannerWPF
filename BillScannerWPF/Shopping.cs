@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using Newtonsoft.Json;
 
 namespace BillScannerWPF {
@@ -9,42 +10,26 @@ namespace BillScannerWPF {
 
 		public DateTime date { get; }
 		public decimal totalCost { get; private set; } = 0;
-		public ItemSlim[] purchasedItems { get; private set; }
+		public string[] purchasedItems { get; private set; }
 
 		[NonSerialized]
-		private List<ItemSlim> internalList = new List<ItemSlim>();
+		private List<string> internalList = new List<string>();
 
-		//public Shopping(DateTime date) {
-		//	this.date = date;
-		//}
-
-		public Shopping(DateTime date, ICollection<ItemSlim> collection) {
+		public Shopping(DateTime date, ObservableCollection<UIItem> collection) {
 			this.date = date;
-			internalList = (List<ItemSlim>)collection;
+			internalList = new List<string>();
+			foreach (UIItem item in collection) {
+				internalList.Add(item.asociatedItem.userFriendlyName);
+			}
 		}
 
-		//public int itemsPurchased {
-		//	get { return purchasedItems.Length; }
-		//}
-
-		//public void AddItem(Item i) {
-		//	internalList.Add(i);
-		//	totalCost += i.currentPrice;
-		//}
-
-		//public void AddItems(ICollection<Item> items) {
-		//	internalList.AddRange(items);
-		//}
-
 		public void FinalizePurchase() {
+			DatabaseAccess access = MainWindow.access;
 			purchasedItems = internalList.ToArray();
-			foreach (ItemSlim item in purchasedItems) {
-				totalCost += item.price * item.amountPurchased;
+			foreach (string userFriendlyName in purchasedItems) {
+				Item i = access.GetItem(userFriendlyName);
+				totalCost += i.currentPrice;
 			}
-			//for (int i = 0; i < internalList.Count; i++) { 
-			//	purchasedItems[i] = internalList[i];
-			//}
-			//internalList.Clear();
 		}
 	}
 }
