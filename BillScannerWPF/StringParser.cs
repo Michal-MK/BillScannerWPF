@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -137,7 +138,7 @@ namespace BillScannerWPF {
 							}
 						}
 						catch (NotImplementedException e) {
-							Console.WriteLine(e.Message);
+							Debug.WriteLine(e.Message);
 						}
 					}
 				}
@@ -159,7 +160,7 @@ namespace BillScannerWPF {
 
 		private bool IsInitiatingString(string s, ref int index) {
 			if (rules.startMarkers.Length == 0) {
-				Console.WriteLine("This shop does not have any start markers, attempting to match immediately");
+				Debug.WriteLine("This shop does not have any start markers, attempting to match immediately");
 				if (rules.skipInitiatingString) {
 					index++;
 				}

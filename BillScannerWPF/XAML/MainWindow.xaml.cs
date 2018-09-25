@@ -64,7 +64,7 @@ namespace BillScannerWPF {
 				server.Start(PORT);
 			}
 			catch {
-				Console.WriteLine("Starting in offline mode!");
+				Debug.WriteLine("Starting in offline mode!");
 			}
 			imgProcessing = new ImageProcessor(server, access, mainShopParseRuleset, this);
 

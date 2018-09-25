@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -42,8 +44,7 @@ namespace BillScannerWPF {
 		private void INFO_RegisterItem_Click(object sender, RoutedEventArgs e) {
 			//Get stuff from input fields
 			string modifiedName = INFO_MainName_Text.Text;
-			decimal finalPrice;
-			if(!decimal.TryParse(INFO_CurrentValue_Text.Text,System.Globalization.NumberStyles.Currency, System.Globalization.CultureInfo.InvariantCulture, out finalPrice)) {
+			if (!decimal.TryParse(INFO_CurrentValue_Text.Text, NumberStyles.Currency, CultureInfo.InvariantCulture, out decimal finalPrice)) {
 				return;
 			}
 			try {
@@ -52,7 +53,7 @@ namespace BillScannerWPF {
 				ImageProcessor.instance.uiItemsUnknown.Remove(currentItemBeingInspected);
 				ImageProcessor.instance.uiItemsMatched.Add(currentItemBeingInspected);
 				currentItemBeingInspected.ProductMatchedSuccess();
-				Console.WriteLine("Item Parsed successfully");
+				Debug.WriteLine("Item Parsed successfully");
 				currentItemBeingInspected.asociatedItem.isRegistered = true;
 				MAIN_ItemInfoOverlay_Grid.Visibility = Visibility.Hidden;
 			}
