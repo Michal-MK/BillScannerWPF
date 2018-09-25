@@ -66,8 +66,8 @@ namespace BillScannerWPF {
 
 		private void Button_Click_5(object sender, RoutedEventArgs e) {
 			List<ItemSlim> items = new List<ItemSlim>();
-			items.Add(new ItemSlim("Whatever", 20, 59.86m));
-			items.Add(new ItemSlim("AAA", 2, 111.99m));
+			items.Add(new ItemSlim("Whatever", 20, 59.86m, true));
+			items.Add(new ItemSlim("AAA", 2, 111.99m, false));
 			access.WriteNewShoppingInstance(new Shopping(DateTime.Now, items));
 		}
 

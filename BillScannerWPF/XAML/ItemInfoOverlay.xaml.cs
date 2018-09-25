@@ -23,7 +23,7 @@ namespace BillScannerWPF {
 
 		public ItemInfoOverlay(UIItem source) {
 			currentItemBeingInspected = source;
-			holder = WPFHelper.GetCurrentMainWindow();
+			holder = WPFHelper.GetMainWindow();
 
 			InitializeComponent();
 
@@ -42,8 +42,12 @@ namespace BillScannerWPF {
 		private void INFO_RegisterItem_Click(object sender, RoutedEventArgs e) {
 			//Get stuff from input fields
 			string modifiedName = INFO_MainName_Text.Text;
+			decimal finalPrice;
+			if(!decimal.TryParse(INFO_CurrentValue_Text.Text,System.Globalization.NumberStyles.Currency, System.Globalization.CultureInfo.InvariantCulture, out finalPrice)) {
+				return;
+			}
 			try {
-				MainWindow.access.RegisterItemFromUI(currentItemBeingInspected, modifiedName);
+				MainWindow.access.RegisterItemFromUI(currentItemBeingInspected, modifiedName, finalPrice);
 				((Button)sender).IsEnabled = false;
 				ImageProcessor.instance.uiItemsUnknown.Remove(currentItemBeingInspected);
 				ImageProcessor.instance.uiItemsMatched.Add(currentItemBeingInspected);

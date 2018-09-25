@@ -16,6 +16,10 @@ namespace BillScannerWPF.Rules {
 
 		public Regex correctItemLine { get; } = new Regex(@"(\d+) (.+) (\d+\.\d+) B");
 
+		public bool skipInitiatingString { get { return true; } }
+
+		public int itemLineSpan { get; } = 1;
+
 		public long GetQuantity(string[] ocrText, int index) {
 			string[] split = ocrText[index].Split(null);
 			if (long.TryParse(split[0], out long result)) {

@@ -26,16 +26,16 @@ namespace BillScannerWPF {
 			bool initiated = false;
 			bool finalized = false;
 
-			for (int i = 0; i < split.Length; i++) {
+			bool rulesHandleItemLineSpan = rules.itemLineSpan == -1;
+
+
+			for (int i = 0; i < split.Length; i += rulesHandleItemLineSpan ? 1 : rules.itemLineSpan) {
 				bool matched = false;
 				if (string.IsNullOrWhiteSpace(split[i])) {
 					continue;
 				}
 				if (!initiated) {
-					initiated = IsInitiatingString(split[i].ToLower().Trim());
-					if (initiated) {
-						continue;
-					}
+					initiated = IsInitiatingString(split[i].ToLower().Trim(), ref i);
 				}
 				else {
 					finalized = IsFinalizingString(split[i].ToLower().Trim());
@@ -63,6 +63,9 @@ namespace BillScannerWPF {
 						lowest.item.tirggerForMatch = split[i];
 						matchedItems.Add(lowest);
 						matched = true;
+						if (!items[j].isSingleLine) {
+							i++;
+						}
 						break;
 					}
 				}
@@ -90,6 +93,9 @@ namespace BillScannerWPF {
 								matched = true;
 								break;
 							}
+						}
+						if (matched) {
+							break;
 						}
 					}
 					if (matched) {
@@ -122,12 +128,11 @@ namespace BillScannerWPF {
 					else {
 						try {
 							int indexCopy = i;
-							UItemCreationInfo unknown = new UItemCreationInfo(new Item(split[i], rules.PriceOfOne(split, ref indexCopy)), false, i, MatchRating.Fail);
+							UItemCreationInfo unknown = new UItemCreationInfo(new Item(split[i], rules.PriceOfOne(split, ref indexCopy), indexCopy == i), false, i, MatchRating.Fail);
 							unknown.item.tirggerForMatch = split[i];
 							unknown.item.ocrNames.Add(split[i]);
-							unknown.item.pricesInThePast.Add(unknown.item.currentPrice);
 							unmatchedItems.Add(unknown);
-							if(indexCopy != i) {
+							if (indexCopy != i) {
 								i = indexCopy;
 							}
 						}
@@ -152,9 +157,12 @@ namespace BillScannerWPF {
 			return false;
 		}
 
-		private bool IsInitiatingString(string s) {
+		private bool IsInitiatingString(string s, ref int index) {
 			if (rules.startMarkers.Length == 0) {
-				Console.WriteLine("This shop does not have any start markers, attempting to match immedaitely");
+				Console.WriteLine("This shop does not have any start markers, attempting to match immediately");
+				if (rules.skipInitiatingString) {
+					index++;
+				}
 				return true;
 			}
 			for (int i = 0; i < rules.startMarkers.Length; i++) {
