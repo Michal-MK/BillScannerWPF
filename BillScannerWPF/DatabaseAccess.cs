@@ -44,10 +44,10 @@ namespace BillScannerWPF {
 			throw new ItemNotDefinedException("No item with this name exists!");
 		}
 
-		public Item WriteItemDefinitionToDatabase(Item newItemDefinition, string modifiedName, decimal finalPrice) {
+		public Item WriteItemDefinitionToDatabase(Item newItemDefinition, string userFriendlyName, decimal finalPrice) {
 			JObject obj = JObject.FromObject(newItemDefinition);
 			JArray ocrArray = ((JArray)obj[nameof(Item.ocrNames)]);
-			obj[nameof(Item.userFriendlyName)] = modifiedName;
+			obj[nameof(Item.userFriendlyName)] = userFriendlyName;
 			obj[nameof(Item.currentPrice)] = finalPrice;
 			((JArray)obj[nameof(Item.pricesInThePast)]).Add(finalPrice);
 
@@ -56,24 +56,51 @@ namespace BillScannerWPF {
 			return newItemDefinition;
 		}
 
-		public void AddAlternativeOCRNameForItemToDatabase(string originalName, string altName) {
+		internal void WriteNewCurrentPriceToDatabase(string identifier, decimal price) {
 			foreach (JToken tok in itemDatabaseJson) {
-				if (tok[nameof(Item.userFriendlyName)].Value<string>() == originalName) {
+				if (tok[nameof(Item.identifier)].Value<string>() == identifier) {
+					decimal current = tok[nameof(Item.currentPrice)].Value<decimal>();
+					if (price != current) { 
+						JArray pastPrices = (JArray)tok[nameof(Item.pricesInThePast)];
+						bool priceAlreadyAdded = false;
+						foreach (decimal pastPrice in pastPrices.Values<decimal>()) {
+							if (current == pastPrice) {
+								priceAlreadyAdded = true;
+								break;
+							}
+						}
+						if (priceAlreadyAdded) {
+							tok[nameof(Item.currentPrice)] = price;
+							return;
+						}
+						else {
+							pastPrices.Add(current);
+							tok[nameof(Item.currentPrice)] = price;
+							return;
+						}
+					}
+				}
+			}
+		}
+
+		public void AddAlternativeOCRNameForItemToDatabase(string identifier, string altName) {
+			foreach (JToken tok in itemDatabaseJson) {
+				if (tok[nameof(Item.identifier)].Value<string>() == identifier) {
 					((JArray)tok[nameof(Item.ocrNames)]).Add(altName);
 					break;
 				}
 			}
-			itemDatabase[originalName].ocrNames.Add(altName);
+			itemDatabase[identifier].ocrNames.Add(altName);
 			File.WriteAllText(itemDatabaseFile.FullName, itemDatabaseJson.ToString());
 		}
 
 
-		public void AddNewPurchaseForItemToDatabase(string itemName, PurchaseHistory history) {
+		public void AddNewPurchaseForItemToDatabase(string identifier, PurchaseHistory history) {
 			foreach (JToken tok in itemDatabaseJson) {
-				if (tok[nameof(Item.userFriendlyName)].Value<string>() == itemName) {
+				if (tok[nameof(Item.identifier)].Value<string>() == identifier) {
 					tok[nameof(Item.totalPurchased)] = tok[nameof(Item.totalPurchased)].Value<long>() + history.amount;
-					itemDatabase[itemName].AddAmount(history.amount);
-					itemDatabase[itemName].purchaseHistory.Add(history);
+					itemDatabase[identifier].AddAmount(history.amount);
+					itemDatabase[identifier].purchaseHistory.Add(history);
 					((JArray)tok[nameof(Item.purchaseHistory)]).Add(JObject.FromObject(history));
 					bool priceRecorded = false;
 
@@ -85,10 +112,10 @@ namespace BillScannerWPF {
 					}
 					if (!priceRecorded) {
 						((JArray)tok[nameof(Item.pricesInThePast)]).Add(history.price);
-						itemDatabase[itemName].pricesInThePast.Add(history.price);
+						itemDatabase[identifier].pricesInThePast.Add(history.price);
 					}
 					tok[nameof(Item.currentPrice)] = history.price;
-					itemDatabase[itemName].SetNewCurrentPrice(history.price);
+					itemDatabase[identifier].SetNewCurrentPrice(history.price);
 					break;
 				}
 			}
@@ -100,20 +127,19 @@ namespace BillScannerWPF {
 			itemDatabase.Add(asociated.userFriendlyName, WriteItemDefinitionToDatabase(asociated, modifiedName, finalPrice));
 		}
 
-		public void WriteUnitOfMeassureForItemToDatabase(string itemName, MeassurementUnit unit) {
+		public void WriteUnitOfMeassureForItemToDatabase(string identifier, MeassurementUnit unit) {
 			foreach (JToken tok in itemDatabaseJson) {
-				if (tok[nameof(Item.userFriendlyName)].Value<string>() == itemName) {
+				if (tok[nameof(Item.identifier)].Value<string>() == identifier) {
 					tok[nameof(Item.unitOfMeassure)] = unit.ToString();
 				}
 			}
 			File.WriteAllText(itemDatabaseFile.FullName, itemDatabaseJson.ToString());
-			itemDatabase[itemName].SetUnitOfMeassure(unit);
 		}
 
 		public void WriteNewShoppingInstance(Shopping purchaseInstance) {
 			purchaseInstance.FinalizePurchase();
 			((JArray)shoppingDatabaseJson[nameof(Shopping.purchasedItems)]).Add(JObject.FromObject(purchaseInstance));
-			purchaseDatabase.Add(purchaseInstance.date, purchaseInstance);
+			purchaseDatabase.Add(purchaseInstance.GUIDString, purchaseInstance);
 			File.WriteAllText(WPFHelper.dataPath + current.ToString() + "db.json", shoppingDatabaseJson.ToString());
 		}
 	}

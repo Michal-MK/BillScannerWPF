@@ -12,13 +12,15 @@ namespace BillScannerWPF {
 
 		internal Item asociatedItem { get; }
 		internal int index { get; }
+		internal long quantityPurchased { get; }
 		internal MatchRating quality { get; private set; }
 
-		internal UIItem(Item item, int index, MatchRating quality) {
+		internal UIItem(Item item, long quantityPurchased, int index, MatchRating quality) {
 			InitializeComponent();
 			UITEM_OriginalName_Text.Text = item.tirggerForMatch + " | Price: " + item.currentPrice.ToString();
 			asociatedItem = item;
 			this.quality = quality;
+			this.quantityPurchased = quantityPurchased;
 			SetMatchRatingImage();
 		}
 

@@ -5,8 +5,8 @@ namespace BillScannerWPF.Rules {
 	class LidlRuleset : BaseRuleset, IRuleset {
 		public string[] startMarkers { get { return new string[0]; } }
 
-		public string[] endMarkers { get { return new string[] { "k platbe", "k platbě", "k p1atbe", "karta", "celkova", "castka", "zaplacena"}; } }
-		
+		public string[] endMarkers { get { return new string[] { "k platbe", "k platbě", "k p1atbe", "karta", "celkova", "castka", "zaplacena" }; } }
+
 		public char costPlusQuantitySeparator { get { return 'x'; } }
 
 		public bool skipInitiatingString { get { return false; } }
@@ -20,7 +20,7 @@ namespace BillScannerWPF.Rules {
 		public long GetQuantity(string[] ocrText, int index) {
 			if (index > ocrText.Length) { throw new IndexOutOfRangeException(nameof(index)); }
 			string quantity = ocrText[index + 1];
-			string[] split = quantity.Split(costPlusQuantitySeparator);
+			string[] split = RemoveLetterCharacters(quantity, costPlusQuantitySeparator).Split(costPlusQuantitySeparator);
 			if (split.Length != 2) {
 				throw new NotImplementedException("Unable to split quantity and cost");
 			}
@@ -29,7 +29,7 @@ namespace BillScannerWPF.Rules {
 				return result;
 			}
 			else {
-				quantity = ReplaceAmbiguous(quantity);
+				quantity = ReplaceAmbiguousToNumber(quantity);
 				if (long.TryParse(quantity.Split(costPlusQuantitySeparator)[0], out long resultReplaced)) {
 					return resultReplaced;
 				}

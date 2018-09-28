@@ -70,6 +70,9 @@
     <Compile Include="ImageProcessor.cs" />
     <Compile Include="Item.cs" />
     <Compile Include="Exceptions\ItemNotDefinedException.cs" />
+    <Compile Include="XAML\ManualResolveChoice.xaml.cs">
+      <DependentUpon>ManualResolveChoice.xaml</DependentUpon>
+    </Compile>
     <Compile Include="PurchaseMeta.cs" />
     <Compile Include="XAML\ItemInfoOverlay.xaml.cs">
       <DependentUpon>ItemInfoOverlay.xaml</DependentUpon>
@@ -95,6 +98,10 @@
     <Compile Include="StringParser.cs" />
     <Compile Include="WordSimilarity.cs" />
     <Compile Include="Exceptions\WindowInitExpection.cs" />
+    <Page Include="XAML\ManualResolveChoice.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="XAML\ItemInfoOverlay.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

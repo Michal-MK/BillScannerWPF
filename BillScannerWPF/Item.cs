@@ -10,9 +10,11 @@ namespace BillScannerWPF {
 			ocrNames = new List<string>();
 			pricesInThePast = new List<decimal>();
 			purchaseHistory = new List<PurchaseHistory>();
+			identifier = Guid.NewGuid().ToString();
 		}
 
 		public string userFriendlyName { get; private set; }
+		public string identifier { get; private set; }
 		public List<string> ocrNames { get; }
 		public MeassurementUnit unitOfMeassure { get; private set; }
 		public decimal currentPrice { get; private set; }
@@ -30,37 +32,23 @@ namespace BillScannerWPF {
 
 		internal void SetNewCurrentPrice(decimal price) {
 			currentPrice = price;
+			MainWindow.access.WriteNewCurrentPriceToDatabase(identifier, price);
 		}
 		internal void SetUnitOfMeassure(MeassurementUnit unit) {
 			unitOfMeassure = unit;
-		}
-
-		public static implicit operator ItemSlim(Item item) {
-			return new ItemSlim(item.userFriendlyName, 0, item.currentPrice, item.isSingleLine);
+			MainWindow.access.WriteUnitOfMeassureForItemToDatabase(identifier, unit);
 		}
 
 		internal void PurchaseModifications(string modifiedName, decimal finalPrice) {
 			userFriendlyName = modifiedName;
 			currentPrice = finalPrice;
 		}
+
+		//public static bool operator !=(Item item, Item other) {
+		//	return item.identifier != other.identifier;
+		//}
+		//public static bool operator ==(Item item, Item other) {
+		//	return item.identifier == other.identifier;
+		//}
 	}
-
-	public class ItemSlim {
-		public ItemSlim(string name, long amountPurchased, decimal price, bool isSingleLine) {
-			this.name = name;
-			this.amountPurchased = amountPurchased;
-			this.price = price;
-			this.isSingleLine = isSingleLine;
-		}
-
-		public string name { get; }
-		public long amountPurchased { get; }
-		public decimal price { get; }
-		public bool isSingleLine { get; }
-
-		public static implicit operator Item(ItemSlim item) {
-			return new Item(item.name, item.price);
-		}
-	}
-
 }

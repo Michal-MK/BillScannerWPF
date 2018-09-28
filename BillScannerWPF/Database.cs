@@ -9,7 +9,7 @@ namespace BillScannerWPF {
 
 		protected Dictionary<string, Item> itemDatabase;
 		protected JArray itemDatabaseJson;
-		protected Dictionary<DateTime, Shopping> purchaseDatabase;
+		protected Dictionary<string, Shopping> purchaseDatabase;
 		protected JToken shoppingDatabaseJson;
 
 		internal FileInfo itemDatabaseFile { get; }
@@ -39,23 +39,23 @@ namespace BillScannerWPF {
 		}
 
 		private void LoadPurchaseDatabase() {
-			purchaseDatabase = new Dictionary<DateTime, Shopping>();
+			purchaseDatabase = new Dictionary<string, Shopping>();
 			using (StreamReader sr = File.OpenText(selectedShopDBFile.FullName))
 			using (JsonTextReader jr = new JsonTextReader(sr)) {
 				shoppingDatabaseJson = JToken.ReadFrom(jr);
 				JArray array = ((JArray)shoppingDatabaseJson["purchases"]);
 				for (int i = 0; i < array.Count; i++) {
 					Shopping item = array[i].ToObject<Shopping>();
-					purchaseDatabase.Add(item.date, item);
+					purchaseDatabase.Add(item.GUIDString, item);
 				}
 			}
 		}
 
 		private void AddToDB(Item item) {
-			if (itemDatabase.ContainsKey(item.userFriendlyName)) {
-				return;
+			if (itemDatabase.ContainsKey(item.identifier)) {
+				throw new Exception("What ? " + item.identifier);
 			}
-			itemDatabase.Add(item.userFriendlyName, item);
+			itemDatabase.Add(item.identifier, item);
 		}
 	}
 

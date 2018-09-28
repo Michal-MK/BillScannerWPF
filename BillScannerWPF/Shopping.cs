@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using Newtonsoft.Json;
 
 namespace BillScannerWPF {
 	[Serializable]
@@ -11,6 +9,7 @@ namespace BillScannerWPF {
 		public DateTime date { get; }
 		public decimal totalCost { get; private set; } = 0;
 		public string[] purchasedItems { get; private set; }
+		public string GUIDString { get; private set; }
 
 		[NonSerialized]
 		private List<string> internalList = new List<string>();
@@ -30,6 +29,7 @@ namespace BillScannerWPF {
 				Item i = access.GetItem(userFriendlyName);
 				totalCost += i.currentPrice;
 			}
+			GUIDString = Guid.NewGuid().ToString();
 		}
 	}
 }

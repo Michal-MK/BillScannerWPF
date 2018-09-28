@@ -36,15 +36,21 @@ namespace BillScannerWPF {
 			INFO_CurrentValue_Text.Text = source.asociatedItem.currentPrice.ToString();
 			INFO_PricesBefore_Text.Text = source.asociatedItem.pricesInThePast.Merge(',');
 			INFO_AmountBought_Text.Text = source.asociatedItem.totalPurchased.ToString();
+			INFO_PURCHASE_ItemQuantity.Text = source.quantityPurchased.ToString();
 			MAIN_ItemInfoOverlay_Grid.Visibility = Visibility.Visible;
 			INFO_RegisterItem_Button.IsEnabled = !source.asociatedItem.isRegistered;
 			INFO_MainName_Text.IsEnabled = !source.asociatedItem.isRegistered;
+			INFO_CurrentValue_Text.IsEnabled = !source.asociatedItem.isRegistered;
+			Binding b = new Binding("Text");
+			b.Source = INFO_CurrentValue_Text;
+			INFO_PricesBefore_Text.SetBinding(TextBlock.TextProperty, b);
+		 
 		}
 
 		private void INFO_RegisterItem_Click(object sender, RoutedEventArgs e) {
 			//Get stuff from input fields
 			string modifiedName = INFO_MainName_Text.Text;
-			if (!decimal.TryParse(INFO_CurrentValue_Text.Text, NumberStyles.Currency, CultureInfo.InvariantCulture, out decimal finalPrice)) {
+			if (!decimal.TryParse(INFO_CurrentValue_Text.Text.Trim().Replace(',','.'), NumberStyles.Currency, CultureInfo.InvariantCulture, out decimal finalPrice)) {
 				return;
 			}
 			try {

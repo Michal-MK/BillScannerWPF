@@ -8,19 +8,20 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static BillScannerWPF.ManualResolveChoice;
 
 namespace BillScannerWPF {
 	internal class StringParser {
 
-		private Rules.IRuleset rules;
+		private IRuleset rules;
 
 		private bool foundSomeKindOfMatch = false;
 
-		internal StringParser(Rules.IRuleset rules) {
+		internal StringParser(IRuleset rules) {
 			this.rules = rules;
 		}
 
-		public ParsingResult Parse(string[] split) {
+		public async Task<ParsingResult> ParseAsync(string[] split) {
 			ObservableCollection<UItemCreationInfo> matchedItems = new ObservableCollection<UItemCreationInfo>();
 			ObservableCollection<UItemCreationInfo> unmatchedItems = new ObservableCollection<UItemCreationInfo>();
 
@@ -63,91 +64,67 @@ namespace BillScannerWPF {
 				if (finalized) {
 					continue;
 				}
-				int mainLowestDist = int.MaxValue;
-				int mainLowestIndex = -1;
 
 				int ocrLowestDist = int.MaxValue;
 				int ocrLowestIndex = -1;
-
 				for (int j = 0; j < items.Length; j++) {
-					int mainNameDist = WordSimilarity.Compute(split[i], items[j].userFriendlyName);
-					if (mainNameDist < mainLowestDist) {
-						mainLowestDist = mainNameDist;
-						mainLowestIndex = j;
-					}
-					if (mainNameDist == 0) {
-						UItemCreationInfo lowest = new UItemCreationInfo(items[j], true, j, (MatchRating)mainNameDist);
-						lowest.item.tirggerForMatch = split[i];
-						matchedItems.Add(lowest);
-						matched = true;
-						if (!items[j].isSingleLine) {
-							i++;
+					foreach (string ss in items[j].ocrNames) {
+						int currentOCRNameDist = WordSimilarity.Compute(split[i], ss);
+						if (currentOCRNameDist < ocrLowestDist) {
+							ocrLowestDist = currentOCRNameDist;
+							ocrLowestIndex = j;
 						}
+						if (ocrLowestDist == 0) {
+							decimal currentPrice = TryGetCurrentPrice(split, i);
+							UItemCreationInfo lowest = new UItemCreationInfo(items[ocrLowestIndex], true, rules.GetQuantity(split, i), ocrLowestIndex, currentPrice, (MatchRating)ocrLowestDist);
+							lowest.item.tirggerForMatch = split[i];
+							matchedItems.Add(lowest);
+							matched = true;
+							break;
+						}
+					}
+					if (matched) {
 						break;
 					}
 				}
 				if (matched) {
 					continue;
 				}
-				else if (mainLowestDist <= 3) {
-					UItemCreationInfo something = new UItemCreationInfo(items[mainLowestIndex], true, mainLowestIndex, (MatchRating)mainLowestDist);
+				if (ocrLowestDist <= 3) {
+					decimal currentPrice = TryGetCurrentPrice(split, i);
+					UItemCreationInfo something = new UItemCreationInfo(items[ocrLowestIndex], true, rules.GetQuantity(split, i), ocrLowestIndex, currentPrice, (MatchRating)ocrLowestDist);
 					something.item.tirggerForMatch = split[i];
 					matchedItems.Add(something);
 					foundSomeKindOfMatch = true;
 				}
-				else {
-					for (int j = 0; j < items.Length; j++) {
-						foreach (string ss in items[j].ocrNames) {
-							int currentOCRNameDist = WordSimilarity.Compute(split[i], ss);
-							if (currentOCRNameDist < ocrLowestDist) {
-								ocrLowestDist = currentOCRNameDist;
-								ocrLowestIndex = j;
-							}
-							if (ocrLowestDist == 0) {
-								UItemCreationInfo lowest = new UItemCreationInfo(items[ocrLowestIndex], true, ocrLowestIndex, (MatchRating)ocrLowestDist);
-								lowest.item.tirggerForMatch = split[i];
-								matchedItems.Add(lowest);
-								matched = true;
-								break;
-							}
-						}
-						if (matched) {
-							break;
-						}
-					}
-					if (matched) {
-						continue;
-					}
-					if (ocrLowestDist <= 3) {
-						UItemCreationInfo something = new UItemCreationInfo(items[ocrLowestIndex], true, ocrLowestIndex, (MatchRating)mainLowestDist);
-						something.item.tirggerForMatch = split[i];
-						matchedItems.Add(something);
-						foundSomeKindOfMatch = true;
-					}
-				}
-				if (!foundSomeKindOfMatch) {
-					int min = Math.Min(mainLowestDist, ocrLowestDist);
-					int selectedIndex = -1;
-					if (min == mainLowestDist) {
-						selectedIndex = mainLowestIndex;
-					}
-					else {
-						selectedIndex = ocrLowestIndex;
-					}
 
-					if (min <= 6) {
-						UItemCreationInfo unknown = new UItemCreationInfo(items[selectedIndex], false, selectedIndex, MatchRating.Fail);
-						unknown.item.tirggerForMatch = split[i];
-						unknown.item.ocrNames.Add(split[i]);
-						unknown.item.pricesInThePast.Add(unknown.item.currentPrice);
-						unmatchedItems.Add(unknown);
+				if (!foundSomeKindOfMatch) {
+					if (ocrLowestDist <= 6) {
+						ManualResolveChoice resolveChoice = new ManualResolveChoice(
+							string.Format("Found Item '{0}' with {1} char differences, closest Item: '{2}'", split[i], ocrLowestIndex, items[ocrLowestIndex].userFriendlyName),
+							Choices.MatchAnyway, Choices.MatchWithoutAddingAmbiguities, Choices.NotAnItem);
+						WPFHelper.GetMainWindow().MAIN_Grid.Children.Add(resolveChoice);
+						Choices choice = await resolveChoice.SelectChoice();
+						WPFHelper.GetMainWindow().MAIN_Grid.Children.Remove(resolveChoice);
+
+						if (choice != Choices.NotAnItem) {
+							decimal currentPrice = TryGetCurrentPrice(split, i);
+							UItemCreationInfo creationInfo = new UItemCreationInfo(items[ocrLowestIndex], true, rules.GetQuantity(split, i), ocrLowestIndex, currentPrice, MatchRating.Fail);
+							creationInfo.item.tirggerForMatch = split[i];
+							if (choice == Choices.MatchAnyway) {
+								creationInfo.item.ocrNames.Add(split[i]);
+								creationInfo.item.pricesInThePast.Add(creationInfo.item.currentPrice);
+							}
+							matchedItems.Add(creationInfo);
+						}
 					}
 					else {
 						try {
 							int indexCopy = i;
+							decimal currentPrice = TryGetCurrentPrice(split, indexCopy);
 							Item newItem = new Item(split[i], rules.PriceOfOne(split, ref indexCopy));
 							newItem.isSingleLine = indexCopy == i;
-							UItemCreationInfo unknown = new UItemCreationInfo(newItem, false, i, MatchRating.Fail);
+							UItemCreationInfo unknown = new UItemCreationInfo(newItem, false, rules.GetQuantity(split, i), i, currentPrice, MatchRating.Fail);
 							unknown.item.tirggerForMatch = split[i];
 							unknown.item.ocrNames.Add(split[i]);
 							unmatchedItems.Add(unknown);
@@ -191,19 +168,33 @@ namespace BillScannerWPF {
 			}
 			return false;
 		}
+
+		private decimal TryGetCurrentPrice(string[] split, int i) {
+			try {
+				return rules.PriceOfOne(split, ref i);
+			}
+			catch (NotImplementedException e) {
+				//TODO error logging
+				return -1;
+			}
+		}
 	}
 
 	public struct UItemCreationInfo {
-		internal UItemCreationInfo(Item i, bool isRegistered, int index, MatchRating quality) {
+		internal UItemCreationInfo(Item i, bool isRegistered, long quantity, int index, decimal currentPrice, MatchRating quality) {
 			item = i;
 			this.index = index;
 			this.quality = quality;
 			this.isRegistered = isRegistered;
+			this.quantity = quantity;
+			this.currentPrice = currentPrice;
 		}
 
 		internal Item item { get; }
 		internal int index { get; }
+		internal long quantity { get; }
 		internal MatchRating quality { get; }
 		internal bool isRegistered { get; private set; }
+		internal decimal currentPrice { get; }
 	}
 }

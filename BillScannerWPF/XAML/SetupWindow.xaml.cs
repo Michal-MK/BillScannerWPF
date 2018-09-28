@@ -66,10 +66,10 @@ namespace BillScannerWPF {
 		}
 
 		private void Button_Click_5(object sender, RoutedEventArgs e) {
-			ObservableCollection<UIItem> items = new ObservableCollection<UIItem>();
-			items.Add(new UIItem(new Item("Whatever", 20),0,MatchRating.Two));
-			items.Add(new UIItem(new Item("Some more Stuff", 9999),0,MatchRating.Success));
-			access.WriteNewShoppingInstance(new Shopping(DateTime.Now, items));
+			//ObservableCollection<UIItem> items = new ObservableCollection<UIItem>();
+			//items.Add(new UIItem(new Item("Whatever", 20),0,MatchRating.Two));
+			//items.Add(new UIItem(new Item("Some more Stuff", 9999),0,MatchRating.Success));
+			//access.WriteNewShoppingInstance(new Shopping(DateTime.Now, items));
 		}
 
 		private void Button_Click_6(object sender, RoutedEventArgs e) {

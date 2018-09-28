@@ -15,7 +15,7 @@
 			<ColumnDefinition Width="10"></ColumnDefinition>
 		</Grid.ColumnDefinitions>
 		<Grid.Background>
-			<SolidColorBrush Color="LightCyan"></SolidColorBrush>
+			<SolidColorBrush Color="LightSlateGray"></SolidColorBrush>
 		</Grid.Background>
 		<TextBlock x:Name="UITEM_OriginalName_Text" Grid.Column="1" Text="Original Name" VerticalAlignment="Center" HorizontalAlignment="Left" ></TextBlock>
 		<Button x:Name="UITEM_ShowDetails_Button" Grid.Column="2" Content="Details" Click="UITEM_ShowDetails_Click" HorizontalAlignment="Stretch"></Button>

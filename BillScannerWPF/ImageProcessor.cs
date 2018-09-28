@@ -65,13 +65,13 @@ namespace BillScannerWPF {
 				string[] split = p.GetText().Split('\n');
 				string[] ready = split.Where((s) => { return !string.IsNullOrWhiteSpace(s); }).ToArray();
 				try {
-					result = await Task.Run(() => { return instance.Parse(ready); });
+					result = await instance.ParseAsync(ready);
 				}
 				catch (ParsingEntryNotFoundException) {
 					string[] modified = new string[ready.Length + 1];
 					modified[0] = ruleset.startMarkers[0];
 					ready.CopyTo(modified, 1);
-					result = await Task.Run(() => { return instance.Parse(modified); });
+					result = await instance.ParseAsync(modified);
 				}
 				ConstructUI(result.parsed, uiItemsMatched);
 				ConstructUI(result.unknown, uiItemsUnknown);
@@ -82,7 +82,7 @@ namespace BillScannerWPF {
 
 		private void ConstructUI(ObservableCollection<UItemCreationInfo> from, ObservableCollection<UIItem> destination) {
 			foreach (UItemCreationInfo info in from) {
-				UIItem item = new UIItem(info.item, info.index, info.quality);
+				UIItem item = new UIItem(info.item, info.quantity, info.index, info.quality);
 				item.asociatedItem.isRegistered = info.isRegistered;
 				destination.Add(item);
 			}
