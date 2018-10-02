@@ -37,7 +37,14 @@
 					<TextBlock Grid.Row="2" Grid.Column="0" Text="$Solution 1" x:Name="MANUAL_RESOLUTION_Solution1_Text"></TextBlock>
 					<TextBlock Grid.Row="3" Grid.Column="0" Text="$Solution 2" x:Name="MANUAL_RESOLUTION_Solution2_Text"></TextBlock>
 					<TextBlock Grid.Row="4" Grid.Column="0" Text="$Solution 3" x:Name="MANUAL_RESOLUTION_Solution3_Text"></TextBlock>
-					<TextBlock Grid.Row="5" Grid.Column="0" Text="$Solution 4" x:Name="MANUAL_RESOLUTION_Solution4_Text"></TextBlock>
+					<Grid Grid.Row="5" Grid.Column="0">
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="7*"></ColumnDefinition>
+							<ColumnDefinition Width="3*"></ColumnDefinition>
+						</Grid.ColumnDefinitions>
+						<TextBlock Grid.Column="0" Text="$Solution 4" x:Name="MANUAL_RESOLUTION_Solution4_Text" ></TextBlock>
+						<TextBox Grid.Column="1" Text="$Solution 4.1" x:Name="MANUAL_RESOLUTION_Solution4_Box"></TextBox>
+					</Grid>
 
 				</Grid>
 				<Grid VerticalAlignment="Bottom" HorizontalAlignment="Right">
@@ -51,7 +58,7 @@
 					<Button x:Name="MANUAL_RESOLUTION_Resolve1_Button" Grid.Column="1" Content="Resolve1" Margin="0,10,10,10" Padding="20,5"></Button>
 					<Button x:Name="MANUAL_RESOLUTION_Resolve2_Button" Grid.Column="2" Content="Resolve2" Margin="0,10,10,10" Padding="20,5"></Button>
 					<Button x:Name="MANUAL_RESOLUTION_Resolve3_Button" Grid.Column="3" Content="Resolve3" Margin="0,10,10,10" Padding="20,5"></Button>
-					<Button x:Name="MANUAL_RESOLUTION_Resolve4_Button" Grid.Column="4" Content="Resolve4" Margin="0,10,10,10" Padding="20,5"></Button>
+					<Button x:Name="MANUAL_RESOLUTION_Resolve4_Button" Grid.Column="4" Content="Resolve4" Margin="0,10,10,10" Padding="20,5" Visibility="Collapsed"></Button>
 				</Grid>
 			</Grid>
 		</Viewbox>

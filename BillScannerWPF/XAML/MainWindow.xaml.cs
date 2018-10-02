@@ -121,6 +121,8 @@ namespace BillScannerWPF {
 		private void MAIN_FinalizePurchase_Click(object sender, RoutedEventArgs e) {
 			ImageProcessor pr = WPFHelper.GetMainWindow().imgProcessing;
 			Shopping s = new Shopping(pr.currentParsingResult.meta.purchasedAt, pr.uiItemsMatched);
+			s.FinalizePurchase();
+			MAIN_Finalize_Button.IsEnabled = false;
 		}
 
 		#region IDisposable Support

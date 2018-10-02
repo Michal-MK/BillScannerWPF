@@ -24,22 +24,13 @@ namespace BillScannerWPF {
 		}
 
 		/// <summary>
-		/// Get the actual item by name
+		/// Get the actual item by GUID
 		/// </summary>
 		/// <exception cref="ItemNotDefinedException"></exception>
-		/// <param name="name">Name of the item</param>
-		public Item GetItem(string name) {
-			if (itemDatabase.ContainsKey(name)) {
-				return itemDatabase[name];
-			}
-			else {
-				foreach (KeyValuePair<string, Item> item in itemDatabase) {
-					for (int i = 0; i < item.Value.ocrNames.Count; i++) {
-						if (item.Value.ocrNames[i] == name) {
-							return item.Value;
-						}
-					}
-				}
+		/// <param name="guidString">GUID of the item</param>
+		public Item GetItem(string guidString) {
+			if (itemDatabase.ContainsKey(guidString)) {
+				return itemDatabase[guidString];
 			}
 			throw new ItemNotDefinedException("No item with this name exists!");
 		}
@@ -137,10 +128,9 @@ namespace BillScannerWPF {
 		}
 
 		public void WriteNewShoppingInstance(Shopping purchaseInstance) {
-			purchaseInstance.FinalizePurchase();
 			((JArray)shoppingDatabaseJson[nameof(Shopping.purchasedItems)]).Add(JObject.FromObject(purchaseInstance));
 			purchaseDatabase.Add(purchaseInstance.GUIDString, purchaseInstance);
-			File.WriteAllText(WPFHelper.dataPath + current.ToString() + "db.json", shoppingDatabaseJson.ToString());
+			File.WriteAllText(WPFHelper.dataPath + current.ToString() + "_purchasedb.json", shoppingDatabaseJson.ToString());
 		}
 	}
 }

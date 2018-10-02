@@ -32,7 +32,7 @@ namespace BillScannerWPF {
 			using (JsonTextReader jr = new JsonTextReader(sr)) {
 				itemDatabaseJson = JArray.Load(jr);
 				for (int i = 0; i < itemDatabaseJson.Count; i++) {
-					Item item = itemDatabaseJson[i].ToObject<Item>();
+					Item item = JsonConvert.DeserializeObject<Item>(itemDatabaseJson[i].ToString());
 					AddToDB(item);
 				}
 			}
@@ -43,7 +43,7 @@ namespace BillScannerWPF {
 			using (StreamReader sr = File.OpenText(selectedShopDBFile.FullName))
 			using (JsonTextReader jr = new JsonTextReader(sr)) {
 				shoppingDatabaseJson = JToken.ReadFrom(jr);
-				JArray array = ((JArray)shoppingDatabaseJson["purchases"]);
+				JArray array = ((JArray)shoppingDatabaseJson[nameof(Shopping.purchasedItems)]);
 				for (int i = 0; i < array.Count; i++) {
 					Shopping item = array[i].ToObject<Shopping>();
 					purchaseDatabase.Add(item.GUIDString, item);

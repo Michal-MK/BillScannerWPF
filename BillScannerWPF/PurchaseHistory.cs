@@ -3,12 +3,12 @@
 namespace BillScannerWPF {
 	[Serializable]
 	public class PurchaseHistory {
-		public DateTime timePurchased { get; }
-		public int amount { get; }
+		public string purchaseGUID { get; }
+		public long amount { get; }
 		public decimal price { get; }
 
-		public PurchaseHistory(DateTime time, int amount, decimal price) {
-			this.timePurchased = time;
+		public PurchaseHistory(string purchaseGUID, long amount, decimal price) {
+			this.purchaseGUID = purchaseGUID;
 			this.amount = amount;
 			this.price = price;
 		}

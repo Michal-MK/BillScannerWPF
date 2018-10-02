@@ -25,7 +25,6 @@ namespace BillScannerWPF {
 			ObservableCollection<UItemCreationInfo> matchedItems = new ObservableCollection<UItemCreationInfo>();
 			ObservableCollection<UItemCreationInfo> unmatchedItems = new ObservableCollection<UItemCreationInfo>();
 
-			//Process line by line
 			Item[] items = MainWindow.access.GetItems();
 			bool initiated = false;
 			bool finalized = false;
@@ -140,6 +139,19 @@ namespace BillScannerWPF {
 			}
 			if (!initiated) {
 				throw new ParsingEntryNotFoundException(rules.startMarkers, split);
+			}
+			if (!purchaseTimeFound) {
+				ManualResolveChoice resolveChoice = new ManualResolveChoice("Parser could not find purchase date/time in the bill.",
+					new Choices[] { Choices.NOOP, Choices.NOOP, Choices.UseCurrentTime, Choices.ManuallyEnterDate });
+				WPFHelper.GetMainWindow().MAIN_Grid.Children.Add(resolveChoice);
+				Choices choice = await resolveChoice.SelectChoice();
+				if (choice == Choices.UseCurrentTime) {
+					purchaseTime = DateTime.Now;
+				}
+				else {
+					purchaseTime = DateTime.Parse(resolveChoice.MANUAL_RESOLUTION_Solution4_Box.Text); //Sanity Check
+				}
+				WPFHelper.GetMainWindow().MAIN_Grid.Children.Remove(resolveChoice);
 			}
 			return new ParsingResult(split, matchedItems, unmatchedItems, new PurchaseMeta(purchaseTime));
 		}
