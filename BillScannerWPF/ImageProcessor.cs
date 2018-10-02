@@ -1,12 +1,7 @@
-﻿using Igor.TCP;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.Collections.ObjectModel;
 using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using Tesseract;
@@ -14,7 +9,6 @@ using Tesseract;
 namespace BillScannerWPF {
 	internal class ImageProcessor : IDisposable {
 
-		private readonly TCPServer server;
 		private readonly DatabaseAccess access;
 
 		public static ImageProcessor instance { get; private set; }
@@ -27,12 +21,9 @@ namespace BillScannerWPF {
 
 		internal ParsingResult currentParsingResult { get; private set; }
 
-		internal ImageProcessor(TCPServer server, DatabaseAccess access, Rules.IRuleset ruleset, MainWindow main) {
-			
+		internal ImageProcessor(DatabaseAccess access, Rules.IRuleset ruleset, MainWindow main) {
 			instance = this;
-			this.server = server;
 			this.access = access;
-			server.OnConnectionEstablished += Server_OnConnectionEstablished;
 			engine = new TesseractEngine("Resources" + System.IO.Path.DirectorySeparatorChar + "tessdata", "ces");
 			this.ruleset = ruleset;
 
@@ -40,11 +31,7 @@ namespace BillScannerWPF {
 			main.MAIN_UnknownProducts_Stack.ItemsSource = uiItemsUnknown;
 		}
 
-		private void Server_OnConnectionEstablished(object sender, ClientConnectedEventArgs e) {
-			server.GetConnection(e.clientInfo.clientID).dataIDs.DefineCustomDataTypeForID<byte[]>(1, OnImageDataReceived);
-		}
-
-		private void OnImageDataReceived(byte[] imageData, byte sender) {
+		internal void OnImageDataReceived(byte[] imageData, byte sender) {
 			Application.Current.Dispatcher.Invoke(() => {
 				MainWindow w = WPFHelper.GetMainWindow();
 				w.SetPrevImage(imageData);
@@ -52,10 +39,12 @@ namespace BillScannerWPF {
 		}
 
 		internal async void Analyze(object sender, RoutedEventArgs e) {
+			Button bSender = (Button)sender;
 			if (WPFHelper.GetMainWindow().currentImageSource == null) {
 				return;
 			}
-			((Button)sender).IsEnabled = false;
+
+			bSender.IsEnabled = false;
 			uiItemsMatched.Clear();
 			uiItemsUnknown.Clear();
 
@@ -77,7 +66,7 @@ namespace BillScannerWPF {
 				ConstructUI(result.unknown, uiItemsUnknown);
 				currentParsingResult = result;
 			}
-			((Button)sender).IsEnabled = true;
+			bSender.IsEnabled = true;
 		}
 
 		private void ConstructUI(ObservableCollection<UItemCreationInfo> from, ObservableCollection<UIItem> destination) {

@@ -3,7 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="clr-namespace:BillScannerWPF"
              StartupUri="../XAML/SetupWindow.xaml">
-	
+
 	<Application.Resources>
 		<DataTemplate x:Key="myTemplate">
 			<Grid Margin="0,0,0,5">
@@ -15,7 +15,11 @@
 				<TextBlock Grid.Column="1" Text="{Binding AProp}" />
 			</Grid>
 		</DataTemplate>
-	</Application.Resources>
 
+		<Style x:Key="ih_stackPanelMargins" TargetType="{x:Type local:UIItem}">
+			<Setter Property="Margin" Value="0,5"/>
+		</Style>
+		
+	</Application.Resources>
 </Application>
 	

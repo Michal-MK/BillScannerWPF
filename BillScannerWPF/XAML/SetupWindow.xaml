@@ -5,21 +5,20 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:BillScannerWPF"
         mc:Ignorable="d"
-        Title="SetupWindow" Height="750" Width="1092.5">
+        Title="SetupWindow" Height="200" Width="400">
 	<Grid>
-		<Button Content="LoadItems" HorizontalAlignment="Left" Margin="875,99,0,0" VerticalAlignment="Top" Width="168" Click="Button_Click" Height="63"/>
-		<Button Content="RefreshW" HorizontalAlignment="Left" Margin="875,167,0,0" VerticalAlignment="Top" Width="168" Click="Button_Click_2" Height="57"/>
-		<ScrollViewer HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Height="706" Width="596">
-			<TextBlock x:Name="json"/>
-		</ScrollViewer>
-		<Button Content="Add Alt N." HorizontalAlignment="Left" Margin="986,299,0,0" VerticalAlignment="Top" Width="75" Click="Button_Click_3"/>
-		<TextBox x:Name="s_origName" HorizontalAlignment="Left" Height="23" Margin="851,296,0,0" TextWrapping="Wrap" Text="Orig Name" VerticalAlignment="Top" Width="120"/>
-		<TextBox x:Name="s_altName" HorizontalAlignment="Left" Height="23" Margin="851,324,0,0" TextWrapping="Wrap" Text="Alt Name" VerticalAlignment="Top" Width="120"/>
-		<Button Content="Purchase" HorizontalAlignment="Left" Margin="986,374,0,0" VerticalAlignment="Top" Width="75" Click="Button_Click_4"/>
-		<TextBox x:Name="s_amount" HorizontalAlignment="Left" Height="23" Margin="851,371,0,0" TextWrapping="Wrap" Text="Amount" VerticalAlignment="Top" Width="120" />
-		<TextBox x:Name="s_price" HorizontalAlignment="Left" Height="23" Margin="851,399,0,0" TextWrapping="Wrap" Text="Price" VerticalAlignment="Top" Width="120"/>
-		<Button Content="WriteShopp" HorizontalAlignment="Left" Margin="920,448,0,0" VerticalAlignment="Top" Width="75" Click="Button_Click_5"/>
-		<Button Content="Switch Scene" HorizontalAlignment="Left" Margin="875,31,0,0" VerticalAlignment="Top" Width="168" Height="64" Click="Button_Click_6"/>
-		<ComboBox x:Name="s_shopSelect" HorizontalAlignment="Left" Margin="696,53,0,0" VerticalAlignment="Top" Width="164" Height="25"/>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="20"></RowDefinition>
+			<RowDefinition></RowDefinition>
+			<RowDefinition Height="20"></RowDefinition>
+		</Grid.RowDefinitions>
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="20"></ColumnDefinition>
+			<ColumnDefinition Width="1*"></ColumnDefinition>
+			<ColumnDefinition Width="1*"></ColumnDefinition>
+			<ColumnDefinition Width="20"></ColumnDefinition>
+		</Grid.ColumnDefinitions>
+		<ComboBox	Grid.Column="1" Grid.Row="1" x:Name="SETUP_SelectShop_Dropdown" MaxHeight="48" Margin="20,0" />
+		<Button		Grid.Column="2" Grid.Row="1" x:Name="SETUP_SwitchScene_Button" Content="Open Application" Margin="20,0"/>
 	</Grid>
 </Window>
