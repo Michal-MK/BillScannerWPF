@@ -8,25 +8,38 @@
         Title="Bill Scanner" Height="500" Width="1000">
 
 	<Grid Name="MAIN_Grid">
-		<StackPanel Visibility="Hidden">
-			<StackPanel.Resources>
-				<Style x:Key="ih_stackPanelMargins" TargetType="{x:Type local:UIItem}">
-					<Setter Property="Margin" Value="0,5"/>
-				</Style>
-			</StackPanel.Resources>
-		</StackPanel>
-
+		<Grid HorizontalAlignment="Stretch" VerticalAlignment="Top" Height="16" Background="LightSlateGray">
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="10"></ColumnDefinition>
+				<ColumnDefinition Width="auto"></ColumnDefinition>
+				<ColumnDefinition Width="auto"></ColumnDefinition>
+				<ColumnDefinition Width="auto"></ColumnDefinition>
+				<ColumnDefinition Width="auto"></ColumnDefinition>
+				<ColumnDefinition Width="auto"></ColumnDefinition>
+				<ColumnDefinition Width="auto"></ColumnDefinition>
+				<ColumnDefinition Width="auto"></ColumnDefinition>
+				<ColumnDefinition Width="auto"></ColumnDefinition>
+			</Grid.ColumnDefinitions>
+			<TextBlock	Grid.Column="1" Text="Server:"			></TextBlock>
+			<TextBlock	Grid.Column="2" Text="Offline"			x:Name="MAIN_ServerStatus_Text"				Margin="5,0,0,0"	Foreground="Red" FontWeight="DemiBold"></TextBlock>
+			<TextBlock	Grid.Column="3" Text="Client Status:"	Margin="20,0,0,0" ></TextBlock>
+			<TextBlock	Grid.Column="4" Text="1"				x:Name="MAIN_ClientStatusPreImage_Text"		Margin="5,0,0,0"	Foreground="LawnGreen" FontWeight="DemiBold"></TextBlock>
+			<Image		Grid.Column="5"							x:Name="MAIN_ClientStatusImage_Image"		Margin="20,0,0,0"	MaxHeight="16" VerticalAlignment="Top" Source="/BillScannerWPF;component/Resources/MatchRating/Success.png"></Image>
+			<TextBlock	Grid.Column="6"	Text=""					x:Name="MAIN_ClientStatusPostImage_Text"	Margin="20,0,0,0"	Foreground="BlueViolet" FontWeight="DemiBold"></TextBlock>
+			<TextBlock	Grid.Column="7"	Text="Database Status:" Margin="20,0,0,0" ></TextBlock>
+			<TextBlock	Grid.Column="8" Text="Unloaded"			x:Name="MAIN_DatabaseStatus_Text"			Margin="5,0,0,0"	Foreground="BlueViolet" FontWeight="DemiBold"></TextBlock>
+		</Grid>
 		<!--Base-->
-		<Grid>
+		<Grid Margin="0,16,0,0">
 			<Grid.ColumnDefinitions>
 				<ColumnDefinition Width="3*"></ColumnDefinition>
 				<ColumnDefinition Width="3*"></ColumnDefinition>
 				<ColumnDefinition Width="3*"></ColumnDefinition>
 			</Grid.ColumnDefinitions>
 			<Image x:Name="MAIN_PhotoPreview_Image" Grid.Column="0" MouseLeftButtonDown="PreviewImgMouse" MouseRightButtonDown="MAIN_PhotoPreview_RightClick" Stretch="Fill" Margin="10" Source="/BillScannerWPF;component/Resources/Transparent.png"/>
-			
+
 			<Label Content="Matched Products" Grid.Column="1" />
-			<ScrollViewer Grid.Column="1" Margin="0,30,0,70">
+			<ScrollViewer Grid.Column="1"  Margin="0,30,0,70">
 				<StackPanel>
 					<StackPanel.Resources>
 						<Style TargetType="{x:Type local:UIItem}">
@@ -48,7 +61,7 @@
 					<ItemsControl x:Name="MAIN_UnknownProducts_Stack"></ItemsControl>
 				</StackPanel>
 			</ScrollViewer>
-			
+
 		</Grid>
 		<Grid HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="10,0,10,10" Height="50">
 			<Grid.ColumnDefinitions>

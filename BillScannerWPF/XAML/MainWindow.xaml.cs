@@ -1,26 +1,13 @@
-﻿using Igor.TCP;
-using Microsoft.Win32;
+﻿using Microsoft.Win32;
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Resources;
-using System.Windows.Shapes;
-using System.Drawing;
-using System.Threading;
 using System.Diagnostics;
-using System.Globalization;
-using System.Collections.ObjectModel;
+
+using Igor.TCP;
 using BillScannerWPF.Rules;
 
 namespace BillScannerWPF {
@@ -40,12 +27,12 @@ namespace BillScannerWPF {
 		public string currentImageSource { get; set; }
 		public UIItem currentItemBeingInspected { get; set; }
 
-		internal IRuleset mainShopParseRuleset { get; }
+		internal IRuleset selectedShopRuleset { get; }
 
-		public MainWindow() {
+		public MainWindow(Shop selectedShop) {
 			InitializeComponent();
 
-			if (SetupWindow.selectedShop == Shop.NotSelected) {
+			if (selectedShop == Shop.NotSelected) {
 #if !DEBUG
 				throw new WindowInitException(InitExpectionType.SHOP_NOT_SELECTED);
 #endif
@@ -53,24 +40,42 @@ namespace BillScannerWPF {
 
 				Shop selected = implemented[new Random().Next(0, implemented.Length)];
 				MessageBox.Show("No Shop selected, automatically selecting " + selected.ToString() + ".", "No Shop Selected!");
-				SetupWindow.selectedShop = selected;
+				selectedShop = selected;
 			}
 
-			access = DatabaseAccess.LoadDatabase(SetupWindow.selectedShop);
-			mainShopParseRuleset = BaseRuleset.GetRuleset(SetupWindow.selectedShop);
+			access = DatabaseAccess.LoadDatabase(selectedShop);
+			selectedShopRuleset = BaseRuleset.GetRuleset(selectedShop);
+
+			MAIN_DatabaseStatus_Text.Text = "Loaded | Intact";
+			MAIN_DatabaseStatus_Text.Foreground = System.Windows.Media.Brushes.BlueViolet;
 
 			server = new TCPServer();
 			try {
 				server.Start(PORT);
+				server.OnConnectionEstablished += Server_OnConnectionEstablished;
 			}
 			catch {
 				Debug.WriteLine("Starting in offline mode!");
 			}
-			imgProcessing = new ImageProcessor(server, access, mainShopParseRuleset, this);
+
+			MAIN_ServerStatus_Text.Text = "Running";
+			MAIN_ServerStatus_Text.Foreground = System.Windows.Media.Brushes.LawnGreen;
+
+			imgProcessing = new ImageProcessor(access, selectedShopRuleset, this);
 
 			MAIN_Analyze_Button.Click += imgProcessing.Analyze;
 			MAIN_OpenDatabaseFile_Button.Click += MAIN_OpenDatabaseFile_Click;
 			MAIN_Finalize_Button.Click += MAIN_FinalizePurchase_Click;
+
+			MAIN_ClientStatusPreImage_Text.Text = "Client not connected!";
+			MAIN_ClientStatusPreImage_Text.Foreground = System.Windows.Media.Brushes.Red;
+
+			MAIN_ClientStatusImage_Image.Visibility = Visibility.Collapsed;
+			MAIN_ClientStatusPostImage_Text.Visibility = Visibility.Collapsed;
+		}
+
+		private void Server_OnConnectionEstablished(object sender, ClientConnectedEventArgs e) {
+			server.GetConnection(e.clientInfo.clientID).dataIDs.DefineCustomDataTypeForID<byte[]>(1, imgProcessing.OnImageDataReceived);
 		}
 
 		internal void PreviewImgMouse(object sender, MouseButtonEventArgs e) {
