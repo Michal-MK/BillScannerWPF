@@ -54,12 +54,10 @@ namespace BillScannerWPF {
 				server.Start(PORT);
 				server.OnConnectionEstablished += Server_OnConnectionEstablished;
 			}
-			catch {
-				Debug.WriteLine("Starting in offline mode!");
-			}
+			catch { }
 
 			MAIN_ServerStatus_Text.Text = "Running";
-			MAIN_ServerStatus_Text.Foreground = System.Windows.Media.Brushes.LawnGreen;
+			MAIN_ServerStatus_Text.Foreground = Brushes.LawnGreen;
 
 			imgProcessing = new ImageProcessor(access, selectedShopRuleset, this);
 
@@ -68,7 +66,7 @@ namespace BillScannerWPF {
 			MAIN_Finalize_Button.Click += MAIN_FinalizePurchase_Click;
 
 			MAIN_ClientStatusPreImage_Text.Text = "Client not connected!";
-			MAIN_ClientStatusPreImage_Text.Foreground = System.Windows.Media.Brushes.Red;
+			MAIN_ClientStatusPreImage_Text.Foreground = Brushes.Red;
 
 			MAIN_ClientStatusImage_Image.Visibility = Visibility.Collapsed;
 			MAIN_ClientStatusPostImage_Text.Visibility = Visibility.Collapsed;
@@ -76,6 +74,11 @@ namespace BillScannerWPF {
 
 		private void Server_OnConnectionEstablished(object sender, ClientConnectedEventArgs e) {
 			server.GetConnection(e.clientInfo.clientID).dataIDs.DefineCustomDataTypeForID<byte[]>(1, imgProcessing.OnImageDataReceived);
+			Dispatcher.Invoke(() => {
+				MAIN_ClientStatusPreImage_Text.Text = e.myServer.getConnectedClients.Length.ToString();
+				MAIN_ClientStatusPreImage_Text.Foreground = Brushes.LawnGreen;
+				MAIN_ClientStatusImage_Image.Visibility = Visibility.Visible;
+			});
 		}
 
 		internal void PreviewImgMouse(object sender, MouseButtonEventArgs e) {

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Windows;
+using System.Windows.Controls;
 
 namespace BillScannerWPF {
 	/// <summary>
@@ -18,8 +19,11 @@ namespace BillScannerWPF {
 		}
 		//Setup
 		private void SETUP_SwitchScene_Click(object sender, RoutedEventArgs e) {
-			Application.Current.MainWindow = new MainWindow((Shop)SETUP_SelectShop_Dropdown.SelectedItem);
-
+			((Button)sender).IsEnabled = false;
+			MainWindow m = new MainWindow((Shop)SETUP_SelectShop_Dropdown.SelectedItem);
+			Application.Current.MainWindow.Close();
+			Application.Current.MainWindow = m;
+			Application.Current.MainWindow.Show();
 		}
 	}
 }
