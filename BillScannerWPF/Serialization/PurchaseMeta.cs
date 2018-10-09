@@ -9,7 +9,5 @@ namespace BillScannerWPF {
 			purchasedAt = purchaseDate;
 			scannedAt = DateTime.Now;
 		}
-
-
 	}
 }

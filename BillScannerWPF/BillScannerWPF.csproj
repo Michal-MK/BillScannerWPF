@@ -66,31 +66,40 @@
     </ApplicationDefinition>
     <Compile Include="Database.cs" />
     <Compile Include="DatabaseAccess.cs" />
+    <Compile Include="Enumerations\MatchRating.cs" />
+    <Compile Include="Enumerations\MeassurementUnit.cs" />
     <Compile Include="FolderInit.cs" />
     <Compile Include="ImageProcessor.cs" />
-    <Compile Include="Item.cs" />
     <Compile Include="Exceptions\ItemNotDefinedException.cs" />
+    <Compile Include="Serialization\Item.cs" />
+    <Compile Include="Serialization\PurchaseHistory.cs" />
+    <Compile Include="Serialization\PurchaseMeta.cs" />
+    <Compile Include="Serialization\Shopping.cs" />
+    <Compile Include="XAML\ItemList.xaml.cs">
+      <DependentUpon>ItemList.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="XAML\ItemList_Item.xaml.cs">
+      <DependentUpon>ItemList_Item.xaml</DependentUpon>
+    </Compile>
     <Compile Include="XAML\ManualResolveChoice.xaml.cs">
       <DependentUpon>ManualResolveChoice.xaml</DependentUpon>
     </Compile>
-    <Compile Include="PurchaseMeta.cs" />
     <Compile Include="XAML\ItemInfoOverlay.xaml.cs">
       <DependentUpon>ItemInfoOverlay.xaml</DependentUpon>
     </Compile>
-    <Compile Include="MatchRating.cs" />
-    <Compile Include="MeassurementUnit.cs" />
     <Compile Include="Exceptions\ParsingEntryNotFoundException.cs" />
     <Compile Include="ParsingResult.cs" />
-    <Compile Include="PurchaseHistory.cs" />
     <Compile Include="Rules\AlbertRuleset.cs" />
     <Compile Include="Rules\BaseRuleset.cs" />
     <Compile Include="Rules\IRuleset.cs" />
     <Compile Include="Rules\LidlRuleset.cs" />
     <Compile Include="Rules\McDonaldsRuleset.cs" />
-    <Compile Include="Shopping.cs" />
     <Compile Include="WPFHelper.cs" />
     <Compile Include="XAML\MatchedProduct.xaml.cs">
       <DependentUpon>MatchedProduct.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="XAML\NewItemDefinitionPanel.xaml.cs">
+      <DependentUpon>NewItemDefinitionPanel.xaml</DependentUpon>
     </Compile>
     <Compile Include="XAML\SetupWindow.xaml.cs">
       <DependentUpon>SetupWindow.xaml</DependentUpon>
@@ -98,6 +107,14 @@
     <Compile Include="StringParser.cs" />
     <Compile Include="WordSimilarity.cs" />
     <Compile Include="Exceptions\WindowInitExpection.cs" />
+    <Page Include="XAML\ItemList.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="XAML\ItemList_Item.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="XAML\ManualResolveChoice.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -119,6 +136,10 @@
       <SubType>Code</SubType>
     </Compile>
     <Page Include="XAML\MatchedProduct.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="XAML\NewItemDefinitionPanel.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

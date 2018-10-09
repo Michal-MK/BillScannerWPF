@@ -15,7 +15,7 @@
 				<TextBlock Grid.Column="1" Text="{Binding AProp}" />
 			</Grid>
 		</DataTemplate>
-
+		
 		<Style x:Key="ih_stackPanelMargins" TargetType="{x:Type local:UIItem}">
 			<Setter Property="Margin" Value="0,5"/>
 		</Style>

@@ -9,6 +9,8 @@ using System.Diagnostics;
 
 using Igor.TCP;
 using BillScannerWPF.Rules;
+using System.Globalization;
+using System.Threading.Tasks;
 
 namespace BillScannerWPF {
 	/// <summary>
@@ -70,6 +72,14 @@ namespace BillScannerWPF {
 
 			MAIN_ClientStatusImage_Image.Visibility = Visibility.Collapsed;
 			MAIN_ClientStatusPostImage_Text.Visibility = Visibility.Collapsed;
+
+			//Debug();
+		}
+
+		public async Task Debug() {
+			ItemList list = new ItemList(access.GetItems());
+			Item i = await list.SelectItemAsync();
+			System.Diagnostics.Debug.Print(i.identifier);
 		}
 
 		private void Server_OnConnectionEstablished(object sender, ClientConnectedEventArgs e) {

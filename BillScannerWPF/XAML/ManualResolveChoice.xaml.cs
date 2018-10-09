@@ -28,6 +28,10 @@ namespace BillScannerWPF {
 			NotAnItem,
 			ManuallyEnterDate,
 			UseCurrentTime,
+			UseLatestValue,
+			ManuallyEnterPrice,
+			DefineNewItem,
+			FindExistingItemFromList,
 		}
 
 		private readonly Dictionary<Choices, string> texts = new Dictionary<Choices, string>() {
@@ -36,7 +40,10 @@ namespace BillScannerWPF {
 			{ Choices.NotAnItem, "[{0}] - Treat this text as not being an item (Nothing will be preformed)" },
 			{ Choices.ManuallyEnterDate, "[{0}] - Enter date here manually:" },
 			{ Choices.UseCurrentTime, "[{0}] - Use 'today' as the purchase date." },
-
+			{ Choices.ManuallyEnterPrice, "[{0}] - Enter its price here manually:" },
+			{ Choices.UseLatestValue, "[{0}] - Use last known value for this item from database."},
+			{ Choices.FindExistingItemFromList, "[{0}] - Serch database and select an item this string is supposed to match."},
+			{ Choices.DefineNewItem, "[{0}] - Define new item from what we got..."}
 		};
 
 		private readonly Dictionary<string, (Choices choice, string key)> buttons = new Dictionary<string, (Choices choice, string key)>() {
@@ -45,6 +52,10 @@ namespace BillScannerWPF {
 			{ Choices.NotAnItem.ToString(), (Choices.NotAnItem, Choices.NotAnItem.ToString()) },
 			{ Choices.ManuallyEnterDate.ToString(), (Choices.ManuallyEnterDate, Choices.ManuallyEnterDate.ToString()) },
 			{ Choices.UseCurrentTime.ToString(), (Choices.UseCurrentTime, Choices.UseCurrentTime.ToString()) },
+			{ Choices.UseLatestValue.ToString(), (Choices.UseLatestValue, Choices.UseLatestValue.ToString()) },
+			{ Choices.ManuallyEnterPrice.ToString(), (Choices.ManuallyEnterPrice, Choices.ManuallyEnterPrice.ToString()) },
+			{ Choices.DefineNewItem.ToString(), (Choices.DefineNewItem, Choices.DefineNewItem.ToString()) },
+			{ Choices.FindExistingItemFromList.ToString(), (Choices.FindExistingItemFromList, Choices.FindExistingItemFromList.ToString()) },
 		};
 
 		internal ManualResolveChoice(string error, Choices choice) : this(error, new Choices[] { choice }) { }
@@ -59,9 +70,14 @@ namespace BillScannerWPF {
 			choices = ModifyChoices(choices);
 			int choiceNumbering = 0;
 			for (int i = 0; i < 4; i++) {
-				if(i == 3 && choices[i] == Choices.ManuallyEnterDate) {
+				if (i == 3) {
 					MANUAL_RESOLUTION_Solution4_Text.Text = string.Format(texts[choices[3]], choiceNumbering);
-					MANUAL_RESOLUTION_Solution4_Box.Text = DateTime.Now.ToString("dd:MM:yyyy hh:mm:ss");
+					if (choices[i] == Choices.ManuallyEnterDate) {
+						MANUAL_RESOLUTION_Solution4_Box.Text = DateTime.Now.ToString("dd:MM:yyyy hh:mm:ss");
+					}
+					if(choices[i] == Choices.ManuallyEnterPrice) {
+						MANUAL_RESOLUTION_Solution4_Box.Text = "29.90";
+					}
 					solutionButtons[3].Click += ManualResolveChoice_Click;
 					solutionButtons[3].Name = choices[3].ToString();
 					solutionButtons[3].Content = string.Format("Solution {0}", choiceNumbering);
@@ -79,8 +95,6 @@ namespace BillScannerWPF {
 					choiceNumbering++;
 				}
 			}
-			//if(choices[3] == Choices.ManuallyEnterDate) {
-			//}
 		}
 
 		private Choices[] ModifyChoices(Choices[] choices) {

@@ -1,0 +1,72 @@
+﻿<UserControl x:Class="BillScannerWPF.NewItemDefinitionPanel"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:BillScannerWPF"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <Grid>
+		<Grid.Background>
+			<SolidColorBrush Color="Black"  Opacity=".4"/>
+		</Grid.Background>
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition></ColumnDefinition>
+			<ColumnDefinition Width="10*"></ColumnDefinition>
+			<ColumnDefinition></ColumnDefinition>
+		</Grid.ColumnDefinitions>
+		<Grid.RowDefinitions>
+			<RowDefinition></RowDefinition>
+			<RowDefinition Height="10*"></RowDefinition>
+			<RowDefinition></RowDefinition>
+		</Grid.RowDefinitions>
+		<Grid Grid.Row="1" Grid.Column="1" Background="WhiteSmoke">
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="20"></ColumnDefinition>
+				<ColumnDefinition Width="*"></ColumnDefinition>
+				<ColumnDefinition Width="20"></ColumnDefinition>
+			</Grid.ColumnDefinitions>
+			<Grid.RowDefinitions>
+				<RowDefinition Height="10"></RowDefinition>
+				<RowDefinition Height="*"></RowDefinition>
+				<RowDefinition Height="10"></RowDefinition>
+			</Grid.RowDefinitions>
+			<Grid Grid.Column="1" Grid.Row="1">
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="3*"></ColumnDefinition>
+					<ColumnDefinition Width="2*"></ColumnDefinition>
+				</Grid.ColumnDefinitions>
+				<Grid.RowDefinitions>
+					<RowDefinition></RowDefinition>
+					<RowDefinition></RowDefinition>
+					<RowDefinition></RowDefinition>
+					<RowDefinition></RowDefinition>
+					<RowDefinition></RowDefinition>
+					<RowDefinition Height="2*"></RowDefinition>
+				</Grid.RowDefinitions>
+
+				<TextBlock Grid.Row="0" Text="Name to be displayed:" VerticalAlignment="Center"></TextBlock>
+				<TextBlock Grid.Row="1" Text="Value of the item:" VerticalAlignment="Center"></TextBlock>
+				<TextBlock Grid.Row="2" Text="Unit of meassurement:" VerticalAlignment="Center"></TextBlock>
+				<TextBlock Grid.Row="3"></TextBlock>
+				<TextBlock Grid.Row="4"></TextBlock>
+
+				<TextBox   Grid.Row="0" Grid.Column="1" x:Name="ITEMREG_ItemName_Box" ></TextBox>
+				<TextBox   Grid.Row="1" Grid.Column="1" x:Name="ITEMREG_ItemValue_Box"></TextBox>
+				<ComboBox  Grid.Row="2" Grid.Column="1" x:Name="ITEMREG_UnitOfMeassure_DropDown"></ComboBox>
+
+				<TextBlock Grid.Row="5" x:Name="ITEMREG_ErrorInfo_Text" Text="Think before you press that button! Please." Foreground="Red" VerticalAlignment="Bottom"></TextBlock>
+				<Grid Grid.Column="1" Grid.Row="5" Grid.RowSpan="2" VerticalAlignment="Bottom" HorizontalAlignment="Right">
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition Width="20"></ColumnDefinition>
+						<ColumnDefinition Width="auto"></ColumnDefinition>
+						<ColumnDefinition Width="auto"></ColumnDefinition>
+						<ColumnDefinition Width="auto"></ColumnDefinition>
+						<ColumnDefinition Width="auto"></ColumnDefinition>
+					</Grid.ColumnDefinitions>
+					<Button x:Name="ITEMREG_RegisterItem_Button" Grid.Column="1" Content="Register" Margin="0,10,10,10" Padding="20,5"></Button>
+				</Grid>
+			</Grid>
+		</Grid>
+	</Grid>
+</UserControl>
