@@ -32,7 +32,6 @@ namespace BillScannerWPF {
 			observedItems = new ObservableCollection<ItemList_Item>();
 			foreach (Item item in items) {
 				ItemList_Item i = new ItemList_Item(this, item);
-				i.HorizontalAlignment = HorizontalAlignment.Stretch;
 				observedItems.Add(i);
 			}
 

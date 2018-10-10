@@ -77,7 +77,7 @@ namespace BillScannerWPF {
 							ocrLowestIndex = j;
 						}
 						if (ocrLowestDist == 0) {
-							decimal currentPrice = await TryGetCurrentPrice(split, i, ocrLowestIndex);
+							decimal currentPrice = await TryGetCurrentPriceAsync(split, i, ocrLowestIndex);
 							UItemCreationInfo lowest = new UItemCreationInfo(items[ocrLowestIndex], true, rules.GetQuantity(split, i), ocrLowestIndex, currentPrice, (MatchRating)ocrLowestDist);
 							lowest.item.tirggerForMatch = split[i];
 							matchedItems.Add(lowest);
@@ -93,7 +93,7 @@ namespace BillScannerWPF {
 					continue;
 				}
 				if (ocrLowestDist <= 3) {
-					decimal currentPrice = await TryGetCurrentPrice(split, i, ocrLowestIndex);
+					decimal currentPrice = await TryGetCurrentPriceAsync(split, i, ocrLowestIndex);
 					UItemCreationInfo something = new UItemCreationInfo(items[ocrLowestIndex], true, rules.GetQuantity(split, i), ocrLowestIndex, currentPrice, (MatchRating)ocrLowestDist);
 					something.item.tirggerForMatch = split[i];
 					matchedItems.Add(something);
@@ -105,12 +105,10 @@ namespace BillScannerWPF {
 						ManualResolveChoice resolveChoice = new ManualResolveChoice(
 							string.Format("Found Item '{0}' with {1} char differences, closest Item: '{2}'", split[i], ocrLowestIndex, items[ocrLowestIndex].userFriendlyName),
 							Choices.MatchAnyway, Choices.MatchWithoutAddingAmbiguities, Choices.NotAnItem);
-						WPFHelper.GetMainWindow().MAIN_Grid.Children.Add(resolveChoice);
 						Choices choice = await resolveChoice.SelectChoice();
-						WPFHelper.GetMainWindow().MAIN_Grid.Children.Remove(resolveChoice);
 
 						if (choice != Choices.NotAnItem) {
-							decimal currentPrice = await TryGetCurrentPrice(split, i, ocrLowestIndex);
+							decimal currentPrice = await TryGetCurrentPriceAsync(split, i, ocrLowestIndex);
 							UItemCreationInfo creationInfo = new UItemCreationInfo(items[ocrLowestIndex], true, rules.GetQuantity(split, i), ocrLowestIndex, currentPrice, MatchRating.Fail);
 							creationInfo.item.tirggerForMatch = split[i];
 							if (choice == Choices.MatchAnyway) {
@@ -123,7 +121,7 @@ namespace BillScannerWPF {
 					else {
 						try {
 							int indexCopy = i;
-							decimal currentPrice = await TryGetCurrentPrice(split, indexCopy, -1);
+							decimal currentPrice = await TryGetCurrentPriceAsync(split, indexCopy, -1);
 							Item newItem = new Item(split[i], currentPrice);
 							newItem.isSingleLine = indexCopy == i;
 							UItemCreationInfo unknown = new UItemCreationInfo(newItem, false, rules.GetQuantity(split, i), i, currentPrice, MatchRating.Fail);
@@ -134,16 +132,14 @@ namespace BillScannerWPF {
 								i = indexCopy;
 							}
 						}
-						catch (NotImplementedException e) {
+						catch (NotImplementedException) {
 							ManualResolveChoice choice = new ManualResolveChoice("This string is someting else.. what is it??",
 															Choices.FindExistingItemFromList, Choices.DefineNewItem, Choices.NotAnItem);
-							WPFHelper.GetMainWindow().MAIN_Grid.Children.Add(choice);
 							Choices c = await choice.SelectChoice();
-							WPFHelper.GetMainWindow().MAIN_Grid.Children.Remove(choice);
 							if (c == Choices.DefineNewItem) {
 								NewItemDefinitionPanel definition = new NewItemDefinitionPanel();
 								(string itemName, decimal itemPrice, MeassurementUnit itemUnitOfMeassure) = await definition.RegisterItemAsync();
-								UItemCreationInfo nowKnown = new UItemCreationInfo(new Item(itemName,itemPrice), false, rules.GetQuantity(split, i), i, itemPrice, MatchRating.Success);
+								UItemCreationInfo nowKnown = new UItemCreationInfo(new Item(itemName, itemPrice), false, rules.GetQuantity(split, i), i, itemPrice, MatchRating.Success);
 								nowKnown.item.tirggerForMatch = split[i];
 								nowKnown.item.ocrNames.Add(split[i]);
 								nowKnown.item.SetUnitOfMeassure(itemUnitOfMeassure);
@@ -199,18 +195,18 @@ namespace BillScannerWPF {
 			return false;
 		}
 
-		private async Task<decimal> TryGetCurrentPrice(string[] split, int i, int fallbackItemIndex) {
+		private async Task<decimal> TryGetCurrentPriceAsync(string[] split, int splitIndex, int fallbackItemIndex) {
 			try {
-				return rules.PriceOfOne(split, ref i);
+				return rules.PriceOfOne(split, ref splitIndex);
 			}
 			catch (NotImplementedException e) {
 				ManualResolveChoice res;
 				if (fallbackItemIndex == -1) {
-					res = new ManualResolveChoice("Unable to get current item's price [" + split[i] + "]",
+					res = new ManualResolveChoice("Unable to get current item's price [" + split[splitIndex] + "]",
 						new Choices[] { Choices.NOOP, Choices.NOOP, Choices.NOOP, Choices.ManuallyEnterPrice });
 				}
 				else {
-					res = new ManualResolveChoice("Unable to get current item's price [" + split[i] + "]",
+					res = new ManualResolveChoice("Unable to get current item's price [" + split[splitIndex] + "]",
 						new Choices[] { Choices.NOOP, Choices.NOOP, Choices.UseLatestValue, Choices.ManuallyEnterPrice });
 				}
 				WPFHelper.GetMainWindow().MAIN_Grid.Children.Add(res);
@@ -224,7 +220,7 @@ namespace BillScannerWPF {
 						return result;
 					}
 					else {
-						return await TryGetCurrentPrice(split, i, fallbackItemIndex);
+						return await TryGetCurrentPriceAsync(split, splitIndex, fallbackItemIndex);
 					}
 				}
 				else {

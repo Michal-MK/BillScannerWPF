@@ -114,11 +114,13 @@ namespace BillScannerWPF {
 		}
 
 		internal async Task<Choices> SelectChoice() {
-			return await Task.Run(() => {
+			WPFHelper.GetMainWindow().MAIN_Grid.Children.Add(this);
+			await Task.Run(() => {
 				evnt.Wait();
 				evnt.Reset();
-				return selected;
 			});
+			WPFHelper.GetMainWindow().MAIN_Grid.Children.Remove(this);
+			return selected;
 		}
 	}
 }

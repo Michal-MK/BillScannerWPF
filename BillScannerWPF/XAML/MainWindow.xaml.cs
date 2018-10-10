@@ -11,6 +11,7 @@ using Igor.TCP;
 using BillScannerWPF.Rules;
 using System.Globalization;
 using System.Threading.Tasks;
+using System.Threading;
 
 namespace BillScannerWPF {
 	/// <summary>
@@ -72,8 +73,12 @@ namespace BillScannerWPF {
 
 			MAIN_ClientStatusImage_Image.Visibility = Visibility.Collapsed;
 			MAIN_ClientStatusPostImage_Text.Visibility = Visibility.Collapsed;
+			AA();
+		}
 
-			//Debug();
+		private async void AA() {
+			await Task.Run(() => { Thread.Sleep(1000); });
+			await Debug();
 		}
 
 		public async Task Debug() {
