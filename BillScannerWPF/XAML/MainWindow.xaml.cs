@@ -32,6 +32,7 @@ namespace BillScannerWPF {
 
 		internal IRuleset selectedShopRuleset { get; }
 
+		public MainWindow() : this(Shop.Albert) { }
 		public MainWindow(Shop selectedShop) {
 			InitializeComponent();
 
@@ -56,6 +57,7 @@ namespace BillScannerWPF {
 			try {
 				server.Start(PORT);
 				server.OnConnectionEstablished += Server_OnConnectionEstablished;
+				server.OnClientDisconnected += Server_OnClientDisconnected;
 			}
 			catch { }
 
@@ -73,19 +75,9 @@ namespace BillScannerWPF {
 
 			MAIN_ClientStatusImage_Image.Visibility = Visibility.Collapsed;
 			MAIN_ClientStatusPostImage_Text.Visibility = Visibility.Collapsed;
-			AA();
+			//DebugDelay();
 		}
 
-		private async void AA() {
-			await Task.Run(() => { Thread.Sleep(1000); });
-			await Debug();
-		}
-
-		public async Task Debug() {
-			ItemList list = new ItemList(access.GetItems());
-			Item i = await list.SelectItemAsync();
-			System.Diagnostics.Debug.Print(i.identifier);
-		}
 
 		private void Server_OnConnectionEstablished(object sender, ClientConnectedEventArgs e) {
 			server.GetConnection(e.clientInfo.clientID).dataIDs.DefineCustomDataTypeForID<byte[]>(1, imgProcessing.OnImageDataReceived);
@@ -94,6 +86,15 @@ namespace BillScannerWPF {
 				MAIN_ClientStatusPreImage_Text.Foreground = Brushes.LawnGreen;
 				MAIN_ClientStatusImage_Image.Visibility = Visibility.Visible;
 			});
+		}
+
+		private void Server_OnClientDisconnected(object sender, ClientDisconnectedEventArgs e) {
+			Dispatcher.Invoke(() => {
+				MAIN_ClientStatusPreImage_Text.Text = "Client disconnected successfuly!";
+				MAIN_ClientStatusPreImage_Text.Foreground = Brushes.Blue;
+				MAIN_ClientStatusImage_Image.Visibility = Visibility.Collapsed;
+			});
+
 		}
 
 		internal void PreviewImgMouse(object sender, MouseButtonEventArgs e) {

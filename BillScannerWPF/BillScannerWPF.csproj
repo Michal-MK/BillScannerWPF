@@ -37,8 +37,9 @@
     <Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.11.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
-    <Reference Include="SimpleTCP">
-      <HintPath>..\packages\SimpleTCP\SimpleTCP.dll</HintPath>
+    <Reference Include="SimpleTCP, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\BillScanner_Android\Bill Scanner\Libraries\SimpleTCP.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -81,6 +82,7 @@
     <Compile Include="XAML\ItemList_Item.xaml.cs">
       <DependentUpon>ItemList_Item.xaml</DependentUpon>
     </Compile>
+    <Compile Include="XAML\MainWindowTesting.cs" />
     <Compile Include="XAML\ManualResolveChoice.xaml.cs">
       <DependentUpon>ManualResolveChoice.xaml</DependentUpon>
     </Compile>

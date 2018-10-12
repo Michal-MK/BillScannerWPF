@@ -77,6 +77,6 @@ namespace BillScannerWPF.Rules {
 				return m.Value.Replace(" ", "");
 			}
 			throw new NotImplementedException();
-		}
+		}	
 	}
 }
