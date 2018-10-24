@@ -17,12 +17,13 @@ namespace BillScannerWPF.Rules {
 
 		public int itemLineSpan { get; } = 2;
 
+
 		public long GetQuantity(string[] ocrText, int index) {
 			if (index > ocrText.Length) { throw new IndexOutOfRangeException(nameof(index)); }
 			string quantity = ocrText[index + 1];
 			string[] split = RemoveLetterCharacters(quantity, costPlusQuantitySeparator).Split(costPlusQuantitySeparator);
 			if (split.Length != 2) {
-				throw new NotImplementedException("Unable to split quantity and cost");
+				throw new QuantityParsingException("Unable to get quantity from string " + ocrText[index + 1], ocrText[index + 2], index + 1);
 			}
 
 			if (long.TryParse(split[0], out long result)) {
@@ -34,7 +35,7 @@ namespace BillScannerWPF.Rules {
 					return resultReplaced;
 				}
 			}
-			throw new NotImplementedException("Unable to get quantity from string " + ocrText[index + 1] + ", subsequently modified " + quantity);
+			throw new QuantityParsingException("Unable to get quantity from string " + ocrText[index + 1] + ", subsequently modified " + quantity, ocrText[index + 1], index + 1);
 		}
 
 		public string Name(string line) {
@@ -51,7 +52,7 @@ namespace BillScannerWPF.Rules {
 					return name;
 				}
 				else {
-					throw new NotImplementedException("Unable to get name from line " + line);
+					throw new NameParsingException("Unable to get name from line " + line, line);
 				}
 			}
 		}
@@ -61,7 +62,7 @@ namespace BillScannerWPF.Rules {
 			string modified = RemoveLetterCharacters(quantity, costPlusQuantitySeparator).ToLower().Trim();
 			string[] split = modified.Split(costPlusQuantitySeparator);
 			if (split.Length != 2) {
-				throw new Exception("Unable to split quantity and cost");
+				throw new PriceParsingException(ocrText[index + 1], index + 1, false);
 			}
 			split[1] = split[1].Replace(',', '.');
 
@@ -74,7 +75,7 @@ namespace BillScannerWPF.Rules {
 					return resultReplaced;
 				}
 			}
-			throw new NotImplementedException("Unable to get PriceOfOne from string " + ocrText[index + 1] + ", subsequently modified " + modified);
+			throw new PriceParsingException(ocrText[index + 1], index + 1, false);
 		}
 	}
 }

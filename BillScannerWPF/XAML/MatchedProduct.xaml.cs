@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
 using System.Windows.Media.Imaging;
 
 namespace BillScannerWPF {
@@ -11,13 +10,17 @@ namespace BillScannerWPF {
 	public partial class UIItem : UserControl {
 
 		internal Item asociatedItem { get; }
-		internal int index { get; }
 		internal long quantityPurchased { get; }
 		internal MatchRating quality { get; private set; }
 
-		internal UIItem(Item item, long quantityPurchased, int index, MatchRating quality) {
+		internal UIItem(Item item, long quantityPurchased, MatchRating quality) {
 			InitializeComponent();
-			UITEM_OriginalName_Text.Text = item.tirggerForMatch + " | Price: " + item.currentPrice.ToString();
+			if (quality == MatchRating.Success) {
+				UITEM_OriginalName_Text.Text = item.userFriendlyName + " | Price: " + string.Format("{0:f2}",item.currentPrice) + "Kč";
+			}
+			else {
+				UITEM_OriginalName_Text.Text = item.tirggerForMatch + " | Price: " + string.Format("{0:f2}", item.currentPrice) + "Kč";
+			}
 			asociatedItem = item;
 			this.quality = quality;
 			this.quantityPurchased = quantityPurchased;

@@ -69,9 +69,9 @@ namespace BillScannerWPF {
 			bSender.IsEnabled = true;
 		}
 
-		private void ConstructUI(ObservableCollection<UItemCreationInfo> from, ObservableCollection<UIItem> destination) {
-			foreach (UItemCreationInfo info in from) {
-				UIItem item = new UIItem(info.item, info.quantity, info.index, info.quality);
+		private void ConstructUI(ObservableCollection<UIItemCreationInfo> from, ObservableCollection<UIItem> destination) {
+			foreach (UIItemCreationInfo info in from) {
+				UIItem item = new UIItem(info.item, info.quantity, info.quality);
 				item.asociatedItem.isRegistered = info.isRegistered;
 				destination.Add(item);
 			}

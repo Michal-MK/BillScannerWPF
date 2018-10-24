@@ -44,7 +44,6 @@ namespace BillScannerWPF {
 			Binding b = new Binding("Text");
 			b.Source = INFO_CurrentValue_Text;
 			INFO_PricesBefore_Text.SetBinding(TextBlock.TextProperty, b);
-		 
 		}
 
 		private void INFO_RegisterItem_Click(object sender, RoutedEventArgs e) {

@@ -1,13 +1,10 @@
 ﻿using BillScannerWPF.Rules;
-using Igor.TCP;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Globalization;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
+
 using static BillScannerWPF.ManualResolveChoice;
 
 namespace BillScannerWPF {
@@ -22,8 +19,8 @@ namespace BillScannerWPF {
 		}
 
 		public async Task<ParsingResult> ParseAsync(string[] split) {
-			ObservableCollection<UItemCreationInfo> matchedItems = new ObservableCollection<UItemCreationInfo>();
-			ObservableCollection<UItemCreationInfo> unmatchedItems = new ObservableCollection<UItemCreationInfo>();
+			ObservableCollection<UIItemCreationInfo> matchedItems = new ObservableCollection<UIItemCreationInfo>();
+			ObservableCollection<UIItemCreationInfo> unmatchedItems = new ObservableCollection<UIItemCreationInfo>();
 
 			Item[] items = MainWindow.access.GetItems();
 			bool initiated = false;
@@ -36,9 +33,11 @@ namespace BillScannerWPF {
 
 			for (int i = 0; i < split.Length; i += rulesHandleItemLineSpan ? 1 : rules.itemLineSpan) {
 				bool matched = false;
+
 				if (string.IsNullOrWhiteSpace(split[i])) {
 					continue;
 				}
+
 				if (!initiated) {
 					initiated = IsInitiatingString(split[i].ToLower().Trim(), ref i);
 					if (initiated && rules.skipInitiatingString) {
@@ -48,6 +47,7 @@ namespace BillScannerWPF {
 				else {
 					finalized = IsFinalizingString(split[i].ToLower().Trim());
 				}
+
 				if (!purchaseTimeFound) {
 					if (rules.dateTimeFormat.IsMatch(split[i])) {
 						if (DateTime.TryParseExact(split[i], "hh:mm:ss", CultureInfo.InvariantCulture, DateTimeStyles.NoCurrentDateDefault, out purchaseTime)) {
@@ -60,10 +60,7 @@ namespace BillScannerWPF {
 						}
 					}
 				}
-				if (!initiated) {
-					continue;
-				}
-				if (finalized) {
+				if (!initiated || finalized) {
 					continue;
 				}
 
@@ -77,8 +74,10 @@ namespace BillScannerWPF {
 							ocrLowestIndex = j;
 						}
 						if (ocrLowestDist == 0) {
-							decimal currentPrice = await TryGetCurrentPriceAsync(split, i, ocrLowestIndex);
-							UItemCreationInfo lowest = new UItemCreationInfo(items[ocrLowestIndex], true, rules.GetQuantity(split, i), ocrLowestIndex, currentPrice, (MatchRating)ocrLowestDist);
+							decimal currentPrice = await GetCurrentPriceAsync(split, i, ocrLowestIndex);
+							long quantity = await GetQuantityAsync(split, i, items[ocrLowestIndex].userFriendlyName);
+
+							UIItemCreationInfo lowest = new UIItemCreationInfo(items[ocrLowestIndex], true, quantity, ocrLowestIndex, currentPrice, (MatchRating)ocrLowestDist);
 							lowest.item.tirggerForMatch = split[i];
 							matchedItems.Add(lowest);
 							matched = true;
@@ -93,8 +92,10 @@ namespace BillScannerWPF {
 					continue;
 				}
 				if (ocrLowestDist <= 3) {
-					decimal currentPrice = await TryGetCurrentPriceAsync(split, i, ocrLowestIndex);
-					UItemCreationInfo something = new UItemCreationInfo(items[ocrLowestIndex], true, rules.GetQuantity(split, i), ocrLowestIndex, currentPrice, (MatchRating)ocrLowestDist);
+					decimal currentPrice = await GetCurrentPriceAsync(split, i, ocrLowestIndex);
+					long quantity = await GetQuantityAsync(split, i, items[ocrLowestIndex].userFriendlyName);
+
+					UIItemCreationInfo something = new UIItemCreationInfo(items[ocrLowestIndex], true, quantity, ocrLowestIndex, currentPrice, (MatchRating)ocrLowestDist);
 					something.item.tirggerForMatch = split[i];
 					matchedItems.Add(something);
 					foundSomeKindOfMatch = true;
@@ -105,11 +106,12 @@ namespace BillScannerWPF {
 						ManualResolveChoice resolveChoice = new ManualResolveChoice(
 							string.Format("Found Item '{0}' with {1} char differences, closest Item: '{2}'", split[i], ocrLowestIndex, items[ocrLowestIndex].userFriendlyName),
 							Choices.MatchAnyway, Choices.MatchWithoutAddingAmbiguities, Choices.NotAnItem);
-						Choices choice = await resolveChoice.SelectChoice();
+						Choices choice = await resolveChoice.SelectChoiceAsync();
 
 						if (choice != Choices.NotAnItem) {
-							decimal currentPrice = await TryGetCurrentPriceAsync(split, i, ocrLowestIndex);
-							UItemCreationInfo creationInfo = new UItemCreationInfo(items[ocrLowestIndex], true, rules.GetQuantity(split, i), ocrLowestIndex, currentPrice, MatchRating.Fail);
+							decimal currentPrice = await GetCurrentPriceAsync(split, i, ocrLowestIndex);
+							long quantity = await GetQuantityAsync(split, i, items[ocrLowestIndex].userFriendlyName);
+							UIItemCreationInfo creationInfo = new UIItemCreationInfo(items[ocrLowestIndex], true, quantity, ocrLowestIndex, currentPrice, MatchRating.Fail);
 							creationInfo.item.tirggerForMatch = split[i];
 							if (choice == Choices.MatchAnyway) {
 								creationInfo.item.ocrNames.Add(split[i]);
@@ -119,40 +121,33 @@ namespace BillScannerWPF {
 						}
 					}
 					else {
-						try {
-							int indexCopy = i;
-							decimal currentPrice = await TryGetCurrentPriceAsync(split, indexCopy, -1);
-							Item newItem = new Item(split[i], currentPrice);
-							newItem.isSingleLine = indexCopy == i;
-							UItemCreationInfo unknown = new UItemCreationInfo(newItem, false, rules.GetQuantity(split, i), i, currentPrice, MatchRating.Fail);
-							unknown.item.tirggerForMatch = split[i];
-							unknown.item.ocrNames.Add(split[i]);
-							unmatchedItems.Add(unknown);
-							if (indexCopy != i) {
-								i = indexCopy;
-							}
+						ManualResolveChoice choice = new ManualResolveChoice("This string is something else.. what is it??\n'" + split[i] + "'",
+														Choices.FindExistingItemFromList, Choices.DefineNewItem, Choices.NotAnItem);
+						Choices c = await choice.SelectChoiceAsync();
+						if (c == Choices.DefineNewItem) {
+							NewItemDefinitionPanel definition = new NewItemDefinitionPanel();
+							(string itemName, decimal itemPrice, MeassurementUnit itemUnitOfMeassure) = await definition.RegisterItemAsync();
+							long quantity = await GetQuantityAsync(split, i, itemName);
+							Item newItem = new Item(itemName, itemPrice);
+							UIItemCreationInfo nowKnown = new UIItemCreationInfo(newItem, false, quantity, i, itemPrice, MatchRating.Success);
+							MainWindow.access.WriteItemDefinitionToDatabase(newItem);
+							nowKnown.item.tirggerForMatch = split[i];
+							nowKnown.item.ocrNames.Add(split[i]);
+							nowKnown.item.SetUnitOfMeassure(itemUnitOfMeassure);
+							matchedItems.Add(nowKnown);
 						}
-						catch (NotImplementedException) {
-							ManualResolveChoice choice = new ManualResolveChoice("This string is someting else.. what is it??",
-															Choices.FindExistingItemFromList, Choices.DefineNewItem, Choices.NotAnItem);
-							Choices c = await choice.SelectChoice();
-							if (c == Choices.DefineNewItem) {
-								NewItemDefinitionPanel definition = new NewItemDefinitionPanel();
-								(string itemName, decimal itemPrice, MeassurementUnit itemUnitOfMeassure) = await definition.RegisterItemAsync();
-								UItemCreationInfo nowKnown = new UItemCreationInfo(new Item(itemName, itemPrice), false, rules.GetQuantity(split, i), i, itemPrice, MatchRating.Success);
-								nowKnown.item.tirggerForMatch = split[i];
-								nowKnown.item.ocrNames.Add(split[i]);
-								nowKnown.item.SetUnitOfMeassure(itemUnitOfMeassure);
-								matchedItems.Add(nowKnown);
+						else if (c == Choices.FindExistingItemFromList) {
+							ItemList list = new ItemList(MainWindow.access.GetItems());
+							Item manuallyMatchedItem = await list.SelectItemAsync();
+							if (manuallyMatchedItem == null) {
+								i -= rulesHandleItemLineSpan ? 1 : rules.itemLineSpan;
+								continue;
 							}
-							else if (c == Choices.FindExistingItemFromList) {
-								ItemList list = new ItemList(MainWindow.access.GetItems());
-								Item manuallyMatchedItem = await list.SelectItemAsync();
-								UItemCreationInfo nowKnown = new UItemCreationInfo(manuallyMatchedItem, false, rules.GetQuantity(split, i), i, manuallyMatchedItem.currentPrice, MatchRating.Success);
-								nowKnown.item.tirggerForMatch = split[i];
-								nowKnown.item.ocrNames.Add(split[i]);
-								matchedItems.Add(nowKnown);
-							}
+							long quantity = await GetQuantityAsync(split, i, manuallyMatchedItem.userFriendlyName);
+							UIItemCreationInfo nowKnown = new UIItemCreationInfo(manuallyMatchedItem, false, quantity, i, manuallyMatchedItem.currentPrice, MatchRating.Success);
+							nowKnown.item.tirggerForMatch = split[i];
+							nowKnown.item.ocrNames.Add(split[i]);
+							matchedItems.Add(nowKnown);
 						}
 					}
 				}
@@ -195,11 +190,11 @@ namespace BillScannerWPF {
 			return false;
 		}
 
-		private async Task<decimal> TryGetCurrentPriceAsync(string[] split, int splitIndex, int fallbackItemIndex) {
+		private async Task<decimal> GetCurrentPriceAsync(string[] split, int splitIndex, int fallbackItemIndex) {
 			try {
 				return rules.PriceOfOne(split, ref splitIndex);
 			}
-			catch (NotImplementedException e) {
+			catch (PriceParsingException) {
 				ManualResolveChoice res;
 				if (fallbackItemIndex == -1) {
 					res = new ManualResolveChoice("Unable to get current item's price [" + split[splitIndex] + "]",
@@ -209,9 +204,7 @@ namespace BillScannerWPF {
 					res = new ManualResolveChoice("Unable to get current item's price [" + split[splitIndex] + "]",
 						new Choices[] { Choices.NOOP, Choices.NOOP, Choices.UseLatestValue, Choices.ManuallyEnterPrice });
 				}
-				WPFHelper.GetMainWindow().MAIN_Grid.Children.Add(res);
-				Choices choice = await res.SelectChoice();
-				WPFHelper.GetMainWindow().MAIN_Grid.Children.Remove(res);
+				Choices choice = await res.SelectChoiceAsync();
 				if (choice == Choices.UseLatestValue) {
 					return MainWindow.access.GetItems()[fallbackItemIndex].currentPrice;
 				}
@@ -220,7 +213,7 @@ namespace BillScannerWPF {
 						return result;
 					}
 					else {
-						return await TryGetCurrentPriceAsync(split, splitIndex, fallbackItemIndex);
+						return await GetCurrentPriceAsync(split, splitIndex, fallbackItemIndex);
 					}
 				}
 				else {
@@ -232,9 +225,7 @@ namespace BillScannerWPF {
 		private async Task<(bool, DateTime)> GetPurchaseDateAsync() {
 			ManualResolveChoice resolveChoice = new ManualResolveChoice("Parser could not find purchase date/time in the bill.",
 								new Choices[] { Choices.NOOP, Choices.NOOP, Choices.UseCurrentTime, Choices.ManuallyEnterDate });
-			WPFHelper.GetMainWindow().MAIN_Grid.Children.Add(resolveChoice);
-			Choices choice = await resolveChoice.SelectChoice();
-			WPFHelper.GetMainWindow().MAIN_Grid.Children.Remove(resolveChoice);
+			Choices choice = await resolveChoice.SelectChoiceAsync();
 			if (choice == Choices.UseCurrentTime) {
 				return (true, DateTime.Now);
 			}
@@ -253,23 +244,20 @@ namespace BillScannerWPF {
 				}
 			}
 		}
-	}
 
-	public struct UItemCreationInfo {
-		internal UItemCreationInfo(Item i, bool isRegistered, long quantity, int index, decimal currentPrice, MatchRating quality) {
-			item = i;
-			this.index = index;
-			this.quality = quality;
-			this.isRegistered = isRegistered;
-			this.quantity = quantity;
-			this.currentPrice = currentPrice;
+		private async Task<long> GetQuantityAsync(string[] split, int index, string itemName) {
+			long quantity;
+			try {
+				quantity = rules.GetQuantity(split, index);
+			}
+			catch (QuantityParsingException) {
+				ManualResolveChoice choice2 = new ManualResolveChoice("Unable to get quantity of goods purchased: Item name '" + itemName + "'", Choices.ManuallyEnterQuantity);
+				Choices c2 = await choice2.SelectChoiceAsync();
+				while (!long.TryParse(choice2.MANUAL_RESOLUTION_Solution4_Box.Text, out quantity)) {
+					await choice2.SelectChoiceAsync();
+				}
+			}
+			return quantity;
 		}
-
-		internal Item item { get; }
-		internal int index { get; }
-		internal long quantity { get; }
-		internal MatchRating quality { get; }
-		internal bool isRegistered { get; private set; }
-		internal decimal currentPrice { get; }
 	}
 }

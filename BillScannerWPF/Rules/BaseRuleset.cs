@@ -64,11 +64,15 @@ namespace BillScannerWPF.Rules {
 					return new AlbertRuleset();
 				}
 				default: {
-					throw new NotImplementedException();
+					throw new NotImplementedException(selectedShop.ToString() + " was not yet implemented!");
 				}
 			}
 		}
 
+
+		/// <summary>
+		/// Attempts to remove any leading or trailing non numeric characters from a string, on failure returns original!
+		/// </summary>
 		internal string RemoveLetterCharacters(string original, char splitter) {
 			Regex r = new Regex(@"(\d+([,.] ?\d+)?) " + splitter + @" (\d+([,.] ?\d+)?)");
 
@@ -76,7 +80,7 @@ namespace BillScannerWPF.Rules {
 			if (m.Success) {
 				return m.Value.Replace(" ", "");
 			}
-			throw new NotImplementedException();
+			return original;
 		}	
 	}
 }

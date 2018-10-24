@@ -12,8 +12,8 @@
 			<ColumnDefinition></ColumnDefinition>
 			<ColumnDefinition></ColumnDefinition>
 		</Grid.ColumnDefinitions>
-		<TextBlock x:Name="ITEMLISTCONTENT_ItemName_Text" Grid.Column="0" VerticalAlignment="Center" Margin="5,0,0,2"></TextBlock>
-		<TextBlock x:Name="ITEMLISTCONTENT_ItemValue_Text" Grid.Column="1" VerticalAlignment="Center"></TextBlock>
-		<TextBlock x:Name="ITEMLISTCONTENT_ItemMeassurement_Text" Grid.Column="2" VerticalAlignment="Center"></TextBlock>
+		<TextBlock x:Name="ITEMLISTCONTENT_ItemName_Text"			 Grid.Column="0" VerticalAlignment="Center" Margin="5,0,0,2" ></TextBlock>
+		<TextBlock x:Name="ITEMLISTCONTENT_ItemValue_Text"			 Grid.Column="1" VerticalAlignment="Center" ></TextBlock>
+		<TextBlock x:Name="ITEMLISTCONTENT_ItemMeassurement_Text"	 Grid.Column="2" VerticalAlignment="Center" ></TextBlock>
     </Grid>
 </UserControl>

@@ -32,7 +32,7 @@ namespace BillScannerWPF {
 
 		internal IRuleset selectedShopRuleset { get; }
 
-		public MainWindow() : this(Shop.Albert) { }
+		public MainWindow() : this(Shop.Lidl) { }
 		public MainWindow(Shop selectedShop) {
 			InitializeComponent();
 

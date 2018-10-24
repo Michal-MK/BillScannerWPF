@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.IO;
 using Newtonsoft.Json.Linq;
 
@@ -35,6 +33,10 @@ namespace BillScannerWPF {
 			throw new ItemNotDefinedException("No item with this name exists!");
 		}
 
+		public Item WriteItemDefinitionToDatabase(Item newItemDefinition) {
+			return WriteItemDefinitionToDatabase(newItemDefinition, newItemDefinition.userFriendlyName, newItemDefinition.currentPrice);
+		}
+
 		public Item WriteItemDefinitionToDatabase(Item newItemDefinition, string userFriendlyName, decimal finalPrice) {
 			JObject obj = JObject.FromObject(newItemDefinition);
 			JArray ocrArray = ((JArray)obj[nameof(Item.ocrNames)]);
@@ -46,6 +48,8 @@ namespace BillScannerWPF {
 			File.WriteAllText(itemDatabaseFile.FullName, itemDatabaseJson.ToString());
 			return newItemDefinition;
 		}
+
+
 
 		internal void WriteNewCurrentPriceToDatabase(string identifier, decimal price) {
 			foreach (JToken tok in itemDatabaseJson) {

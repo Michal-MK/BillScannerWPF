@@ -69,13 +69,18 @@
     <Compile Include="DatabaseAccess.cs" />
     <Compile Include="Enumerations\MatchRating.cs" />
     <Compile Include="Enumerations\MeassurementUnit.cs" />
+    <Compile Include="Exceptions\GenericParsingException.cs" />
     <Compile Include="FolderInit.cs" />
     <Compile Include="ImageProcessor.cs" />
     <Compile Include="Exceptions\ItemNotDefinedException.cs" />
+    <Compile Include="Exceptions\PriceParsingException.cs" />
+    <Compile Include="Exceptions\NameParsingException.cs" />
+    <Compile Include="Exceptions\QuantityParsingException.cs" />
     <Compile Include="Serialization\Item.cs" />
     <Compile Include="Serialization\PurchaseHistory.cs" />
     <Compile Include="Serialization\PurchaseMeta.cs" />
     <Compile Include="Serialization\Shopping.cs" />
+    <Compile Include="UIItemCreationInfo.cs" />
     <Compile Include="XAML\ItemList.xaml.cs">
       <DependentUpon>ItemList.xaml</DependentUpon>
     </Compile>

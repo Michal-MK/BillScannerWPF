@@ -1,18 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+
 
 namespace BillScannerWPF {
 	/// <summary>
@@ -26,15 +18,17 @@ namespace BillScannerWPF {
 			MatchAnyway,
 			MatchWithoutAddingAmbiguities,
 			NotAnItem,
-			ManuallyEnterDate,
 			UseCurrentTime,
 			UseLatestValue,
-			ManuallyEnterPrice,
 			DefineNewItem,
 			FindExistingItemFromList,
+			ManuallyEnterQuantity = 20,
+			ManuallyEnterDate = 21,
+			ManuallyEnterPrice = 22,
 		}
 
 		private readonly Dictionary<Choices, string> texts = new Dictionary<Choices, string>() {
+			{ Choices.NOOP, "NOOP" },
 			{ Choices.MatchAnyway, "[{0}] - Match!" },
 			{ Choices.MatchWithoutAddingAmbiguities, "[{0}] - Match without modifying database." },
 			{ Choices.NotAnItem, "[{0}] - Treat this text as not being an item (Nothing will be preformed)" },
@@ -42,69 +36,69 @@ namespace BillScannerWPF {
 			{ Choices.UseCurrentTime, "[{0}] - Use 'today' as the purchase date." },
 			{ Choices.ManuallyEnterPrice, "[{0}] - Enter its price here manually:" },
 			{ Choices.UseLatestValue, "[{0}] - Use last known value for this item from database."},
-			{ Choices.FindExistingItemFromList, "[{0}] - Serch database and select an item this string is supposed to match."},
-			{ Choices.DefineNewItem, "[{0}] - Define new item from what we got..."}
+			{ Choices.FindExistingItemFromList, "[{0}] - Search database and select an item this string is supposed to match."},
+			{ Choices.DefineNewItem, "[{0}] - Define new item from what we got..."},
+			{ Choices.ManuallyEnterQuantity, "[{0}] - Enter the amount here manually: " }
 		};
 
-		private readonly Dictionary<string, (Choices choice, string key)> buttons = new Dictionary<string, (Choices choice, string key)>() {
-			{ Choices.MatchAnyway.ToString(), (Choices.MatchAnyway, Choices.MatchAnyway.ToString()) },
-			{ Choices.MatchWithoutAddingAmbiguities.ToString(), (Choices.MatchWithoutAddingAmbiguities, Choices.MatchWithoutAddingAmbiguities.ToString()) },
-			{ Choices.NotAnItem.ToString(), (Choices.NotAnItem, Choices.NotAnItem.ToString()) },
-			{ Choices.ManuallyEnterDate.ToString(), (Choices.ManuallyEnterDate, Choices.ManuallyEnterDate.ToString()) },
-			{ Choices.UseCurrentTime.ToString(), (Choices.UseCurrentTime, Choices.UseCurrentTime.ToString()) },
-			{ Choices.UseLatestValue.ToString(), (Choices.UseLatestValue, Choices.UseLatestValue.ToString()) },
-			{ Choices.ManuallyEnterPrice.ToString(), (Choices.ManuallyEnterPrice, Choices.ManuallyEnterPrice.ToString()) },
-			{ Choices.DefineNewItem.ToString(), (Choices.DefineNewItem, Choices.DefineNewItem.ToString()) },
-			{ Choices.FindExistingItemFromList.ToString(), (Choices.FindExistingItemFromList, Choices.FindExistingItemFromList.ToString()) },
-		};
 
-		internal ManualResolveChoice(string error, Choices choice) : this(error, new Choices[] { choice }) { }
-		internal ManualResolveChoice(string error, Choices choice1, Choices choice2) : this(error, new Choices[] { choice1, choice2 }) { }
-		internal ManualResolveChoice(string error, Choices choice1, Choices choice2, Choices choice3) : this(error, new Choices[] { choice1, choice2, choice3 }) { }
+		#region Constructors
 
-		internal ManualResolveChoice(string error, Choices[] choices) {
+		internal ManualResolveChoice(string error, Choices choice) : this(error, new Choices[4] { choice, 0, 0, 0 }) { }
+		internal ManualResolveChoice(string error, Choices choice1, Choices choice2) : this(error, new Choices[4] { choice1, choice2, 0, 0 }) { }
+		internal ManualResolveChoice(string error, Choices choice1, Choices choice2, Choices choice3) : this(error, new Choices[4] { choice1, choice2, choice3, 0 }) { }
+
+		#endregion
+
+		internal ManualResolveChoice(string errorText, Choices[] choices) {
 			InitializeComponent();
-			TextBlock[] solutionTexts = new TextBlock[] { MANUAL_RESOLUTION_Solution1_Text, MANUAL_RESOLUTION_Solution2_Text, MANUAL_RESOLUTION_Solution3_Text, MANUAL_RESOLUTION_Solution4_Text };
-			Button[] solutionButtons = new Button[] { MANUAL_RESOLUTION_Resolve1_Button, MANUAL_RESOLUTION_Resolve2_Button, MANUAL_RESOLUTION_Resolve3_Button, MANUAL_RESOLUTION_Resolve4_Button };
-			MANUAL_RESOLUTION_ErrorType_Text.Text = error;
-			choices = ModifyChoices(choices);
+			TextBlock[] solutionTexts = new TextBlock[] {
+				MANUAL_RESOLUTION_Solution1_Text,
+				MANUAL_RESOLUTION_Solution2_Text,
+				MANUAL_RESOLUTION_Solution3_Text,
+				MANUAL_RESOLUTION_Solution4_Text
+			};
+			Button[] solutionButtons = new Button[] {
+				MANUAL_RESOLUTION_Resolve1_Button,
+				MANUAL_RESOLUTION_Resolve2_Button,
+				MANUAL_RESOLUTION_Resolve3_Button,
+				MANUAL_RESOLUTION_Resolve4_Button
+			};
+			TextBox inputBox = MANUAL_RESOLUTION_Solution4_Box;
+
+
+			MANUAL_RESOLUTION_ErrorType_Text.Text = errorText;
+
 			int choiceNumbering = 0;
-			for (int i = 0; i < 4; i++) {
-				if (i == 3) {
-					MANUAL_RESOLUTION_Solution4_Text.Text = string.Format(texts[choices[3]], choiceNumbering);
-					if (choices[i] == Choices.ManuallyEnterDate) {
-						MANUAL_RESOLUTION_Solution4_Box.Text = DateTime.Now.ToString("dd:MM:yyyy hh:mm:ss");
-					}
-					if(choices[i] == Choices.ManuallyEnterPrice) {
-						MANUAL_RESOLUTION_Solution4_Box.Text = "29.90";
-					}
-					solutionButtons[3].Click += ManualResolveChoice_Click;
-					solutionButtons[3].Name = choices[3].ToString();
-					solutionButtons[3].Content = string.Format("Solution {0}", choiceNumbering);
-					solutionButtons[3].Visibility = Visibility.Visible;
+
+			for (int i = 0; i < choices.Length; i++) {
+				solutionTexts[i].Visibility = choices[i] == Choices.NOOP ? Visibility.Collapsed : Visibility.Visible;
+
+				if ((int)choices[i] > 20) {
+					inputBox.Visibility = Visibility.Visible;
 				}
-				if (i >= choices.Length || choices[i] == Choices.NOOP) {
-					solutionButtons[i].Visibility = Visibility.Collapsed;
-					solutionTexts[i].Visibility = Visibility.Collapsed;
+
+				if (choices[i] == Choices.ManuallyEnterDate) {
+					inputBox.Text = DateTime.Now.ToString("dd:MM:yyyy hh:mm:ss");
 				}
-				else {
-					solutionTexts[i].Text = string.Format(texts[choices[i]], choiceNumbering);
-					solutionButtons[i].Click += ManualResolveChoice_Click;
-					solutionButtons[i].Name = choices[i].ToString();
-					solutionButtons[i].Content = string.Format("Solution {0}", choiceNumbering);
+				if (choices[i] == Choices.ManuallyEnterPrice) {
+					inputBox.Text = "29.90";
+				}
+				if (choices[i] == Choices.ManuallyEnterQuantity) {
+					inputBox.Text = "1";
+				}
+
+				solutionTexts[i].Text = string.Format(texts[choices[i]], choiceNumbering);
+				solutionButtons[i].Click += ManualResolveChoice_Click;
+				solutionButtons[i].Name = choices[i].ToString();
+				solutionButtons[i].Content = string.Format("Solution {0}", choiceNumbering);
+				if (choices[i] != Choices.NOOP)
 					choiceNumbering++;
-				}
+
 			}
 		}
 
-		private Choices[] ModifyChoices(Choices[] choices) {
-			Choices[] modified = new Choices[4];
-			choices.CopyTo(modified, 0);
-			for (int i = choices.Length; i < modified.Length; i++) {
-				modified[i] = Choices.NOOP;
-			}
-			return modified;
-		}
+		#region Choice Selection
 
 		private Choices selected;
 
@@ -113,7 +107,7 @@ namespace BillScannerWPF {
 			evnt.Set();
 		}
 
-		internal async Task<Choices> SelectChoice() {
+		internal async Task<Choices> SelectChoiceAsync() {
 			WPFHelper.GetMainWindow().MAIN_Grid.Children.Add(this);
 			await Task.Run(() => {
 				evnt.Wait();
@@ -122,5 +116,7 @@ namespace BillScannerWPF {
 			WPFHelper.GetMainWindow().MAIN_Grid.Children.Remove(this);
 			return selected;
 		}
+
+		#endregion
 	}
 }

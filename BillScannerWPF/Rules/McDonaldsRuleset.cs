@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 
 namespace BillScannerWPF.Rules {
 	class McDonaldsRuleset : BaseRuleset, IRuleset {
@@ -29,14 +25,14 @@ namespace BillScannerWPF.Rules {
 			}
 			string modified = ReplaceAmbiguousToNumber(split[0]);
 			if (modified == split[0]) {
-				throw new NotImplementedException("Unable to get quantity from string " + ocrText[index]);
+				throw new QuantityParsingException("Unable to get quantity from string " + ocrText[index], ocrText[index], index);
 			}
 			else {
 				if (long.TryParse(modified, out long resultModified)) {
 					return result;
 				}
 			}
-			throw new NotImplementedException("Unable to get quantity from string " + ocrText[index] + ", subsequently modified " + modified);
+			throw new QuantityParsingException("Unable to get quantity from string " + ocrText[index] + ", subsequently modified " + modified, ocrText[index], index);
 		}
 
 		public decimal PriceOfOne(string[] ocrText, ref int index) {
@@ -47,7 +43,7 @@ namespace BillScannerWPF.Rules {
 			}
 			string modified = ReplaceAmbiguousToNumber(line);
 			if (modified == line) {
-				throw new NotImplementedException("Unable to get price from string " + ocrText[index]);
+				throw new PriceParsingException(ocrText[index], index, false);
 			}
 			else {
 				Match mm = correctItemLine.Match(modified);
@@ -55,18 +51,18 @@ namespace BillScannerWPF.Rules {
 					return result;
 				}
 			}
-			throw new NotImplementedException("Unable to get price from string " + ocrText[index] + ", subsequently modified " + modified);
+			throw new PriceParsingException(ocrText[index], index, false);
 		}
 
 
 		public string Name(string line) {
 			Regex nameR = new Regex(@"(\d+) (\w+) (\d+\.\d+) B");
 			Match m = nameR.Match(line);
-			if(m.Groups.Count < 2) {
+			if (m.Groups.Count < 2) {
 				return m.Groups[2].Value;
 			}
 			else {
-				throw new Exception("Unable to get name from line " + line);
+				throw new NameParsingException("Unable to get name from line " + line, line);
 			}
 		}
 	}

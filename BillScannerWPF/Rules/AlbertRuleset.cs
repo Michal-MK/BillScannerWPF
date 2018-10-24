@@ -1,5 +1,4 @@
-﻿using System;
-using System.Globalization;
+﻿using System.Globalization;
 using System.Text.RegularExpressions;
 
 namespace BillScannerWPF.Rules {
@@ -36,7 +35,7 @@ namespace BillScannerWPF.Rules {
 						return result;
 					}
 				}
-				throw new NotImplementedException("Unable to get quantity from string " + ocrText[index + 2]);
+				throw new QuantityParsingException("Unable to get quantity from string " + ocrText[index + 2], ocrText[index + 2], index + 2);
 			}
 		}
 
@@ -51,7 +50,7 @@ namespace BillScannerWPF.Rules {
 					return m.Groups[1].Value;
 				}
 			}
-			throw new NotImplementedException("Unable to get name from string: " + line);
+			throw new NameParsingException("Unable to get name from string: " + line, line);
 		}
 
 		public decimal PriceOfOne(string[] ocrText, ref int index) {
@@ -62,18 +61,18 @@ namespace BillScannerWPF.Rules {
 					return result;
 				}
 				else {
-					throw new NotImplementedException();
+					throw new PriceParsingException(ocrText[index], index, true);
 				}
 			}
 			else {
 				Match multiL = multiLineItems.Match(ocrText[index + 1]);
-				string final = multiL.Groups[2].Value.Replace(',', '.').Replace(" ",".");
+				string final = multiL.Groups[2].Value.Replace(',', '.').Replace(" ", ".");
 				if (decimal.TryParse(final, NumberStyles.Currency, CultureInfo.InvariantCulture, out decimal result)) {
 					index++;
 					return result;
 				}
 				else {
-					throw new NotImplementedException();
+					throw new PriceParsingException(ocrText[index + 1], index + 1, false);
 				}
 			}
 		}
@@ -93,7 +92,7 @@ namespace BillScannerWPF.Rules {
 				ocrText[index + 1] = ReplaceAmbiguous(ocrText[index + 1]);
 				return false;
 			}
-			throw new NotImplementedException();
+			throw new GenericParsingException(ocrText, index);
 		}
 	}
 }

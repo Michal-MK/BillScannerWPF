@@ -24,7 +24,7 @@ namespace BillScannerWPF {
 		private ObservableCollection<ItemList_Item> observedItems;
 		ManualResetEventSlim evnt = new ManualResetEventSlim();
 
-		public ItemList( Item[] items) {
+		public ItemList(Item[] items) {
 			InitializeComponent();
 
 			WPFHelper.GetMainWindow().MAIN_Grid.Children.Add(this);
@@ -37,10 +37,18 @@ namespace BillScannerWPF {
 
 			ITEMLIST_Items_ListBox.ItemsSource = observedItems;
 			ITEMLIST_Select_Button.Click += ITEMLIST_Select_Click;
+			ITEMLIST_Back_Button.Click += ITEMLIST_Back_Click;
+		}
+
+		private bool wasAborted = false;
+
+		private void ITEMLIST_Back_Click(object sender, RoutedEventArgs e) {
+			wasAborted = true;
+			evnt.Set();
 		}
 
 		private void ITEMLIST_Select_Click(object sender, RoutedEventArgs e) {
-			if((ItemList_Item)ITEMLIST_Items_ListBox.SelectedItem == null) {
+			if ((ItemList_Item)ITEMLIST_Items_ListBox.SelectedItem == null) {
 				ITEMLIST_ErrorInfo_Text.Text = "No Item selected!";
 				return;
 			}
@@ -48,9 +56,15 @@ namespace BillScannerWPF {
 		}
 
 		internal async Task<Item> SelectItemAsync() {
-			await Task.Run(() => {
-				evnt.Wait();
-			});
+			while (((ItemList_Item)ITEMLIST_Items_ListBox.SelectedItem) == null) {
+				await Task.Run(() => {
+					evnt.Wait();
+				});
+				if (wasAborted) {
+					WPFHelper.GetMainWindow().MAIN_Grid.Children.Remove(this);
+					return null;
+				}
+			}
 			WPFHelper.GetMainWindow().MAIN_Grid.Children.Remove(this);
 			return ((ItemList_Item)ITEMLIST_Items_ListBox.SelectedItem).asociatedItem;
 		}
