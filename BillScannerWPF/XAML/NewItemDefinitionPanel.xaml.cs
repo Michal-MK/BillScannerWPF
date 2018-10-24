@@ -1,27 +1,22 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
 using System.Globalization;
-using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace BillScannerWPF {
+
 	/// <summary>
-	/// Interaction logic for NewItemDefinitionPanel.xaml
+	/// Code for NewItemDefinitionPanel.xaml
 	/// </summary>
 	public partial class NewItemDefinitionPanel : UserControl {
-		ManualResetEventSlim evnt = new ManualResetEventSlim();
+
+		private ManualResetEventSlim evnt = new ManualResetEventSlim();
+
+		/// <summary>
+		/// Create a new <see cref="NewItemDefinitionPanel"/>
+		/// </summary>
 		public NewItemDefinitionPanel() {
 			InitializeComponent();
 			ITEMREG_RegisterItem_Button.Click += ITEMREG_RegisterItem_Click;
@@ -32,6 +27,10 @@ namespace BillScannerWPF {
 			evnt.Set();
 		}
 
+
+		/// <summary>
+		/// Handle new Item registration from a user, returned values are sanity checked
+		/// </summary>
 		internal async Task<(string itemName, decimal itemValue, MeassurementUnit itemMeassurements)> RegisterItemAsync() {
 			WPFHelper.GetMainWindow().MAIN_Grid.Children.Add(this);
 			await Task.Run(() => {
@@ -49,7 +48,7 @@ namespace BillScannerWPF {
 				valueString = ITEMREG_ItemValue_Box.Text.Replace(',', '.');
 			}
 			while (ITEMREG_UnitOfMeassure_DropDown.SelectedItem == null) {
-				ITEMREG_ErrorInfo_Text.Text = "No Meassurement Unit selected!";
+				ITEMREG_ErrorInfo_Text.Text = "No Measurement Unit selected!";
 				await Task.Run(() => {
 					evnt.Reset();
 					evnt.Wait();

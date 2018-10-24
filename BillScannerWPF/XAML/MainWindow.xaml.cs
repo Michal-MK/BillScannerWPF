@@ -9,9 +9,7 @@ using System.Diagnostics;
 
 using Igor.TCP;
 using BillScannerWPF.Rules;
-using System.Globalization;
-using System.Threading.Tasks;
-using System.Threading;
+
 
 namespace BillScannerWPF {
 	/// <summary>
@@ -19,20 +17,50 @@ namespace BillScannerWPF {
 	/// </summary>
 	public partial class MainWindow : Window, IDisposable {
 
+		/// <summary>
+		/// The constant port the server is listening on for incoming phone connections
+		/// </summary>
 		public const ushort PORT = 6689;
 
+		/// <summary>
+		/// Static reference to database IO
+		/// </summary>
 		public static DatabaseAccess access;
-		public static TCPClient client;
+
+		/// <summary>
+		/// Static reference to the server
+		/// </summary>
 		public static TCPServer server;
 
+		/// <summary>
+		/// Image processing class that does the scanning and subsequent parsing of the image
+		/// </summary>
 		internal ImageProcessor imgProcessing;
 
+		/// <summary>
+		/// Absolute path to the image currently being displayed in the image preview control
+		/// </summary>
 		public string currentImageSource { get; set; }
+
+		/// <summary>
+		/// The container that displays currently previewed item
+		/// </summary>
 		public UIItem currentItemBeingInspected { get; set; }
 
+		/// <summary>
+		/// The rule-set selected at the launch of the application
+		/// </summary>
 		internal IRuleset selectedShopRuleset { get; }
 
+		/// <summary>
+		/// Create a default Lidl window (Debug)
+		/// </summary>
 		public MainWindow() : this(Shop.Lidl) { }
+
+		/// <summary>
+		/// Create a new Main window and prepare it for the selected shop type
+		/// </summary>
+		/// <param name="selectedShop">The shop to load data for</param>
 		public MainWindow(Shop selectedShop) {
 			InitializeComponent();
 
@@ -59,7 +87,7 @@ namespace BillScannerWPF {
 				server.OnConnectionEstablished += Server_OnConnectionEstablished;
 				server.OnClientDisconnected += Server_OnClientDisconnected;
 			}
-			catch { }
+			catch { /*TODO*/ }
 
 			MAIN_ServerStatus_Text.Text = "Running";
 			MAIN_ServerStatus_Text.Foreground = Brushes.LawnGreen;
@@ -78,6 +106,7 @@ namespace BillScannerWPF {
 			//DebugDelay();
 		}
 
+		#region Server Connection/Disconnection events
 
 		private void Server_OnConnectionEstablished(object sender, ClientConnectedEventArgs e) {
 			server.GetConnection(e.clientInfo.clientID).dataIDs.DefineCustomDataTypeForID<byte[]>(1, imgProcessing.OnImageDataReceived);
@@ -90,12 +119,16 @@ namespace BillScannerWPF {
 
 		private void Server_OnClientDisconnected(object sender, ClientDisconnectedEventArgs e) {
 			Dispatcher.Invoke(() => {
-				MAIN_ClientStatusPreImage_Text.Text = "Client disconnected successfuly!";
+				MAIN_ClientStatusPreImage_Text.Text = "Client disconnected successfully!";
 				MAIN_ClientStatusPreImage_Text.Foreground = Brushes.Blue;
 				MAIN_ClientStatusImage_Image.Visibility = Visibility.Collapsed;
 			});
-
 		}
+
+		#endregion
+
+
+		#region Image preview container functions: Changing, Opening full view.
 
 		internal void PreviewImgMouse(object sender, MouseButtonEventArgs e) {
 			OpenFileDialog dialog = new OpenFileDialog();
@@ -135,6 +168,11 @@ namespace BillScannerWPF {
 			p.Start();
 		}
 
+		#endregion
+
+
+		#region Control button functionality
+
 		private void MAIN_OpenDatabaseFile_Click(object sender, RoutedEventArgs e) {
 			Process p = new Process();
 			ProcessStartInfo info = new ProcessStartInfo(access.itemDatabaseFile.FullName);
@@ -148,6 +186,9 @@ namespace BillScannerWPF {
 			s.FinalizePurchase();
 			MAIN_Finalize_Button.IsEnabled = false;
 		}
+
+		#endregion
+
 
 		#region IDisposable Support
 		private bool disposedValue = false; // To detect redundant calls

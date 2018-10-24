@@ -39,7 +39,7 @@ namespace BillScannerWPF.Rules {
 			}
 		}
 
-		public string Name(string line) {
+		public string GetName(string line) {
 			Match m = correctItemLine.Match(line);
 			if (m.Success) {
 				return m.Groups[1].Value;
@@ -53,7 +53,7 @@ namespace BillScannerWPF.Rules {
 			throw new NameParsingException("Unable to get name from string: " + line, line);
 		}
 
-		public decimal PriceOfOne(string[] ocrText, ref int index) {
+		public decimal GetPriceOfOne(string[] ocrText, ref int index) {
 			if (IsSingleItem(ocrText, index)) {
 				Match single = correctItemLine.Match(ocrText[index]);
 				string final = single.Groups[4].Value.Replace(',', '.');

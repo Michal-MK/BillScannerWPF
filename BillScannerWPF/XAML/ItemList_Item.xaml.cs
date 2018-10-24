@@ -1,14 +1,25 @@
 ﻿using System.Windows.Controls;
 
 namespace BillScannerWPF {
+
 	/// <summary>
-	/// Interaction logic for ItemList_Item.xaml
+	/// Code for ItemList_Item.xaml
 	/// </summary>
 	public partial class ItemList_Item : UserControl {
-		internal bool isSelected { get; private set; }
+
+		/// <summary>
+		/// The parent element this item is a child of
+		/// </summary>
 		private ItemList parent;
+
+		/// <summary>
+		/// The item connected to this UI representation
+		/// </summary>
 		internal Item asociatedItem { get; }
 
+		/// <summary>
+		/// Create a new visual representation of an item in a list
+		/// </summary>
 		public ItemList_Item(ItemList parent, Item asociatedItem) {
 			InitializeComponent();
 

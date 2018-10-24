@@ -1,28 +1,31 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace BillScannerWPF {
+
 	/// <summary>
-	/// Interaction logic for ItemInfoOverlay.xaml
+	/// Code for ItemInfoOverlay.xaml
 	/// </summary>
 	public partial class ItemInfoOverlay : UserControl {
+
+		/// <summary>
+		/// Static reference to the items currently being inspected in the application
+		/// </summary>
 		public static UIItem currentItemBeingInspected { get; private set; }
+
+		/// <summary>
+		/// Parent element of this control
+		/// </summary>
 		private MainWindow holder;
 
+		/// <summary>
+		/// Construct a new Item info from a small preview <see cref="UIItem"/>
+		/// </summary>
+		/// <param name="source"></param>
 		public ItemInfoOverlay(UIItem source) {
 			currentItemBeingInspected = source;
 			holder = WPFHelper.GetMainWindow();
@@ -46,8 +49,8 @@ namespace BillScannerWPF {
 			INFO_PricesBefore_Text.SetBinding(TextBlock.TextProperty, b);
 		}
 
+
 		private void INFO_RegisterItem_Click(object sender, RoutedEventArgs e) {
-			//Get stuff from input fields
 			string modifiedName = INFO_MainName_Text.Text;
 			if (!decimal.TryParse(INFO_CurrentValue_Text.Text.Trim().Replace(',','.'), NumberStyles.Currency, CultureInfo.InvariantCulture, out decimal finalPrice)) {
 				return;

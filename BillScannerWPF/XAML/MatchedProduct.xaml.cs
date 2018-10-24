@@ -4,15 +4,33 @@ using System.Windows.Controls;
 using System.Windows.Media.Imaging;
 
 namespace BillScannerWPF {
+
 	/// <summary>
-	/// Interaction logic for MatchedProduct.xaml
+	/// Code for MatchedProduct.xaml
 	/// </summary>
 	public partial class UIItem : UserControl {
 
+		/// <summary>
+		/// An item connected to this UI representation
+		/// </summary>
 		internal Item asociatedItem { get; }
+
+		/// <summary>
+		/// The amount of items purchased
+		/// </summary>
 		internal long quantityPurchased { get; }
+
+		/// <summary>
+		/// Internal rating of how successful this match was
+		/// </summary>
 		internal MatchRating quality { get; private set; }
 
+		/// <summary>
+		/// Create new <see cref="UIItem"/>
+		/// </summary>
+		/// <param name="item">The associated item</param>
+		/// <param name="quantityPurchased">The amount bought</param>
+		/// <param name="quality">Match quality</param>
 		internal UIItem(Item item, long quantityPurchased, MatchRating quality) {
 			InitializeComponent();
 			if (quality == MatchRating.Success) {
@@ -27,10 +45,16 @@ namespace BillScannerWPF {
 			SetMatchRatingImage();
 		}
 
+		/// <summary>
+		/// Update the match rating image
+		/// </summary>
 		internal void SetMatchRatingImage() {
 			this.UITEM_MatchQuality_Iamge.Source = new BitmapImage(new Uri(WPFHelper.imageRatingResourcesPath + quality.ToString() + ".png", UriKind.Absolute));
 		}
 
+		/// <summary>
+		/// Set visuals for a successful match
+		/// </summary>
 		internal void ProductMatchedSuccess() {
 			quality = MatchRating.Success;
 			this.UITEM_MatchQuality_Iamge.Source = new BitmapImage(new Uri(WPFHelper.imageRatingResourcesPath + MatchRating.Success.ToString() + ".png", UriKind.Absolute));

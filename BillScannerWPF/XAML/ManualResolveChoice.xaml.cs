@@ -7,25 +7,13 @@ using System.Windows.Controls;
 
 
 namespace BillScannerWPF {
+
 	/// <summary>
-	/// Interaction logic for ManualResolveChoice.xaml
+	/// Code for ManualResolveChoice.xaml
 	/// </summary>
 	public partial class ManualResolveChoice : UserControl {
-		ManualResetEventSlim evnt = new ManualResetEventSlim();
 
-		internal enum Choices {
-			NOOP,
-			MatchAnyway,
-			MatchWithoutAddingAmbiguities,
-			NotAnItem,
-			UseCurrentTime,
-			UseLatestValue,
-			DefineNewItem,
-			FindExistingItemFromList,
-			ManuallyEnterQuantity = 20,
-			ManuallyEnterDate = 21,
-			ManuallyEnterPrice = 22,
-		}
+		ManualResetEventSlim evnt = new ManualResetEventSlim();
 
 		private readonly Dictionary<Choices, string> texts = new Dictionary<Choices, string>() {
 			{ Choices.NOOP, "NOOP" },
@@ -41,15 +29,29 @@ namespace BillScannerWPF {
 			{ Choices.ManuallyEnterQuantity, "[{0}] - Enter the amount here manually: " }
 		};
 
-
 		#region Constructors
 
+		/// <summary>
+		/// Create new <see cref="ManualResolveChoice"/> with an error message and one solution
+		/// </summary>
 		internal ManualResolveChoice(string error, Choices choice) : this(error, new Choices[4] { choice, 0, 0, 0 }) { }
+
+		/// <summary>
+		/// Create new <see cref="ManualResolveChoice"/> with an error message and two solutions
+		/// </summary>
 		internal ManualResolveChoice(string error, Choices choice1, Choices choice2) : this(error, new Choices[4] { choice1, choice2, 0, 0 }) { }
+
+		/// <summary>
+		/// Create new <see cref="ManualResolveChoice"/> with an error message and three solutions
+		/// </summary>
 		internal ManualResolveChoice(string error, Choices choice1, Choices choice2, Choices choice3) : this(error, new Choices[4] { choice1, choice2, choice3, 0 }) { }
 
 		#endregion
 
+
+		/// <summary>
+		/// Create new <see cref="ManualResolveChoice"/> with an error message and defined solutions
+		/// </summary>
 		internal ManualResolveChoice(string errorText, Choices[] choices) {
 			InitializeComponent();
 			TextBlock[] solutionTexts = new TextBlock[] {
@@ -107,6 +109,9 @@ namespace BillScannerWPF {
 			evnt.Set();
 		}
 
+		/// <summary>
+		/// Handles user selection of one resolution for the problem
+		/// </summary>
 		internal async Task<Choices> SelectChoiceAsync() {
 			WPFHelper.GetMainWindow().MAIN_Grid.Children.Add(this);
 			await Task.Run(() => {

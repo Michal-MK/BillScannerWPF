@@ -5,6 +5,9 @@ using Newtonsoft.Json.Linq;
 namespace BillScannerWPF {
 	public class DatabaseAccess : Database {
 
+		/// <summary>
+		/// The shop that was selected at startup
+		/// </summary>
 		private Shop current;
 
 		private DatabaseAccess(Shop s) : base(s) {
@@ -12,11 +15,17 @@ namespace BillScannerWPF {
 			current = s;
 		}
 
+		/// <summary>
+		/// Loads internal databases (<see cref="Database.itemDatabase"/> and <see cref="Database.purchaseDatabase"/>) with contents of the JSON files for selected <see cref="Shop"/>
+		/// </summary>
 		public static DatabaseAccess LoadDatabase(Shop shop) {
 			DatabaseAccess access = new DatabaseAccess(shop);
 			return access;
 		}
 
+		/// <summary>
+		/// Return all items from the database in form of an array
+		/// </summary>
 		public Item[] GetItems() {
 			return itemDatabase.Values.ToArray();
 		}
@@ -33,10 +42,21 @@ namespace BillScannerWPF {
 			throw new ItemNotDefinedException("No item with this name exists!");
 		}
 
+
+		/// <summary>
+		/// Write newly defined <see cref="Item"/> into the database
+		/// </summary>
+		/// <param name="newItemDefinition">The item to write out</param>
 		public Item WriteItemDefinitionToDatabase(Item newItemDefinition) {
 			return WriteItemDefinitionToDatabase(newItemDefinition, newItemDefinition.userFriendlyName, newItemDefinition.currentPrice);
 		}
 
+		/// <summary>
+		/// Write newly defined <see cref="Item"/> into the database
+		/// </summary>
+		/// <param name="newItemDefinition">The item to write out</param>
+		/// <param name="userFriendlyName">New user friendly name for the item</param>
+		/// <param name="finalPrice">New price, adds the previous one to price history</param>
 		public Item WriteItemDefinitionToDatabase(Item newItemDefinition, string userFriendlyName, decimal finalPrice) {
 			JObject obj = JObject.FromObject(newItemDefinition);
 			JArray ocrArray = ((JArray)obj[nameof(Item.ocrNames)]);
@@ -50,7 +70,11 @@ namespace BillScannerWPF {
 		}
 
 
-
+		/// <summary>
+		/// Searches the database and updates <see cref="Item"/>'s current price, on change updates price history as well
+		/// </summary>
+		/// <param name="identifier"><see cref="Item"/>'s GUID</param>
+		/// <param name="price">The price to set as new</param>
 		internal void WriteNewCurrentPriceToDatabase(string identifier, decimal price) {
 			foreach (JToken tok in itemDatabaseJson) {
 				if (tok[nameof(Item.identifier)].Value<string>() == identifier) {
@@ -78,6 +102,12 @@ namespace BillScannerWPF {
 			}
 		}
 
+
+		/// <summary>
+		/// Update items list of OCR recognized strings
+		/// </summary>
+		/// <param name="identifier"><see cref="Item"/>'s GUID</param>
+		/// <param name="altName">New alternative OCR name</param>
 		public void AddAlternativeOCRNameForItemToDatabase(string identifier, string altName) {
 			foreach (JToken tok in itemDatabaseJson) {
 				if (tok[nameof(Item.identifier)].Value<string>() == identifier) {
@@ -89,7 +119,11 @@ namespace BillScannerWPF {
 			File.WriteAllText(itemDatabaseFile.FullName, itemDatabaseJson.ToString());
 		}
 
-
+		/// <summary>
+		/// Records new purchase for an <see cref="Item"/> into its internal list
+		/// </summary>
+		/// <param name="identifier"><see cref="Item"/>'s GUID</param>
+		/// <param name="history">The purchase history of this <see cref="Item"/></param>
 		public void AddNewPurchaseForItemToDatabase(string identifier, PurchaseHistory history) {
 			foreach (JToken tok in itemDatabaseJson) {
 				if (tok[nameof(Item.identifier)].Value<string>() == identifier) {
@@ -117,11 +151,22 @@ namespace BillScannerWPF {
 			File.WriteAllText(itemDatabaseFile.FullName, itemDatabaseJson.ToString());
 		}
 
+		/// <summary>
+		/// Registers <see cref="Item"/> from UI !writes only into <see cref="Database.itemDatabase"/>!
+		/// </summary>
+		/// <param name="currentItemBeingInspected">The <see cref="UIItem"/> from which to get <see cref="Item"/> information</param>
+		/// <param name="modifiedName">New user friendly name</param>
+		/// <param name="finalPrice">New price for the item</param>
 		internal void RegisterItemFromUI(UIItem currentItemBeingInspected, string modifiedName, decimal finalPrice) {
 			Item asociated = currentItemBeingInspected.asociatedItem;
 			itemDatabase.Add(asociated.userFriendlyName, WriteItemDefinitionToDatabase(asociated, modifiedName, finalPrice));
 		}
 
+		/// <summary>
+		/// Updates <see cref="Item"/>'s <see cref="MeassurementUnit"/>
+		/// </summary>
+		/// <param name="identifier"><see cref="Item"/>'s GUID</param>
+		/// <param name="unit">The units to change to</param>
 		public void WriteUnitOfMeassureForItemToDatabase(string identifier, MeassurementUnit unit) {
 			foreach (JToken tok in itemDatabaseJson) {
 				if (tok[nameof(Item.identifier)].Value<string>() == identifier) {
@@ -131,6 +176,9 @@ namespace BillScannerWPF {
 			File.WriteAllText(itemDatabaseFile.FullName, itemDatabaseJson.ToString());
 		}
 
+		/// <summary>
+		/// Writes new purchase information into <see cref="Database.purchaseDatabase"/> and into the JSON file
+		/// </summary>
 		public void WriteNewShoppingInstance(Shopping purchaseInstance) {
 			((JArray)shoppingDatabaseJson[nameof(Shopping.purchasedItems)]).Add(JObject.FromObject(purchaseInstance));
 			purchaseDatabase.Add(purchaseInstance.GUIDString, purchaseInstance);

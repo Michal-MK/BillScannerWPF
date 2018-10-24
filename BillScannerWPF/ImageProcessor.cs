@@ -7,20 +7,42 @@ using System.Windows.Controls;
 using Tesseract;
 
 namespace BillScannerWPF {
+
+	/// <summary>
+	/// Contains functionality to scan bills and return their content as a string array.
+	/// </summary>
 	internal class ImageProcessor : IDisposable {
 
 		private readonly DatabaseAccess access;
-
-		public static ImageProcessor instance { get; private set; }
-
 		private readonly TesseractEngine engine;
 		private readonly Rules.IRuleset ruleset;
 
+		/// <summary>
+		/// Static reference to the <see cref="ImageProcessor"/> and its content
+		/// </summary>
+		public static ImageProcessor instance { get; private set; }
+
+		/// <summary>
+		/// Bound container that holds all matched <see cref="UIItem"/>s
+		/// </summary>
 		internal ObservableCollection<UIItem> uiItemsMatched = new ObservableCollection<UIItem>();
+
+		/// <summary>
+		/// Bound container that holds all unknown <see cref="UIItem"/>s
+		/// </summary>
 		internal ObservableCollection<UIItem> uiItemsUnknown = new ObservableCollection<UIItem>();
 
+		/// <summary>
+		/// Parse results and other information from current scan
+		/// </summary>
 		internal ParsingResult currentParsingResult { get; private set; }
 
+		/// <summary>
+		/// Create new <see cref="ImageProcessor"/> with needed references
+		/// </summary>
+		/// <param name="access">Reference to database IO</param>
+		/// <param name="ruleset">Reference to selected <see cref="Shop"/>'s rules</param>
+		/// <param name="main">Reference to main application window</param>
 		internal ImageProcessor(DatabaseAccess access, Rules.IRuleset ruleset, MainWindow main) {
 			instance = this;
 			this.access = access;
@@ -31,6 +53,9 @@ namespace BillScannerWPF {
 			main.MAIN_UnknownProducts_Stack.ItemsSource = uiItemsUnknown;
 		}
 
+		/// <summary>
+		/// Event for receiving image data from a mobile device
+		/// </summary>
 		internal void OnImageDataReceived(byte[] imageData, byte sender) {
 			Application.Current.Dispatcher.Invoke(() => {
 				MainWindow w = WPFHelper.GetMainWindow();
@@ -38,6 +63,9 @@ namespace BillScannerWPF {
 			});
 		}
 
+		/// <summary>
+		/// Main function that start image analysis, triggered a UI element
+		/// </summary>
 		internal async void Analyze(object sender, RoutedEventArgs e) {
 			Button bSender = (Button)sender;
 			if (WPFHelper.GetMainWindow().currentImageSource == null) {

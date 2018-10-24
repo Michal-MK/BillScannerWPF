@@ -38,7 +38,7 @@ namespace BillScannerWPF.Rules {
 			throw new QuantityParsingException("Unable to get quantity from string " + ocrText[index + 1] + ", subsequently modified " + quantity, ocrText[index + 1], index + 1);
 		}
 
-		public string Name(string line) {
+		public string GetName(string line) {
 			Match m = correctItemLine.Match(line);
 			if (m.Success) {
 				string name = m.Groups[1].Value + m.Groups[2];
@@ -57,7 +57,7 @@ namespace BillScannerWPF.Rules {
 			}
 		}
 
-		public decimal PriceOfOne(string[] ocrText, ref int index) {
+		public decimal GetPriceOfOne(string[] ocrText, ref int index) {
 			string quantity = ocrText[index + 1];
 			string modified = RemoveLetterCharacters(quantity, costPlusQuantitySeparator).ToLower().Trim();
 			string[] split = modified.Split(costPlusQuantitySeparator);

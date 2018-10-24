@@ -1,29 +1,24 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.ObjectModel;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace BillScannerWPF {
+
 	/// <summary>
-	/// Interaction logic for ItemList.xaml
+	/// Code for ItemList.xaml
 	/// </summary>
 	public partial class ItemList : UserControl {
 
 		private ObservableCollection<ItemList_Item> observedItems;
-		ManualResetEventSlim evnt = new ManualResetEventSlim();
+		private readonly ManualResetEventSlim evnt = new ManualResetEventSlim();
+		private bool wasAborted = false;
 
+		/// <summary>
+		/// Create a list of items for the UI from a normal <see cref="Item"/> class
+		/// </summary>
+		/// <param name="items"></param>
 		public ItemList(Item[] items) {
 			InitializeComponent();
 
@@ -40,7 +35,6 @@ namespace BillScannerWPF {
 			ITEMLIST_Back_Button.Click += ITEMLIST_Back_Click;
 		}
 
-		private bool wasAborted = false;
 
 		private void ITEMLIST_Back_Click(object sender, RoutedEventArgs e) {
 			wasAborted = true;
@@ -55,6 +49,9 @@ namespace BillScannerWPF {
 			evnt.Set();
 		}
 
+		/// <summary>
+		/// Handle user selection of an item and clicking of "Select" button, repeat on unsuccessful select
+		/// </summary>
 		internal async Task<Item> SelectItemAsync() {
 			while (((ItemList_Item)ITEMLIST_Items_ListBox.SelectedItem) == null) {
 				await Task.Run(() => {

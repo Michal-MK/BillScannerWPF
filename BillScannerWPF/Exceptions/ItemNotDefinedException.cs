@@ -2,10 +2,14 @@
 
 namespace BillScannerWPF {
 
+	/// <summary>
+	/// Exception that is thrown when an Item can not be found inside the internal representation of database file.
+	/// </summary>
 	[Serializable]
 	class ItemNotDefinedException : Exception {
-		public ItemNotDefinedException(string message) {
-			
+
+		public ItemNotDefinedException(string message): base(message) {
+			//TODO	
 		}
 	}
 }

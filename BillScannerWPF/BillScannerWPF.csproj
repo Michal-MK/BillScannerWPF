@@ -67,8 +67,10 @@
     </ApplicationDefinition>
     <Compile Include="Database.cs" />
     <Compile Include="DatabaseAccess.cs" />
+    <Compile Include="Enumerations\ManualResolutionChoices.cs" />
     <Compile Include="Enumerations\MatchRating.cs" />
     <Compile Include="Enumerations\MeassurementUnit.cs" />
+    <Compile Include="Enumerations\Shops.cs" />
     <Compile Include="Exceptions\GenericParsingException.cs" />
     <Compile Include="FolderInit.cs" />
     <Compile Include="ImageProcessor.cs" />
