@@ -40,7 +40,7 @@ namespace BillScannerWPF {
 				using (StreamWriter sw = File.CreateText(shopPath.FullName)) {
 					sw.WriteLine("{");
 					sw.WriteLine("\"shopName\": \"{0}\",", shopName);
-					sw.WriteLine("\"purchases\": []");
+					sw.WriteLine("\""+ nameof(Shopping.purchasedItems) + "\": []");
 					sw.WriteLine("}");
 				}
 			}

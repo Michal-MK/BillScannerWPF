@@ -76,7 +76,7 @@ namespace BillScannerWPF {
 			for (int i = 0; i < choices.Length; i++) {
 				solutionTexts[i].Visibility = choices[i] == Choices.NOOP ? Visibility.Collapsed : Visibility.Visible;
 
-				if ((int)choices[i] > 20) {
+				if ((int)choices[i] >= 20) {
 					inputBox.Visibility = Visibility.Visible;
 				}
 

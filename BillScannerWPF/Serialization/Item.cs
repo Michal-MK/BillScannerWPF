@@ -78,6 +78,10 @@ namespace BillScannerWPF {
 		internal bool isRegistered { get; set; }
 		internal string tirggerForMatch { get; set; }
 
+		internal void AddOCRName(string v) {
+			ocrNames.Add(v);
+		}
+
 		internal void AddAmount(long amount) {
 			totalPurchased += amount;
 		}

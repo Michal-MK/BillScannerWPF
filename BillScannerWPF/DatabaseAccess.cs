@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using System.IO;
 using Newtonsoft.Json.Linq;
+using System;
 
 namespace BillScannerWPF {
 	public class DatabaseAccess : Database {
@@ -79,7 +80,7 @@ namespace BillScannerWPF {
 			foreach (JToken tok in itemDatabaseJson) {
 				if (tok[nameof(Item.identifier)].Value<string>() == identifier) {
 					decimal current = tok[nameof(Item.currentPrice)].Value<decimal>();
-					if (price != current) { 
+					if (price != current) {
 						JArray pastPrices = (JArray)tok[nameof(Item.pricesInThePast)];
 						bool priceAlreadyAdded = false;
 						foreach (decimal pastPrice in pastPrices.Values<decimal>()) {
@@ -155,11 +156,28 @@ namespace BillScannerWPF {
 		/// Registers <see cref="Item"/> from UI !writes only into <see cref="Database.itemDatabase"/>!
 		/// </summary>
 		/// <param name="currentItemBeingInspected">The <see cref="UIItem"/> from which to get <see cref="Item"/> information</param>
+		internal void RegisterItemFromUI(Item newItem) {
+			RegisterNewItem(newItem);
+		}
+
+		/// <summary>
+		/// Registers <see cref="Item"/> from UI !writes only into <see cref="Database.itemDatabase"/>!
+		/// </summary>
+		/// <param name="currentItemBeingInspected">The <see cref="UIItem"/> from which to get <see cref="Item"/> information</param>
 		/// <param name="modifiedName">New user friendly name</param>
 		/// <param name="finalPrice">New price for the item</param>
 		internal void RegisterItemFromUI(UIItem currentItemBeingInspected, string modifiedName, decimal finalPrice) {
-			Item asociated = currentItemBeingInspected.asociatedItem;
-			itemDatabase.Add(asociated.userFriendlyName, WriteItemDefinitionToDatabase(asociated, modifiedName, finalPrice));
+			RegisterNewItem(currentItemBeingInspected.asociatedItem, modifiedName, finalPrice);
+		}
+
+		/// <summary>
+		/// Adds new <see cref="Item"/> definition into internal database !Does not write into files!
+		/// </summary>
+		/// <param name="item">The <see cref="Item"/> to add</param>
+		private void RegisterNewItem(Item item, string modifiedName = null, decimal finalPrice = -1) {
+			itemDatabase.Add(item.identifier, WriteItemDefinitionToDatabase(item,
+				modifiedName == null ? item.userFriendlyName : modifiedName,
+				finalPrice == -1 ? item.currentPrice : finalPrice));
 		}
 
 		/// <summary>

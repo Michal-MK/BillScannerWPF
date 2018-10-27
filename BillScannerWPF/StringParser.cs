@@ -138,10 +138,10 @@ namespace BillScannerWPF {
 							(string itemName, decimal itemPrice, MeassurementUnit itemUnitOfMeassure) = await definition.RegisterItemAsync();
 							long quantity = await GetQuantityAsync(split, i, itemName);
 							Item newItem = new Item(itemName, itemPrice);
+							newItem.AddOCRName(split[i]);
 							UIItemCreationInfo nowKnown = new UIItemCreationInfo(newItem, false, quantity, itemPrice, MatchRating.Success);
-							MainWindow.access.WriteItemDefinitionToDatabase(newItem);
+							MainWindow.access.RegisterItemFromUI(newItem);
 							nowKnown.item.tirggerForMatch = split[i];
-							nowKnown.item.ocrNames.Add(split[i]);
 							nowKnown.item.SetUnitOfMeassure(itemUnitOfMeassure);
 							matchedItems.Add(nowKnown);
 						}
