@@ -20,7 +20,9 @@ namespace BillScannerWPF {
 		/// <summary>
 		/// The constant port the server is listening on for incoming phone connections
 		/// </summary>
-		public const ushort PORT = 6689;
+		public const ushort START_PORT = 6689;
+
+		public const ushort PORT_RANGE = 10;
 
 		/// <summary>
 		/// Static reference to database IO
@@ -71,15 +73,19 @@ namespace BillScannerWPF {
 			MAIN_DatabaseStatus_Text.Foreground = Brushes.BlueViolet;
 
 			server = new TCPServer();
-			try {
-				server.Start(PORT);
-				server.OnConnectionEstablished += Server_OnConnectionEstablished;
-				server.OnClientDisconnected += Server_OnClientDisconnected;
+			for (ushort i = 0; i < PORT_RANGE; i++) {
+				try {
+					server.Start((ushort)(START_PORT + i));
+					server.OnConnectionEstablished += Server_OnConnectionEstablished;
+					server.OnClientDisconnected += Server_OnClientDisconnected;
+				}
+				catch { }
 			}
-			catch {
-				MessageBox.Show("Unable to start server at " + Helper.GetActiveIPv4Address() + " " + PORT + "\n" +
+
+			if (!server.isRunning) {
+				MessageBox.Show("Unable to start server at " + Helper.GetActiveIPv4Address() + " " + START_PORT + "\n" +
 								"Either the port is already taken of you are not connected to the Internet!"
-								,"Server Off-line!",MessageBoxButton.OK, MessageBoxImage.Exclamation);
+								, "Server Off-line!", MessageBoxButton.OK, MessageBoxImage.Exclamation);
 			}
 
 			MAIN_ServerStatus_Text.Text = "Running";

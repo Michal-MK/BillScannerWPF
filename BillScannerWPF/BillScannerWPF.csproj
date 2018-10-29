@@ -39,7 +39,7 @@
     </Reference>
     <Reference Include="SimpleTCP, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\BillScanner_Android\Bill Scanner\Libraries\SimpleTCP.dll</HintPath>
+      <HintPath>..\packages\SimpleTCP\SimpleTCP.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -65,15 +65,15 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Database.cs" />
-    <Compile Include="DatabaseAccess.cs" />
+    <Compile Include="Database\Database.cs" />
+    <Compile Include="Database\DatabaseAccess.cs" />
     <Compile Include="Enumerations\ManualResolutionChoices.cs" />
     <Compile Include="Enumerations\MatchRating.cs" />
     <Compile Include="Enumerations\MeassurementUnit.cs" />
     <Compile Include="Enumerations\Shops.cs" />
     <Compile Include="Exceptions\GenericParsingException.cs" />
-    <Compile Include="FolderInit.cs" />
-    <Compile Include="ImageProcessor.cs" />
+    <Compile Include="Database\FolderInit.cs" />
+    <Compile Include="BillParsing\ImageProcessor.cs" />
     <Compile Include="Exceptions\ItemNotDefinedException.cs" />
     <Compile Include="Exceptions\PriceParsingException.cs" />
     <Compile Include="Exceptions\NameParsingException.cs" />
@@ -83,7 +83,7 @@
     <Compile Include="Serialization\ItemPurchaseHistory.cs" />
     <Compile Include="Serialization\Purchase.cs" />
     <Compile Include="Serialization\PurchaseMeta.cs" />
-    <Compile Include="UIItemCreationInfo.cs" />
+    <Compile Include="BillParsing\UIItemCreationInfo.cs" />
     <Compile Include="XAML\ItemList.xaml.cs">
       <DependentUpon>ItemList.xaml</DependentUpon>
     </Compile>
@@ -98,7 +98,7 @@
       <DependentUpon>ItemInfoOverlay.xaml</DependentUpon>
     </Compile>
     <Compile Include="Exceptions\ParsingEntryNotFoundException.cs" />
-    <Compile Include="ParsingResult.cs" />
+    <Compile Include="BillParsing\ParsingResult.cs" />
     <Compile Include="Rules\AlbertRuleset.cs" />
     <Compile Include="Rules\BaseRuleset.cs" />
     <Compile Include="Rules\IRuleset.cs" />
@@ -114,8 +114,8 @@
     <Compile Include="XAML\SetupWindow.xaml.cs">
       <DependentUpon>SetupWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="StringParser.cs" />
-    <Compile Include="WordSimilarity.cs" />
+    <Compile Include="BillParsing\StringParser.cs" />
+    <Compile Include="BillParsing\WordSimilarity.cs" />
     <Compile Include="Exceptions\WindowInitExpection.cs" />
     <Page Include="XAML\ItemList.xaml">
       <SubType>Designer</SubType>

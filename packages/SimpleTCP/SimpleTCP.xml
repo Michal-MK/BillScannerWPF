@@ -119,6 +119,26 @@
             Remove previously registered custom packet by 'ID'
             </summary>
         </member>
+        <member name="T:Igor.TCP.DataReroutedEventArgs">
+            <summary>
+            Basic rerouting information
+            </summary>
+        </member>
+        <member name="P:Igor.TCP.DataReroutedEventArgs.forwardedClient">
+            <summary>
+            The client that will receive this packet
+            </summary>
+        </member>
+        <member name="P:Igor.TCP.DataReroutedEventArgs.universalID">
+            <summary>
+            PacketID, if 'isUserDefined' is true, this filed holds the DataID under <see cref="F:Igor.TCP.DataIDs.UserDefined"/>
+            </summary>
+        </member>
+        <member name="P:Igor.TCP.DataReroutedEventArgs.isUserDefined">
+            <summary>
+            Is this data defined by user
+            </summary>
+        </member>
         <member name="T:Igor.TCP.PacketReceivedEventArgs`1">
             <summary>
             Predefined packets data holder
@@ -207,6 +227,12 @@
             </summary>
         </member>
         <member name="M:Igor.TCP.TCPClient.#ctor(System.String,System.UInt16)">
+            <summary>
+            Initialize new TCPClient by connecting to 'ipAddress' on port 'port'
+            </summary>
+            <exception cref="T:System.Net.WebException"></exception>
+        </member>
+        <member name="M:Igor.TCP.TCPClient.#ctor(System.Net.IPAddress,System.UInt16)">
             <summary>
             Initialize new TCPClient by connecting to 'ipAddress' on port 'port'
             </summary>
@@ -465,24 +491,35 @@
             Class containing response data to raised request
             </summary>
         </member>
-        <member name="M:Igor.TCP.TCPResponse.#ctor(System.Byte,System.Byte[])">
+        <member name="M:Igor.TCP.TCPResponse.#ctor(System.Byte,System.Byte[],System.Type)">
             <summary>
             Create new response for 'packetID' containing 'rawData'
             </summary>
         </member>
-        <member name="M:Igor.TCP.TCPResponse.#ctor(System.Byte)">
+        <member name="M:Igor.TCP.TCPResponse.#ctor(System.Byte,System.Type)">
             <summary>
             Create new response for 'packetID' with no  data
             </summary>
         </member>
         <member name="P:Igor.TCP.TCPResponse.rawData">
             <summary>
-            Received bytes from the other side
+            Raw byte[] data from the other side, holds requested information
             </summary>
         </member>
         <member name="P:Igor.TCP.TCPResponse.packetID">
             <summary>
             Represents user defined ID for data reception
+            </summary>
+        </member>
+        <member name="P:Igor.TCP.TCPResponse.dataType">
+            <summary>
+            The type of data this packet carries
+            </summary>
+        </member>
+        <member name="P:Igor.TCP.TCPResponse.getObject">
+            <summary>
+            Attempts conversion to requested type, will fail if the object's name-space differs between Assemblies!
+            <para>It is advised to create your own byte[] to object converter</para>
             </summary>
         </member>
         <member name="T:Igor.TCP.TCPServer">
@@ -503,6 +540,11 @@
         <member name="E:Igor.TCP.TCPServer.OnClientDisconnected">
             <summary>
             Called when client disconnects from this server
+            </summary>
+        </member>
+        <member name="E:Igor.TCP.TCPServer.OnDataRerouted">
+            <summary>
+            Called when server reroutes data
             </summary>
         </member>
         <member name="M:Igor.TCP.TCPServer.Start(System.UInt16)">

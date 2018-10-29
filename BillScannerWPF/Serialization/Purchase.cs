@@ -32,8 +32,6 @@ namespace BillScannerWPF {
 		public string[] purchasedItems { get; private set; }
 
 		[NonSerialized]
-		private List<string> internalItemGUIDs;
-		[NonSerialized]
 		private List<long> internalItemsBought;
 
 		[JsonConstructor]
@@ -45,17 +43,17 @@ namespace BillScannerWPF {
 		}
 
 		/// <summary>
-		/// Create a new purchase
+		/// Create a new <see cref="Purchase"/>
 		/// </summary>
 		/// <param name="date">The date this purchase was made</param>
 		/// <param name="collection">The items scanned from a bill visually represented by a <see cref="UIItem"/></param>
 		public Purchase(DateTime date, ObservableCollection<UIItem> collection) {
 			this.date = date;
-			internalItemGUIDs = new List<string>(collection.Count);
+			purchasedItems = new string[collection.Count];
 			internalItemsBought = new List<long>(collection.Count);
-			foreach (UIItem item in collection) {
-				internalItemGUIDs.Add(item.asociatedItem.identifier);
-				internalItemsBought.Add(item.quantityPurchased);
+			for (int i = 0; i < collection.Count; i++) {
+				purchasedItems[i] = collection[i].asociatedItem.identifier;
+				internalItemsBought.Add(collection[i].quantityPurchased);
 			}
 		}
 
@@ -64,7 +62,6 @@ namespace BillScannerWPF {
 		/// </summary>
 		public void FinalizePurchase() {
 			GUIDString = Guid.NewGuid().ToString();
-			purchasedItems = internalItemGUIDs.ToArray();
 			for (int i = 0; i < purchasedItems.Length; i++) {
 				Item item = MainWindow.access.GetItem(purchasedItems[i]);
 				MainWindow.access.AddNewPurchaseForItemToDatabase(purchasedItems[i], new ItemPurchaseHistory(GUIDString, internalItemsBought[i], item.currentPrice));
