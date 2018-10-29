@@ -78,10 +78,11 @@
     <Compile Include="Exceptions\PriceParsingException.cs" />
     <Compile Include="Exceptions\NameParsingException.cs" />
     <Compile Include="Exceptions\QuantityParsingException.cs" />
+    <Compile Include="Exceptions\PurchaseNotFoundException.cs" />
     <Compile Include="Serialization\Item.cs" />
-    <Compile Include="Serialization\PurchaseHistory.cs" />
+    <Compile Include="Serialization\ItemPurchaseHistory.cs" />
+    <Compile Include="Serialization\Purchase.cs" />
     <Compile Include="Serialization\PurchaseMeta.cs" />
-    <Compile Include="Serialization\Shopping.cs" />
     <Compile Include="UIItemCreationInfo.cs" />
     <Compile Include="XAML\ItemList.xaml.cs">
       <DependentUpon>ItemList.xaml</DependentUpon>

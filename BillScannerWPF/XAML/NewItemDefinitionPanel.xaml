@@ -20,7 +20,7 @@
 			<RowDefinition Height="10*"></RowDefinition>
 			<RowDefinition></RowDefinition>
 		</Grid.RowDefinitions>
-		<Grid Grid.Row="1" Grid.Column="1" Background="WhiteSmoke">
+		<Grid Grid.Row="1" Grid.Column="1" Background="WhiteSmoke" Margin="75">
 			<Grid.ColumnDefinitions>
 				<ColumnDefinition Width="20"></ColumnDefinition>
 				<ColumnDefinition Width="*"></ColumnDefinition>
@@ -51,9 +51,9 @@
 				<TextBlock Grid.Row="3"></TextBlock>
 				<TextBlock Grid.Row="4"></TextBlock>
 
-				<TextBox   Grid.Row="0" Grid.Column="1" x:Name="ITEMREG_ItemName_Box" ></TextBox>
-				<TextBox   Grid.Row="1" Grid.Column="1" x:Name="ITEMREG_ItemValue_Box"></TextBox>
-				<ComboBox  Grid.Row="2" Grid.Column="1" x:Name="ITEMREG_UnitOfMeassure_DropDown"></ComboBox>
+				<TextBox   Grid.Row="0" Grid.Column="1" x:Name="ITEMREG_ItemName_Box"				VerticalContentAlignment="Center"></TextBox>
+				<TextBox   Grid.Row="1" Grid.Column="1" x:Name="ITEMREG_ItemValue_Box"				VerticalContentAlignment="Center"></TextBox>
+				<ComboBox  Grid.Row="2" Grid.Column="1" x:Name="ITEMREG_UnitOfMeassure_DropDown"	VerticalContentAlignment="Center"></ComboBox>
 
 				<TextBlock Grid.Row="5" x:Name="ITEMREG_ErrorInfo_Text" Text="Think before you press that button! Please." Foreground="Red" VerticalAlignment="Bottom"></TextBlock>
 				<Grid Grid.Column="1" Grid.Row="5" Grid.RowSpan="2" VerticalAlignment="Bottom" HorizontalAlignment="Right">

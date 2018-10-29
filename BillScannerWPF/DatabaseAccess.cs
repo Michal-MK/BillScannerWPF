@@ -1,9 +1,12 @@
 ﻿using System.Linq;
 using System.IO;
 using Newtonsoft.Json.Linq;
-using System;
 
 namespace BillScannerWPF {
+
+	/// <summary>
+	/// Provides methods for database IO.
+	/// </summary>
 	public class DatabaseAccess : Database {
 
 		/// <summary>
@@ -32,6 +35,13 @@ namespace BillScannerWPF {
 		}
 
 		/// <summary>
+		/// Return all purchases from the database in form of an array
+		/// </summary>
+		public Purchase[] GetPurchases() {
+			return purchaseDatabase.Values.ToArray();
+		}
+
+		/// <summary>
 		/// Get the actual item by GUID
 		/// </summary>
 		/// <exception cref="ItemNotDefinedException"></exception>
@@ -43,6 +53,17 @@ namespace BillScannerWPF {
 			throw new ItemNotDefinedException("No item with this name exists!");
 		}
 
+		/// <summary>
+		/// Get the actual purchase by GUID
+		/// </summary>		
+		/// <exception cref="PurchaseNotFoundException"></exception>
+		/// <param name="guidString">GUID of the purchase</param>
+		public Purchase GetPurchase(string guidString) {
+			if (purchaseDatabase.ContainsKey(guidString)) {
+				return purchaseDatabase[guidString];
+			}
+			throw new PurchaseNotFoundException("Purchase with GUID:" + guidString + " does not exist!");
+		}
 
 		/// <summary>
 		/// Write newly defined <see cref="Item"/> into the database
@@ -69,7 +90,6 @@ namespace BillScannerWPF {
 			File.WriteAllText(itemDatabaseFile.FullName, itemDatabaseJson.ToString());
 			return newItemDefinition;
 		}
-
 
 		/// <summary>
 		/// Searches the database and updates <see cref="Item"/>'s current price, on change updates price history as well
@@ -103,7 +123,6 @@ namespace BillScannerWPF {
 			}
 		}
 
-
 		/// <summary>
 		/// Update items list of OCR recognized strings
 		/// </summary>
@@ -125,7 +144,7 @@ namespace BillScannerWPF {
 		/// </summary>
 		/// <param name="identifier"><see cref="Item"/>'s GUID</param>
 		/// <param name="history">The purchase history of this <see cref="Item"/></param>
-		public void AddNewPurchaseForItemToDatabase(string identifier, PurchaseHistory history) {
+		public void AddNewPurchaseForItemToDatabase(string identifier, ItemPurchaseHistory history) {
 			foreach (JToken tok in itemDatabaseJson) {
 				if (tok[nameof(Item.identifier)].Value<string>() == identifier) {
 					tok[nameof(Item.totalPurchased)] = tok[nameof(Item.totalPurchased)].Value<long>() + history.amount;
@@ -197,8 +216,8 @@ namespace BillScannerWPF {
 		/// <summary>
 		/// Writes new purchase information into <see cref="Database.purchaseDatabase"/> and into the JSON file
 		/// </summary>
-		public void WriteNewShoppingInstance(Shopping purchaseInstance) {
-			((JArray)shoppingDatabaseJson[nameof(Shopping.purchasedItems)]).Add(JObject.FromObject(purchaseInstance));
+		public void WriteNewPurchaseInstance(Purchase purchaseInstance) {
+			((JArray)shoppingDatabaseJson[nameof(Purchase.purchasedItems)]).Add(JObject.FromObject(purchaseInstance));
 			purchaseDatabase.Add(purchaseInstance.GUIDString, purchaseInstance);
 			File.WriteAllText(WPFHelper.dataPath + current.ToString() + "_purchasedb.json", shoppingDatabaseJson.ToString());
 		}

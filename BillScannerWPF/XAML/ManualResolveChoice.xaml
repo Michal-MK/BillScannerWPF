@@ -5,15 +5,17 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:BillScannerWPF"
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800">
+             d:DesignHeight="450" d:DesignWidth="800"
+			 KeyboardNavigation.TabNavigation="Cycle">
 	<Grid x:Name="MAIN_ManualResolveChoice_Grid" Panel.ZIndex="1" Visibility="Visible">
 		<Grid.Background>
 			<SolidColorBrush Color="DarkRed"  Opacity=".4"/>
 		</Grid.Background>
 		<Viewbox>
-			<Grid Panel.ZIndex="2" Margin="100" Background="WhiteSmoke">
+			<Grid Panel.ZIndex="2" Margin="75" Background="WhiteSmoke">
 				<Grid Margin="10">
 					<Grid.RowDefinitions>
+						<RowDefinition Height="auto"></RowDefinition>
 						<RowDefinition Height="auto"></RowDefinition>
 						<RowDefinition Height="auto"></RowDefinition>
 						<RowDefinition Height="auto"></RowDefinition>
@@ -26,40 +28,26 @@
 					<Grid.ColumnDefinitions>
 						<ColumnDefinition Width="auto"></ColumnDefinition>
 						<ColumnDefinition Width="auto"></ColumnDefinition>
-						<ColumnDefinition Width="40"></ColumnDefinition>
-						<ColumnDefinition Width="auto"></ColumnDefinition>
-						<ColumnDefinition Width="auto"></ColumnDefinition>
-						<ColumnDefinition Width="auto"></ColumnDefinition>
-						<ColumnDefinition Width="*"></ColumnDefinition>
 					</Grid.ColumnDefinitions>
 					<TextBlock Grid.Row="0" Grid.Column="0" Text="The parser encountered a situation where it is unsure what to do!"	Margin="0,0,0,20" FontWeight="Heavy"></TextBlock>
-					<TextBlock Grid.Row="1" Grid.Column="0" Text="$Error Type" x:Name="MANUAL_RESOLUTION_ErrorType_Text"				Margin="0,0,0,10" FontWeight="DemiBold" Foreground="Red"></TextBlock>
+					<TextBlock Grid.Row="1" Grid.Column="0" Text="$Error Desc." x:Name="MANUAL_RESOLUTION_ErrorType_Text"				Margin="0,0,0,10" FontWeight="DemiBold" Foreground="Red" FocusManager.FocusedElement="{Binding}"></TextBlock>
 					
-					<TextBlock Grid.Row="2" Grid.Column="0" Text="$Solution 1" x:Name="MANUAL_RESOLUTION_Solution1_Text" Visibility="Collapsed"></TextBlock>
-					<TextBlock Grid.Row="3" Grid.Column="0" Text="$Solution 2" x:Name="MANUAL_RESOLUTION_Solution2_Text" Visibility="Collapsed"></TextBlock>
-					<TextBlock Grid.Row="4" Grid.Column="0" Text="$Solution 3" x:Name="MANUAL_RESOLUTION_Solution3_Text" Visibility="Collapsed"></TextBlock>
-					<Grid Grid.Row="5" Grid.Column="0">
+					
+					<Button Grid.Row="2" Grid.Column="0" Content="$Solution 1" HorizontalContentAlignment="Left" x:Name="MANUAL_RESOLUTION_Solution1_Button" Margin="4" Visibility="Collapsed" Padding="10,2"></Button>
+					<Button Grid.Row="3" Grid.Column="0" Content="$Solution 2" HorizontalContentAlignment="Left" x:Name="MANUAL_RESOLUTION_Solution2_Button" Margin="4" Visibility="Collapsed" Padding="10,2"></Button>
+					<Button Grid.Row="4" Grid.Column="0" Content="$Solution 3" HorizontalContentAlignment="Left" x:Name="MANUAL_RESOLUTION_Solution3_Button" Margin="4" Visibility="Collapsed" Padding="10,2"></Button>
+					<Button Grid.Row="5" Grid.Column="0" Content="$Solution 4" HorizontalContentAlignment="Left" x:Name="MANUAL_RESOLUTION_Solution4_Button" Margin="4" Visibility="Collapsed" Padding="10,2"></Button>
+					
+					<Grid Grid.Row="6" Grid.Column="0">
 						<Grid.ColumnDefinitions>
 							<ColumnDefinition Width="7*"></ColumnDefinition>
 							<ColumnDefinition Width="3*"></ColumnDefinition>
 						</Grid.ColumnDefinitions>
-						<TextBlock Grid.Column="0" Text="$Solution 4" x:Name="MANUAL_RESOLUTION_Solution4_Text" Visibility="Collapsed"></TextBlock>
-						<TextBox Grid.Column="1" Text="$Solution 4.1" x:Name="MANUAL_RESOLUTION_Solution4_Box"  Visibility="Collapsed"></TextBox>
+
+						<Button Grid.Column="0" Content="$Solution 5" HorizontalContentAlignment="Left" x:Name="MANUAL_RESOLUTION_Solution5_Button"	Margin="4" Visibility="Collapsed" Padding="10,2"></Button>
+						<TextBox Grid.Column="1" Text="$Solution 5.1" x:Name="MANUAL_RESOLUTION_Solution5_Box"		Margin="4" Visibility="{Binding ElementName=MANUAL_RESOLUTION_Solution5_Button, Path=Visibility}"></TextBox>
 					</Grid>
 
-				</Grid>
-				<Grid VerticalAlignment="Bottom" HorizontalAlignment="Right">
-					<Grid.ColumnDefinitions>
-						<ColumnDefinition Width="20"></ColumnDefinition>
-						<ColumnDefinition Width="auto"></ColumnDefinition>
-						<ColumnDefinition Width="auto"></ColumnDefinition>
-						<ColumnDefinition Width="auto"></ColumnDefinition>
-						<ColumnDefinition Width="auto"></ColumnDefinition>
-					</Grid.ColumnDefinitions>
-					<Button x:Name="MANUAL_RESOLUTION_Resolve1_Button" Grid.Column="1" Content="Resolve1" Margin="0,10,10,10" Padding="20,5"	Visibility="{Binding ElementName=MANUAL_RESOLUTION_Solution1_Text, Path=Visibility}"></Button>
-					<Button x:Name="MANUAL_RESOLUTION_Resolve2_Button" Grid.Column="2" Content="Resolve2" Margin="0,10,10,10" Padding="20,5"	Visibility="{Binding ElementName=MANUAL_RESOLUTION_Solution2_Text, Path=Visibility}"></Button>
-					<Button x:Name="MANUAL_RESOLUTION_Resolve3_Button" Grid.Column="3" Content="Resolve3" Margin="0,10,10,10" Padding="20,5"	Visibility="{Binding ElementName=MANUAL_RESOLUTION_Solution3_Text, Path=Visibility}"></Button>
-					<Button x:Name="MANUAL_RESOLUTION_Resolve4_Button" Grid.Column="4" Content="Resolve4" Margin="0,10,10,10" Padding="20,5"	Visibility="{Binding ElementName=MANUAL_RESOLUTION_Solution4_Text, Path=Visibility}"></Button>
 				</Grid>
 			</Grid>
 		</Viewbox>

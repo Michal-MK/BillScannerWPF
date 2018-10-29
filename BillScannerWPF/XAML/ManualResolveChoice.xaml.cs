@@ -4,7 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-
+using System.Windows.Input;
 
 namespace BillScannerWPF {
 
@@ -28,6 +28,8 @@ namespace BillScannerWPF {
 			{ Choices.DefineNewItem, "[{0}] - Define new item from what we got..."},
 			{ Choices.ManuallyEnterQuantity, "[{0}] - Enter the amount here manually: " }
 		};
+
+		private Button focusableElement;
 
 		#region Constructors
 
@@ -54,49 +56,49 @@ namespace BillScannerWPF {
 		/// </summary>
 		internal ManualResolveChoice(string errorText, Choices[] choices) {
 			InitializeComponent();
-			TextBlock[] solutionTexts = new TextBlock[] {
-				MANUAL_RESOLUTION_Solution1_Text,
-				MANUAL_RESOLUTION_Solution2_Text,
-				MANUAL_RESOLUTION_Solution3_Text,
-				MANUAL_RESOLUTION_Solution4_Text
+			Button[] solutionTexts1to4 = new Button[] {
+				MANUAL_RESOLUTION_Solution1_Button,
+				MANUAL_RESOLUTION_Solution2_Button,
+				MANUAL_RESOLUTION_Solution3_Button,
+				MANUAL_RESOLUTION_Solution4_Button
 			};
-			Button[] solutionButtons = new Button[] {
-				MANUAL_RESOLUTION_Resolve1_Button,
-				MANUAL_RESOLUTION_Resolve2_Button,
-				MANUAL_RESOLUTION_Resolve3_Button,
-				MANUAL_RESOLUTION_Resolve4_Button
-			};
-			TextBox inputBox = MANUAL_RESOLUTION_Solution4_Box;
 
+			Button solution5Button = MANUAL_RESOLUTION_Solution5_Button;
+			TextBox solution5Box = MANUAL_RESOLUTION_Solution5_Box;
 
 			MANUAL_RESOLUTION_ErrorType_Text.Text = errorText;
 
 			int choiceNumbering = 0;
 
 			for (int i = 0; i < choices.Length; i++) {
-				solutionTexts[i].Visibility = choices[i] == Choices.NOOP ? Visibility.Collapsed : Visibility.Visible;
+				solutionTexts1to4[i].Visibility = choices[i] == Choices.NOOP || (int)choices[i] >= 20 ? Visibility.Collapsed : Visibility.Visible;
 
 				if ((int)choices[i] >= 20) {
-					inputBox.Visibility = Visibility.Visible;
+					solution5Button.Visibility = Visibility.Visible;
+					solution5Button.Content = string.Format(texts[choices[i]], choiceNumbering);
+					solution5Button.Click += ManualResolveChoice_Click;
+					solution5Button.Name = choices[i].ToString();
 				}
 
 				if (choices[i] == Choices.ManuallyEnterDate) {
-					inputBox.Text = DateTime.Now.ToString("dd:MM:yyyy hh:mm:ss");
+					solution5Box.Text = DateTime.Now.ToString("dd:MM:yyyy hh:mm:ss");
 				}
 				if (choices[i] == Choices.ManuallyEnterPrice) {
-					inputBox.Text = "29.90";
+					solution5Box.Text = "29.90";
 				}
 				if (choices[i] == Choices.ManuallyEnterQuantity) {
-					inputBox.Text = "1";
+					solution5Box.Text = "1";
 				}
 
-				solutionTexts[i].Text = string.Format(texts[choices[i]], choiceNumbering);
-				solutionButtons[i].Click += ManualResolveChoice_Click;
-				solutionButtons[i].Name = choices[i].ToString();
-				solutionButtons[i].Content = string.Format("Solution {0}", choiceNumbering);
-				if (choices[i] != Choices.NOOP)
+				solutionTexts1to4[i].Content = string.Format(texts[choices[i]], choiceNumbering);
+				solutionTexts1to4[i].Click += ManualResolveChoice_Click;
+				solutionTexts1to4[i].Name = choices[i].ToString();
+				if (focusableElement == null) {
+					focusableElement = solutionTexts1to4[i];
+				}
+				if (choices[i] != Choices.NOOP) {
 					choiceNumbering++;
-
+				}
 			}
 		}
 
@@ -114,6 +116,12 @@ namespace BillScannerWPF {
 		/// </summary>
 		internal async Task<Choices> SelectChoiceAsync() {
 			WPFHelper.GetMainWindow().MAIN_Grid.Children.Add(this);
+			await Task.Run(() => {
+				Thread.Sleep(10);
+				Dispatcher.Invoke(() => {
+					Keyboard.Focus(focusableElement);
+				});
+			});
 			await Task.Run(() => {
 				evnt.Wait();
 				evnt.Reset();

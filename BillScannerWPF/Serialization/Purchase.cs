@@ -9,7 +9,7 @@ namespace BillScannerWPF {
 	/// Class representing a singe purchase
 	/// </summary>
 	[Serializable]
-	public class Shopping {
+	public class Purchase {
 
 		/// <summary>
 		/// Unique identifier of this purchase
@@ -37,7 +37,7 @@ namespace BillScannerWPF {
 		private List<long> internalItemsBought;
 
 		[JsonConstructor]
-		public Shopping(string GUIDString, DateTime date, decimal totalCost, string[] purchasedItems) {
+		public Purchase(string GUIDString, DateTime date, decimal totalCost, string[] purchasedItems) {
 			this.GUIDString = GUIDString;
 			this.date = date;
 			this.totalCost = totalCost;
@@ -49,7 +49,7 @@ namespace BillScannerWPF {
 		/// </summary>
 		/// <param name="date">The date this purchase was made</param>
 		/// <param name="collection">The items scanned from a bill visually represented by a <see cref="UIItem"/></param>
-		public Shopping(DateTime date, ObservableCollection<UIItem> collection) {
+		public Purchase(DateTime date, ObservableCollection<UIItem> collection) {
 			this.date = date;
 			internalItemGUIDs = new List<string>(collection.Count);
 			internalItemsBought = new List<long>(collection.Count);
@@ -67,10 +67,10 @@ namespace BillScannerWPF {
 			purchasedItems = internalItemGUIDs.ToArray();
 			for (int i = 0; i < purchasedItems.Length; i++) {
 				Item item = MainWindow.access.GetItem(purchasedItems[i]);
-				MainWindow.access.AddNewPurchaseForItemToDatabase(purchasedItems[i], new PurchaseHistory(GUIDString, internalItemsBought[i], item.currentPrice));
+				MainWindow.access.AddNewPurchaseForItemToDatabase(purchasedItems[i], new ItemPurchaseHistory(GUIDString, internalItemsBought[i], item.currentPrice));
 				totalCost += item.currentPrice;
 			}
-			MainWindow.access.WriteNewShoppingInstance(this);
+			MainWindow.access.WriteNewPurchaseInstance(this);
 		}
 	}
 }

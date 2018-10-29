@@ -7,7 +7,7 @@ namespace BillScannerWPF {
 	public class Item {
 
 		[JsonConstructor]
-		private Item(string userFriendlyName, string identifier, List<string> ocrNames, MeassurementUnit unitOfMeassure, decimal currentPrice, List<decimal> pricesInThePast, long totalPurchased, List<PurchaseHistory> purchaseHistory) {
+		private Item(string userFriendlyName, string identifier, List<string> ocrNames, MeassurementUnit unitOfMeassure, decimal currentPrice, List<decimal> pricesInThePast, long totalPurchased, List<ItemPurchaseHistory> purchaseHistory) {
 			this.userFriendlyName = userFriendlyName;
 			this.identifier = identifier;
 			this.ocrNames = ocrNames;
@@ -26,7 +26,7 @@ namespace BillScannerWPF {
 		public Item(string userFriendlyName, decimal currentPrice) {
 			ocrNames = new List<string>();
 			pricesInThePast = new List<decimal>();
-			purchaseHistory = new List<PurchaseHistory>();
+			purchaseHistory = new List<ItemPurchaseHistory>();
 			this.userFriendlyName = userFriendlyName;
 			this.currentPrice = currentPrice;
 			identifier = Guid.NewGuid().ToString();
@@ -70,7 +70,7 @@ namespace BillScannerWPF {
 		/// <summary>
 		/// History of purchases of this item
 		/// </summary>
-		public List<PurchaseHistory> purchaseHistory { get; }
+		public List<ItemPurchaseHistory> purchaseHistory { get; }
 
 		#region Internal fields and properties
 

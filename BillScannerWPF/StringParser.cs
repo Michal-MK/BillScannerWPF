@@ -230,7 +230,7 @@ namespace BillScannerWPF {
 					return MainWindow.access.GetItems()[fallbackItemIndex].currentPrice;
 				}
 				else if (choice == Choices.ManuallyEnterPrice) {
-					if (decimal.TryParse(res.MANUAL_RESOLUTION_Solution4_Box.Text.Replace(',', '.'), NumberStyles.Currency, CultureInfo.InvariantCulture, out decimal result)) {
+					if (decimal.TryParse(res.MANUAL_RESOLUTION_Solution5_Box.Text.Replace(',', '.'), NumberStyles.Currency, CultureInfo.InvariantCulture, out decimal result)) {
 						return result;
 					}
 					else {
@@ -254,13 +254,13 @@ namespace BillScannerWPF {
 				return (true, DateTime.Now);
 			}
 			else {
-				if (DateTime.TryParseExact(resolveChoice.MANUAL_RESOLUTION_Solution4_Box.Text, "dd:MM:yyyy hh:mm:ss", CultureInfo.GetCultureInfo("cs"), DateTimeStyles.AllowWhiteSpaces, out DateTime time)) {
+				if (DateTime.TryParseExact(resolveChoice.MANUAL_RESOLUTION_Solution5_Box.Text, "dd:MM:yyyy hh:mm:ss", CultureInfo.GetCultureInfo("cs"), DateTimeStyles.AllowWhiteSpaces, out DateTime time)) {
 					return (true, time);
 				}
-				else if (DateTime.TryParseExact(resolveChoice.MANUAL_RESOLUTION_Solution4_Box.Text, "dd:MM:yyyy", CultureInfo.GetCultureInfo("cs"), DateTimeStyles.AllowWhiteSpaces, out DateTime time1)) {
+				else if (DateTime.TryParseExact(resolveChoice.MANUAL_RESOLUTION_Solution5_Box.Text, "dd:MM:yyyy", CultureInfo.GetCultureInfo("cs"), DateTimeStyles.AllowWhiteSpaces, out DateTime time1)) {
 					return (true, time1);
 				}
-				else if (DateTime.TryParseExact(resolveChoice.MANUAL_RESOLUTION_Solution4_Box.Text, "hh:mm:ss", CultureInfo.GetCultureInfo("cs"), DateTimeStyles.AllowWhiteSpaces, out DateTime time2)) {
+				else if (DateTime.TryParseExact(resolveChoice.MANUAL_RESOLUTION_Solution5_Box.Text, "hh:mm:ss", CultureInfo.GetCultureInfo("cs"), DateTimeStyles.AllowWhiteSpaces, out DateTime time2)) {
 					return (true, new DateTime(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day, time2.Hour, time2.Minute, time2.Second));
 				}
 				else {
@@ -284,7 +284,7 @@ namespace BillScannerWPF {
 			catch (QuantityParsingException) {
 				ManualResolveChoice choice2 = new ManualResolveChoice("Unable to get quantity of goods purchased: Item name '" + itemName + "'", Choices.ManuallyEnterQuantity);
 				Choices c2 = await choice2.SelectChoiceAsync();
-				while (!long.TryParse(choice2.MANUAL_RESOLUTION_Solution4_Box.Text, out quantity)) {
+				while (!long.TryParse(choice2.MANUAL_RESOLUTION_Solution5_Box.Text, out quantity)) {
 					await choice2.SelectChoiceAsync();
 				}
 			}

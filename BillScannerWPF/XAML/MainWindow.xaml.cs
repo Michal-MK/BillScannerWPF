@@ -64,22 +64,11 @@ namespace BillScannerWPF {
 		public MainWindow(Shop selectedShop) {
 			InitializeComponent();
 
-			if (selectedShop == Shop.NotSelected) {
-#if !DEBUG
-				throw new WindowInitException(InitExpectionType.SHOP_NOT_SELECTED);
-#endif
-				Shop[] implemented = new Shop[] { Shop.Albert, Shop.McDonalds, Shop.Lidl };
-
-				Shop selected = implemented[new Random().Next(0, implemented.Length)];
-				MessageBox.Show("No Shop selected, automatically selecting " + selected.ToString() + ".", "No Shop Selected!");
-				selectedShop = selected;
-			}
-
 			access = DatabaseAccess.LoadDatabase(selectedShop);
 			selectedShopRuleset = BaseRuleset.GetRuleset(selectedShop);
 
 			MAIN_DatabaseStatus_Text.Text = "Loaded | Intact";
-			MAIN_DatabaseStatus_Text.Foreground = System.Windows.Media.Brushes.BlueViolet;
+			MAIN_DatabaseStatus_Text.Foreground = Brushes.BlueViolet;
 
 			server = new TCPServer();
 			try {
@@ -87,7 +76,11 @@ namespace BillScannerWPF {
 				server.OnConnectionEstablished += Server_OnConnectionEstablished;
 				server.OnClientDisconnected += Server_OnClientDisconnected;
 			}
-			catch { /*TODO*/ }
+			catch {
+				MessageBox.Show("Unable to start server at " + Helper.GetActiveIPv4Address() + " " + PORT + "\n" +
+								"Either the port is already taken of you are not connected to the Internet!"
+								,"Server Off-line!",MessageBoxButton.OK, MessageBoxImage.Exclamation);
+			}
 
 			MAIN_ServerStatus_Text.Text = "Running";
 			MAIN_ServerStatus_Text.Foreground = Brushes.LawnGreen;
@@ -182,7 +175,7 @@ namespace BillScannerWPF {
 
 		private void MAIN_FinalizePurchase_Click(object sender, RoutedEventArgs e) {
 			ImageProcessor pr = WPFHelper.GetMainWindow().imgProcessing;
-			Shopping s = new Shopping(pr.currentParsingResult.meta.purchasedAt, pr.uiItemsMatched);
+			Purchase s = new Purchase(pr.currentParsingResult.meta.purchasedAt, pr.uiItemsMatched);
 			s.FinalizePurchase();
 			MAIN_Finalize_Button.IsEnabled = false;
 		}

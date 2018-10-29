@@ -11,6 +11,7 @@ namespace BillScannerWPF {
 		/// <summary>
 		/// Creates a new JSON file for selected <see cref="Shop"/>'s Items and returns the <see cref="FileInfo"/>
 		/// </summary>
+		/// <exception cref="IOException"></exception>
 		internal static FileInfo Initialize(Shop shop) {
 			string shopName = shop.ToString();
 
@@ -34,13 +35,14 @@ namespace BillScannerWPF {
 		/// <summary>
 		/// Creates a new JSON file for selected <see cref="Shop"/>'s purchases and returns the <see cref="FileInfo"/>
 		/// </summary>
+		/// <exception cref="IOException"></exception>
 		internal static FileInfo InitNewShop(string shopName) {
 			FileInfo shopPath = new FileInfo(WPFHelper.dataPath + shopName + "_purchasedb.json");
 			if (!File.Exists(shopPath.FullName)) {
 				using (StreamWriter sw = File.CreateText(shopPath.FullName)) {
 					sw.WriteLine("{");
 					sw.WriteLine("\"shopName\": \"{0}\",", shopName);
-					sw.WriteLine("\""+ nameof(Shopping.purchasedItems) + "\": []");
+					sw.WriteLine("\""+ nameof(Purchase.purchasedItems) + "\": []");
 					sw.WriteLine("}");
 				}
 			}

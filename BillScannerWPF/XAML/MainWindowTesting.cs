@@ -11,13 +11,20 @@ namespace BillScannerWPF {
 
 		private async void DebugDelay() {
 			await Task.Run(() => { Thread.Sleep(1000); });
-			await DebugAsync();
+			//await DebugListAsync();
+			await DebugManualResolveAsync();
 		}
 
-		public async Task DebugAsync() {
+		public async Task DebugListAsync() {
 			ItemList list = new ItemList(access.GetItems());
 			Item i = await list.SelectItemAsync();
 			System.Diagnostics.Debug.Print(i.identifier);
+		}
+
+		public async Task DebugManualResolveAsync() {
+			ManualResolveChoice choice = new ManualResolveChoice("Some generic error"
+				, Choices.FindExistingItemFromList, Choices.ManuallyEnterQuantity);
+			await choice.SelectChoiceAsync();
 		}
 	}
 }

@@ -25,7 +25,7 @@ namespace BillScannerWPF {
 		/// <summary>
 		/// All purchases from the database indexed be purchase GUID
 		/// </summary>
-		protected Dictionary<string, Shopping> purchaseDatabase;
+		protected Dictionary<string, Purchase> purchaseDatabase;
 
 		/// <summary>
 		/// JSON structure holding all purchases in the file
@@ -80,13 +80,13 @@ namespace BillScannerWPF {
 		/// Populate internal <see cref="purchaseDatabase"/> with contents of the JSON
 		/// </summary>
 		private void LoadPurchaseDatabase() {
-			purchaseDatabase = new Dictionary<string, Shopping>();
+			purchaseDatabase = new Dictionary<string, Purchase>();
 			using (StreamReader sr = File.OpenText(selectedShopDBFile.FullName))
 			using (JsonTextReader jr = new JsonTextReader(sr)) {
 				shoppingDatabaseJson = JToken.ReadFrom(jr);
-				JArray array = ((JArray)shoppingDatabaseJson[nameof(Shopping.purchasedItems)]);
+				JArray array = ((JArray)shoppingDatabaseJson[nameof(Purchase.purchasedItems)]);
 				for (int i = 0; i < array.Count; i++) {
-					Shopping item = array[i].ToObject<Shopping>();
+					Purchase item = array[i].ToObject<Purchase>();
 					purchaseDatabase.Add(item.GUIDString, item);
 				}
 			}

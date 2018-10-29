@@ -6,7 +6,7 @@ namespace BillScannerWPF {
 	/// Class holding the information about each purchase of an item.
 	/// </summary>
 	[Serializable]
-	public class PurchaseHistory {
+	public class ItemPurchaseHistory {
 
 		/// <summary>
 		/// Unique identifier of this purchase
@@ -23,7 +23,7 @@ namespace BillScannerWPF {
 		/// </summary>
 		public decimal price { get; }
 
-		public PurchaseHistory(string purchaseGUID, long amount, decimal price) {
+		public ItemPurchaseHistory(string purchaseGUID, long amount, decimal price) {
 			this.purchaseGUID = purchaseGUID;
 			this.amount = amount;
 			this.price = price;
