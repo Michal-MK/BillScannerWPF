@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace BillScannerWPF {
+namespace BillScannerCore {
 
 	/// <summary>
 	/// Exception that is thrown when an Item can not be found inside the internal representation of database file.

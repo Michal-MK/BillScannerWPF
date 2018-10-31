@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using Newtonsoft.Json;
 
-namespace BillScannerWPF {
+namespace BillScannerCore {
 	[Serializable]
 	public class Item {
 
@@ -16,6 +16,7 @@ namespace BillScannerWPF {
 			this.pricesInThePast = pricesInThePast;
 			this.totalPurchased = totalPurchased;
 			this.purchaseHistory = purchaseHistory;
+			this.isRegistered = true;
 		}
 		
 		/// <summary>
@@ -74,28 +75,28 @@ namespace BillScannerWPF {
 
 		#region Internal fields and properties
 
-		internal bool isSingleLine { get; set; }
-		internal bool isRegistered { get; set; }
-		internal string tirggerForMatch { get; set; }
+		public bool isRegistered { get; set; }
+		[JsonIgnore]
+		public string tirggerForMatch { get; set; }
 
-		internal void AddOCRName(string v) {
+		public void AddOCRName(string v) {
 			ocrNames.Add(v);
 		}
 
-		internal void AddAmount(long amount) {
+		public void AddAmount(long amount) {
 			totalPurchased += amount;
 		}
 
-		internal void SetNewCurrentPrice(decimal price) {
+		public void SetNewCurrentPrice(decimal price) {
 			currentPrice = price;
-			MainWindow.access.WriteNewCurrentPriceToDatabase(identifier, price);
+			DatabaseAccess.access.WriteNewCurrentPriceToDatabase(identifier, price);
 		}
-		internal void SetUnitOfMeassure(MeassurementUnit unit) {
+		public void SetUnitOfMeassure(MeassurementUnit unit) {
 			unitOfMeassure = unit;
-			MainWindow.access.WriteUnitOfMeassureForItemToDatabase(identifier, unit);
+			DatabaseAccess.access.WriteUnitOfMeassureForItemToDatabase(identifier, unit);
 		}
 
-		internal void PurchaseModifications(string modifiedName, decimal finalPrice) {
+		public void PurchaseModifications(string modifiedName, decimal finalPrice) {
 			userFriendlyName = modifiedName;
 			currentPrice = finalPrice;
 		}

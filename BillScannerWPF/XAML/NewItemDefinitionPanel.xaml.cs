@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BillScannerCore;
+using System;
 using System.Globalization;
 using System.Threading;
 using System.Threading.Tasks;
@@ -32,7 +33,7 @@ namespace BillScannerWPF {
 		/// Handle new Item registration from a user, returned values are sanity checked
 		/// </summary>
 		internal async Task<(string itemName, decimal itemValue, MeassurementUnit itemMeassurements)> RegisterItemAsync() {
-			WPFHelper.GetMainWindow().MAIN_Grid.Children.Add(this);
+			((MainWindow)App.Current.MainWindow).MAIN_Grid.Children.Add(this);
 			await Task.Run(() => {
 				evnt.Wait();
 			});
@@ -67,7 +68,7 @@ namespace BillScannerWPF {
 					itemValue = update;
 				}
 			}
-			WPFHelper.GetMainWindow().MAIN_Grid.Children.Remove(this);
+			((MainWindow)App.Current.MainWindow).MAIN_Grid.Children.Remove(this);
 			return (ITEMREG_ItemName_Box.Text, itemValue, (MeassurementUnit)Enum.Parse(typeof(MeassurementUnit),ITEMREG_UnitOfMeassure_DropDown.SelectedItem.ToString()));
 		}
 	}

@@ -4,19 +4,12 @@ using System.IO;
 using System.Text;
 using System.Windows;
 
-namespace BillScannerWPF {
+namespace BillScannerCore {
 
 	/// <summary>
 	/// Class containing useful helper functionality for the application
 	/// </summary>
-	static class WPFHelper {
-
-		/// <summary>
-		/// Get the reference to <see cref="MainWindow"/>
-		/// </summary>
-		public static MainWindow GetMainWindow() {
-			return (MainWindow)Application.Current.MainWindow;
-		}
+	public static class WPFHelper {
 
 		/// <summary>
 		/// Returns an absolute path to this application's path inside the %appdata% (Roaming) folder

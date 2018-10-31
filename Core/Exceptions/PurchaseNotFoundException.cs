@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.Serialization;
 
-namespace BillScannerWPF {
+namespace BillScannerCore {
 
 	/// <summary>
 	/// Exception thrown when atempting to find a purchase with GUID that does not exist.

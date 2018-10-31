@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using BillScannerCore;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -16,7 +13,7 @@ namespace BillScannerWPF {
 		}
 
 		public async Task DebugListAsync() {
-			ItemList list = new ItemList(access.GetItems());
+			ItemList list = new ItemList(DatabaseAccess.access.GetItems());
 			Item i = await list.SelectItemAsync();
 			System.Diagnostics.Debug.Print(i.identifier);
 		}

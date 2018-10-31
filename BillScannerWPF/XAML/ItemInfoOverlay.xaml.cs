@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BillScannerCore;
+using System;
 using System.Diagnostics;
 using System.Globalization;
 using System.Windows;
@@ -28,7 +29,7 @@ namespace BillScannerWPF {
 		/// <param name="source"></param>
 		public ItemInfoOverlay(UIItem source) {
 			currentItemBeingInspected = source;
-			holder = WPFHelper.GetMainWindow();
+			holder = (MainWindow)App.Current.MainWindow;
 
 			InitializeComponent();
 
@@ -56,7 +57,7 @@ namespace BillScannerWPF {
 				return;
 			}
 			try {
-				MainWindow.access.RegisterItemFromUI(currentItemBeingInspected, modifiedName, finalPrice);
+				DatabaseAccess.access.RegisterItemFromUI(currentItemBeingInspected, modifiedName, finalPrice);
 				((Button)sender).IsEnabled = false;
 				ImageProcessor.instance.uiItemsUnknown.Remove(currentItemBeingInspected);
 				ImageProcessor.instance.uiItemsMatched.Add(currentItemBeingInspected);

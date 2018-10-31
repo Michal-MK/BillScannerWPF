@@ -1,4 +1,5 @@
-﻿using System.Collections.ObjectModel;
+﻿using BillScannerCore;
+using System.Collections.ObjectModel;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
@@ -22,7 +23,7 @@ namespace BillScannerWPF {
 		public ItemList(Item[] items) {
 			InitializeComponent();
 
-			WPFHelper.GetMainWindow().MAIN_Grid.Children.Add(this);
+			((MainWindow)App.Current.MainWindow).MAIN_Grid.Children.Add(this);
 
 			observedItems = new ObservableCollection<ItemList_Item>();
 			foreach (Item item in items) {
@@ -58,11 +59,11 @@ namespace BillScannerWPF {
 					evnt.Wait();
 				});
 				if (wasAborted) {
-					WPFHelper.GetMainWindow().MAIN_Grid.Children.Remove(this);
+					((MainWindow)App.Current.MainWindow).MAIN_Grid.Children.Remove(this);
 					return null;
 				}
 			}
-			WPFHelper.GetMainWindow().MAIN_Grid.Children.Remove(this);
+			((MainWindow)App.Current.MainWindow).MAIN_Grid.Children.Remove(this);
 			return ((ItemList_Item)ITEMLIST_Items_ListBox.SelectedItem).asociatedItem;
 		}
 	}

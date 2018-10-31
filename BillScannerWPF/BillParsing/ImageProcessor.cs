@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BillScannerCore;
+using System;
 using System.Collections.ObjectModel;
 using System.Drawing;
 using System.Linq;
@@ -13,7 +14,6 @@ namespace BillScannerWPF {
 	/// </summary>
 	internal class ImageProcessor : IDisposable {
 
-		private readonly DatabaseAccess access;
 		private readonly TesseractEngine engine;
 		private readonly Rules.IRuleset ruleset;
 
@@ -43,9 +43,8 @@ namespace BillScannerWPF {
 		/// <param name="access">Reference to database IO</param>
 		/// <param name="ruleset">Reference to selected <see cref="Shop"/>'s rules</param>
 		/// <param name="main">Reference to main application window</param>
-		internal ImageProcessor(DatabaseAccess access, Rules.IRuleset ruleset, MainWindow main) {
+		internal ImageProcessor(Rules.IRuleset ruleset, MainWindow main) {
 			instance = this;
-			this.access = access;
 			engine = new TesseractEngine("Resources" + System.IO.Path.DirectorySeparatorChar + "tessdata", "ces");
 			this.ruleset = ruleset;
 
@@ -58,8 +57,7 @@ namespace BillScannerWPF {
 		/// </summary>
 		internal void OnImageDataReceived(byte[] imageData, byte sender) {
 			Application.Current.Dispatcher.Invoke(() => {
-				MainWindow w = WPFHelper.GetMainWindow();
-				w.SetPrevImage(imageData);
+				((MainWindow)App.Current.MainWindow).SetPrevImage(imageData);
 			});
 		}
 
@@ -68,7 +66,7 @@ namespace BillScannerWPF {
 		/// </summary>
 		internal async void Analyze(object sender, RoutedEventArgs e) {
 			Button bSender = (Button)sender;
-			if (WPFHelper.GetMainWindow().currentImageSource == null) {
+			if (((MainWindow)App.Current.MainWindow).currentImageSource == null) {
 				return;
 			}
 
@@ -76,7 +74,7 @@ namespace BillScannerWPF {
 			uiItemsMatched.Clear();
 			uiItemsUnknown.Clear();
 
-			using (Tesseract.Page p = engine.Process((Bitmap)Bitmap.FromFile(WPFHelper.GetMainWindow().currentImageSource), PageSegMode.Auto)) {
+			using (Tesseract.Page p = engine.Process((Bitmap)Bitmap.FromFile(((MainWindow)App.Current.MainWindow).currentImageSource), PageSegMode.Auto)) {
 				StringParser instance = new StringParser(ruleset);
 				ParsingResult result = null;
 				string[] split = p.GetText().Split('\n');

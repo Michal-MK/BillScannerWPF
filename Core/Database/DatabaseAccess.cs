@@ -2,7 +2,7 @@
 using System.IO;
 using Newtonsoft.Json.Linq;
 
-namespace BillScannerWPF {
+namespace BillScannerCore {
 
 	/// <summary>
 	/// Provides methods for database IO.
@@ -14,16 +14,24 @@ namespace BillScannerWPF {
 		/// </summary>
 		private Shop current;
 
+		/// <summary>
+		/// Static access to database I/O
+		/// </summary>
+		public static DatabaseAccess access { get; private set; }
+
 		private DatabaseAccess(Shop s) : base(s) {
 			string shopName = s.ToString();
 			current = s;
+			access = this;
 		}
 
 		/// <summary>
 		/// Loads internal databases (<see cref="Database.itemDatabase"/> and <see cref="Database.purchaseDatabase"/>) with contents of the JSON files for selected <see cref="Shop"/>
 		/// </summary>
 		public static DatabaseAccess LoadDatabase(Shop shop) {
-			DatabaseAccess access = new DatabaseAccess(shop);
+			if (access == null || access.current != shop) {
+				access = new DatabaseAccess(shop);
+			}
 			return access;
 		}
 
@@ -96,7 +104,7 @@ namespace BillScannerWPF {
 		/// </summary>
 		/// <param name="identifier"><see cref="Item"/>'s GUID</param>
 		/// <param name="price">The price to set as new</param>
-		internal void WriteNewCurrentPriceToDatabase(string identifier, decimal price) {
+		public void WriteNewCurrentPriceToDatabase(string identifier, decimal price) {
 			foreach (JToken tok in itemDatabaseJson) {
 				if (tok[nameof(Item.identifier)].Value<string>() == identifier) {
 					decimal current = tok[nameof(Item.currentPrice)].Value<decimal>();
@@ -175,25 +183,25 @@ namespace BillScannerWPF {
 		/// Registers <see cref="Item"/> from UI !writes only into <see cref="Database.itemDatabase"/>!
 		/// </summary>
 		/// <param name="currentItemBeingInspected">The <see cref="UIItem"/> from which to get <see cref="Item"/> information</param>
-		internal void RegisterItemFromUI(Item newItem) {
+		public void RegisterItemFromUI(Item newItem) {
 			RegisterNewItem(newItem);
 		}
 
 		/// <summary>
 		/// Registers <see cref="Item"/> from UI !writes only into <see cref="Database.itemDatabase"/>!
 		/// </summary>
-		/// <param name="currentItemBeingInspected">The <see cref="UIItem"/> from which to get <see cref="Item"/> information</param>
+		/// <param name="currentItemBeingInspected">The <see cref="ItemPurchaseData"/> from which to get <see cref="Item"/> information</param>
 		/// <param name="modifiedName">New user friendly name</param>
 		/// <param name="finalPrice">New price for the item</param>
-		internal void RegisterItemFromUI(UIItem currentItemBeingInspected, string modifiedName, decimal finalPrice) {
-			RegisterNewItem(currentItemBeingInspected.asociatedItem, modifiedName, finalPrice);
+		public void RegisterItemFromUI(ItemPurchaseData currentItemBeingInspected, string modifiedName, decimal finalPrice) {
+			RegisterNewItem(currentItemBeingInspected.item, modifiedName, finalPrice);
 		}
 
 		/// <summary>
 		/// Adds new <see cref="Item"/> definition into internal database !Does not write into files!
 		/// </summary>
 		/// <param name="item">The <see cref="Item"/> to add</param>
-		private void RegisterNewItem(Item item, string modifiedName = null, decimal finalPrice = -1) {
+		public void RegisterNewItem(Item item, string modifiedName = null, decimal finalPrice = -1) {
 			itemDatabase.Add(item.identifier, WriteItemDefinitionToDatabase(item,
 				modifiedName == null ? item.userFriendlyName : modifiedName,
 				finalPrice == -1 ? item.currentPrice : finalPrice));

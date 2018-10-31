@@ -115,7 +115,7 @@ namespace BillScannerWPF {
 		/// Handles user selection of one resolution for the problem
 		/// </summary>
 		internal async Task<Choices> SelectChoiceAsync() {
-			WPFHelper.GetMainWindow().MAIN_Grid.Children.Add(this);
+			((MainWindow)App.Current.MainWindow).MAIN_Grid.Children.Add(this);
 			await Task.Run(() => {
 				Thread.Sleep(10);
 				Dispatcher.Invoke(() => {
@@ -126,7 +126,7 @@ namespace BillScannerWPF {
 				evnt.Wait();
 				evnt.Reset();
 			});
-			WPFHelper.GetMainWindow().MAIN_Grid.Children.Remove(this);
+			((MainWindow)App.Current.MainWindow).MAIN_Grid.Children.Remove(this);
 			return selected;
 		}
 

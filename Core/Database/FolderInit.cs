@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 
-namespace BillScannerWPF {
+namespace BillScannerCore {
 
 	/// <summary>
 	/// Helper class to initialize empty shop JSONs and purchase JSONs

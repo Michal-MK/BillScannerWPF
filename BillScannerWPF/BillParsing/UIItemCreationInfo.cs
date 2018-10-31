@@ -1,4 +1,6 @@
-﻿namespace BillScannerWPF {
+﻿using BillScannerCore;
+
+namespace BillScannerWPF {
 
 	/// <summary>
 	/// Structure holding necessary data to construct a full <see cref="UIItem"/> visual element

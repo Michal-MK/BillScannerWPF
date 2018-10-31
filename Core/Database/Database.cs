@@ -5,7 +5,7 @@ using System.IO;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json;
 
-namespace BillScannerWPF {
+namespace BillScannerCore {
 
 	/// <summary>
 	/// JSON data parsed into the program
@@ -35,12 +35,12 @@ namespace BillScannerWPF {
 		/// <summary>
 		/// Current shops item JSON
 		/// </summary>
-		internal FileInfo itemDatabaseFile { get; }
+		public FileInfo itemDatabaseFile { get; }
 
 		/// <summary>
 		/// Current shops purchase JSON
 		/// </summary>
-		internal FileInfo selectedShopDBFile { get; }
+		public FileInfo selectedShopDBFile { get; }
 
 		/// <summary>
 		/// Shop selected at startup

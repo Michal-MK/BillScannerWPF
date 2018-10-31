@@ -1,4 +1,5 @@
-﻿using System.Collections.ObjectModel;
+﻿using BillScannerCore;
+using System.Collections.ObjectModel;
 
 namespace BillScannerWPF {
 

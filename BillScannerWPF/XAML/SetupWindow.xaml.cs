@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Windows;
 using System.Windows.Controls;
+using BillScannerCore;
+using BillScannerWPF;
 
-namespace BillScannerWPF {
+namespace BillScannerStartup {
 
 	/// <summary>
 	/// Code for SetupWindow.xaml

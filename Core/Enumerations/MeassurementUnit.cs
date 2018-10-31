@@ -1,4 +1,4 @@
-﻿namespace BillScannerWPF {
+﻿namespace BillScannerCore {
 
 	/// <summary>
 	/// Units an item can be measured with

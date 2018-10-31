@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BillScannerCore;
+using System;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media.Imaging;
@@ -63,6 +64,10 @@ namespace BillScannerWPF {
 
 		private void UITEM_ShowDetails_Click(object sender, RoutedEventArgs e) {
 			ItemInfoOverlay overlay = new ItemInfoOverlay(this);
+		}
+
+		public static implicit operator ItemPurchaseData(UIItem item) {
+			return new ItemPurchaseData(item.asociatedItem, item.quantityPurchased);
 		}
 	}
 }

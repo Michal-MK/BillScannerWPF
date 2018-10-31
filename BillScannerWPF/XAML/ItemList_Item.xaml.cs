@@ -1,4 +1,5 @@
-﻿using System.Windows.Controls;
+﻿using BillScannerCore;
+using System.Windows.Controls;
 
 namespace BillScannerWPF {
 

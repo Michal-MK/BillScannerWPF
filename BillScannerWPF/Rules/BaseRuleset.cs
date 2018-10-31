@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BillScannerCore;
+using System;
 using System.Text.RegularExpressions;
 
 namespace BillScannerWPF.Rules {

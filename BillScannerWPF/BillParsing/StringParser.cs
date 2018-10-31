@@ -1,4 +1,5 @@
-﻿using BillScannerWPF.Rules;
+﻿using BillScannerCore;
+using BillScannerWPF.Rules;
 using System;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
@@ -31,7 +32,7 @@ namespace BillScannerWPF {
 			ObservableCollection<UIItemCreationInfo> matchedItems = new ObservableCollection<UIItemCreationInfo>();
 			ObservableCollection<UIItemCreationInfo> unmatchedItems = new ObservableCollection<UIItemCreationInfo>();
 
-			Item[] items = MainWindow.access.GetItems();
+			Item[] items = DatabaseAccess.access.GetItems();
 			bool initiated = false;
 			bool finalized = false;
 			bool purchaseTimeFound = false;
@@ -140,13 +141,13 @@ namespace BillScannerWPF {
 							Item newItem = new Item(itemName, itemPrice);
 							newItem.AddOCRName(split[i]);
 							UIItemCreationInfo nowKnown = new UIItemCreationInfo(newItem, false, quantity, itemPrice, MatchRating.Success);
-							MainWindow.access.RegisterItemFromUI(newItem);
+							DatabaseAccess.access.RegisterItemFromUI(newItem);
 							nowKnown.item.tirggerForMatch = split[i];
 							nowKnown.item.SetUnitOfMeassure(itemUnitOfMeassure);
 							matchedItems.Add(nowKnown);
 						}
 						else if (c == Choices.FindExistingItemFromList) {
-							ItemList list = new ItemList(MainWindow.access.GetItems());
+							ItemList list = new ItemList(DatabaseAccess.access.GetItems());
 							Item manuallyMatchedItem = await list.SelectItemAsync();
 							if (manuallyMatchedItem == null) {
 								i -= rulesHandleItemLineSpan ? 1 : rules.itemLineSpan;
@@ -230,7 +231,7 @@ namespace BillScannerWPF {
 				}
 				Choices choice = await res.SelectChoiceAsync();
 				if (choice == Choices.UseLatestValue) {
-					return MainWindow.access.GetItems()[fallbackItemIndex].currentPrice;
+					return DatabaseAccess.access.GetItems()[fallbackItemIndex].currentPrice;
 				}
 				else if (choice == Choices.ManuallyEnterPrice) {
 					if (decimal.TryParse(res.MANUAL_RESOLUTION_Solution5_Box.Text.Replace(',', '.'), NumberStyles.Currency, CultureInfo.InvariantCulture, out decimal result)) {

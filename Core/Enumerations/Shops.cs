@@ -1,4 +1,4 @@
-﻿namespace BillScannerWPF {
+﻿namespace BillScannerCore {
 
 	/// <summary>
 	/// All shops that are ready to have their bills parsed

@@ -65,25 +65,15 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Database\Database.cs" />
-    <Compile Include="Database\DatabaseAccess.cs" />
     <Compile Include="Enumerations\ManualResolutionChoices.cs" />
     <Compile Include="Enumerations\MatchRating.cs" />
-    <Compile Include="Enumerations\MeassurementUnit.cs" />
-    <Compile Include="Enumerations\Shops.cs" />
     <Compile Include="Exceptions\GenericParsingException.cs" />
-    <Compile Include="Database\FolderInit.cs" />
     <Compile Include="BillParsing\ImageProcessor.cs" />
-    <Compile Include="Exceptions\ItemNotDefinedException.cs" />
     <Compile Include="Exceptions\PriceParsingException.cs" />
     <Compile Include="Exceptions\NameParsingException.cs" />
     <Compile Include="Exceptions\QuantityParsingException.cs" />
-    <Compile Include="Exceptions\PurchaseNotFoundException.cs" />
-    <Compile Include="Serialization\Item.cs" />
-    <Compile Include="Serialization\ItemPurchaseHistory.cs" />
-    <Compile Include="Serialization\Purchase.cs" />
-    <Compile Include="Serialization\PurchaseMeta.cs" />
     <Compile Include="BillParsing\UIItemCreationInfo.cs" />
+    <Compile Include="ScannerHelper.cs" />
     <Compile Include="XAML\ItemList.xaml.cs">
       <DependentUpon>ItemList.xaml</DependentUpon>
     </Compile>
@@ -104,19 +94,18 @@
     <Compile Include="Rules\IRuleset.cs" />
     <Compile Include="Rules\LidlRuleset.cs" />
     <Compile Include="Rules\McDonaldsRuleset.cs" />
-    <Compile Include="WPFHelper.cs" />
     <Compile Include="XAML\MatchedProduct.xaml.cs">
       <DependentUpon>MatchedProduct.xaml</DependentUpon>
     </Compile>
     <Compile Include="XAML\NewItemDefinitionPanel.xaml.cs">
       <DependentUpon>NewItemDefinitionPanel.xaml</DependentUpon>
     </Compile>
-    <Compile Include="XAML\SetupWindow.xaml.cs">
-      <DependentUpon>SetupWindow.xaml</DependentUpon>
-    </Compile>
     <Compile Include="BillParsing\StringParser.cs" />
     <Compile Include="BillParsing\WordSimilarity.cs" />
     <Compile Include="Exceptions\WindowInitExpection.cs" />
+    <Compile Include="XAML\SetupWindow.xaml.cs">
+      <DependentUpon>SetupWindow.xaml</DependentUpon>
+    </Compile>
     <Page Include="XAML\ItemList.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -154,8 +143,8 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="XAML\SetupWindow.xaml">
-      <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
   </ItemGroup>
   <ItemGroup>
@@ -216,7 +205,12 @@
   <ItemGroup>
     <Resource Include="Resources\Transparent.png" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\Core\Core.csproj">
+      <Project>{8ff4b367-ea82-458b-90c6-e152811e6c3b}</Project>
+      <Name>Core</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ProjectExtensions />
 </Project>

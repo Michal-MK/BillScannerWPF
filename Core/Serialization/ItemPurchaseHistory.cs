@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace BillScannerWPF {
+namespace BillScannerCore {
 
 	/// <summary>
 	/// Class holding the information about each purchase of an item.

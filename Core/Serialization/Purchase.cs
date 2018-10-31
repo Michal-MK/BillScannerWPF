@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using Newtonsoft.Json;
 
-namespace BillScannerWPF {
+namespace BillScannerCore {
 
 	/// <summary>
 	/// Class representing a singe purchase
@@ -47,12 +47,12 @@ namespace BillScannerWPF {
 		/// </summary>
 		/// <param name="date">The date this purchase was made</param>
 		/// <param name="collection">The items scanned from a bill visually represented by a <see cref="UIItem"/></param>
-		public Purchase(DateTime date, ObservableCollection<UIItem> collection) {
+		public Purchase(DateTime date, ItemPurchaseData[] collection) {
 			this.date = date;
-			purchasedItems = new string[collection.Count];
-			internalItemsBought = new List<long>(collection.Count);
-			for (int i = 0; i < collection.Count; i++) {
-				purchasedItems[i] = collection[i].asociatedItem.identifier;
+			purchasedItems = new string[collection.Length];
+			internalItemsBought = new List<long>(collection.Length);
+			for (int i = 0; i < collection.Length; i++) {
+				purchasedItems[i] = collection[i].item.identifier;
 				internalItemsBought.Add(collection[i].quantityPurchased);
 			}
 		}
@@ -63,11 +63,11 @@ namespace BillScannerWPF {
 		public void FinalizePurchase() {
 			GUIDString = Guid.NewGuid().ToString();
 			for (int i = 0; i < purchasedItems.Length; i++) {
-				Item item = MainWindow.access.GetItem(purchasedItems[i]);
-				MainWindow.access.AddNewPurchaseForItemToDatabase(purchasedItems[i], new ItemPurchaseHistory(GUIDString, internalItemsBought[i], item.currentPrice));
+				Item item = DatabaseAccess.access.GetItem(purchasedItems[i]);
+				DatabaseAccess.access.AddNewPurchaseForItemToDatabase(purchasedItems[i], new ItemPurchaseHistory(GUIDString, internalItemsBought[i], item.currentPrice));
 				totalCost += item.currentPrice;
 			}
-			MainWindow.access.WriteNewPurchaseInstance(this);
+			DatabaseAccess.access.WriteNewPurchaseInstance(this);
 		}
 	}
 }

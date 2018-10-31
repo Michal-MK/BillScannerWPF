@@ -9,7 +9,7 @@ using System.Diagnostics;
 
 using Igor.TCP;
 using BillScannerWPF.Rules;
-
+using BillScannerCore;
 
 namespace BillScannerWPF {
 	/// <summary>
@@ -23,11 +23,6 @@ namespace BillScannerWPF {
 		public const ushort START_PORT = 6689;
 
 		public const ushort PORT_RANGE = 10;
-
-		/// <summary>
-		/// Static reference to database IO
-		/// </summary>
-		public static DatabaseAccess access;
 
 		/// <summary>
 		/// Static reference to the server
@@ -66,7 +61,7 @@ namespace BillScannerWPF {
 		public MainWindow(Shop selectedShop) {
 			InitializeComponent();
 
-			access = DatabaseAccess.LoadDatabase(selectedShop);
+			DatabaseAccess.LoadDatabase(selectedShop);
 			selectedShopRuleset = BaseRuleset.GetRuleset(selectedShop);
 
 			MAIN_DatabaseStatus_Text.Text = "Loaded | Intact";
@@ -91,7 +86,7 @@ namespace BillScannerWPF {
 			MAIN_ServerStatus_Text.Text = "Running";
 			MAIN_ServerStatus_Text.Foreground = Brushes.LawnGreen;
 
-			imgProcessing = new ImageProcessor(access, selectedShopRuleset, this);
+			imgProcessing = new ImageProcessor(selectedShopRuleset, this);
 
 			MAIN_Analyze_Button.Click += imgProcessing.Analyze;
 			MAIN_OpenDatabaseFile_Button.Click += MAIN_OpenDatabaseFile_Click;
@@ -174,14 +169,14 @@ namespace BillScannerWPF {
 
 		private void MAIN_OpenDatabaseFile_Click(object sender, RoutedEventArgs e) {
 			Process p = new Process();
-			ProcessStartInfo info = new ProcessStartInfo(access.itemDatabaseFile.FullName);
+			ProcessStartInfo info = new ProcessStartInfo(DatabaseAccess.access.itemDatabaseFile.FullName);
 			p.StartInfo = info;
 			p.Start();
 		}
 
 		private void MAIN_FinalizePurchase_Click(object sender, RoutedEventArgs e) {
-			ImageProcessor pr = WPFHelper.GetMainWindow().imgProcessing;
-			Purchase s = new Purchase(pr.currentParsingResult.meta.purchasedAt, pr.uiItemsMatched);
+			ImageProcessor pr = ((MainWindow)App.Current.MainWindow).imgProcessing;
+			Purchase s = new Purchase(pr.currentParsingResult.meta.purchasedAt, pr.uiItemsMatched.Transform());
 			s.FinalizePurchase();
 			MAIN_Finalize_Button.IsEnabled = false;
 		}
