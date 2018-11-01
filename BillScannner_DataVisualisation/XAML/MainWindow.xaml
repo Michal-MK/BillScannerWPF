@@ -6,7 +6,26 @@
         xmlns:local="clr-namespace:BillScannner_DataVisualisation"
         mc:Ignorable="d"
         Title="MainWindow" Height="720" Width="1280" WindowState="Maximized">
-    <Grid>
-        
-    </Grid>
+	<Grid>
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition></ColumnDefinition>
+			<ColumnDefinition></ColumnDefinition>
+			<ColumnDefinition></ColumnDefinition>
+		</Grid.ColumnDefinitions>
+
+		<Grid.RowDefinitions>
+			<RowDefinition></RowDefinition>
+			<RowDefinition></RowDefinition>
+			<RowDefinition></RowDefinition>
+		</Grid.RowDefinitions>
+
+		<ScrollViewer Grid.Row="1" Grid.Column="1" VerticalScrollBarVisibility="Hidden">
+			<StackPanel>
+				<local:PurchaseEntry></local:PurchaseEntry>
+				<local:PurchaseEntry></local:PurchaseEntry>
+				<local:PurchaseEntry></local:PurchaseEntry>
+				<local:PurchaseEntry></local:PurchaseEntry>
+			</StackPanel>
+		</ScrollViewer>
+	</Grid>
 </Window>

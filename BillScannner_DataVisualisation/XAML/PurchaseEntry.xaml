@@ -1,21 +1,52 @@
-﻿<UserControl x:Class="BillScannner_DataVisualisation.XAML.PurchaseEntry"
+﻿<UserControl x:Class="BillScannner_DataVisualisation.PurchaseEntry"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:BillScannner_DataVisualisation.XAML"
+             xmlns:local="clr-namespace:BillScannner_DataVisualisation"
              mc:Ignorable="d" 
-             d:DesignHeight="200" d:DesignWidth="800">
-	<Grid>
-		<Grid.ColumnDefinitions>
-			<ColumnDefinition Width="Auto"/>
-			<ColumnDefinition Width="*"/>
-		</Grid.ColumnDefinitions>
-		<Grid.RowDefinitions>
-			<RowDefinition Height="Auto"/>
-			<RowDefinition/>
-		</Grid.RowDefinitions>
+             d:DesignHeight="150" d:DesignWidth="600">
+	<Border BorderThickness="2,1" BorderBrush="Black" Background="White">
+		<Grid>
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="Auto"/>
+				<ColumnDefinition Width="*"/>
+			</Grid.ColumnDefinitions>
+			<Grid.RowDefinitions>
+				<RowDefinition Height="Auto"/>
+				<RowDefinition/>
+			</Grid.RowDefinitions>
+			<Border Grid.Row="0" Grid.Column="0" BorderBrush="Black" BorderThickness="0,0,0,1">
+				<Image	x:Name="PURCHASE_ShopLogo_Image" MaxWidth="96" Source="/BillScannner_DataVisualisation;component/Resources/placeholder.png"/>
+			</Border>
+			<TextBlock	Grid.Row="1" Grid.Column="0" x:Name="PURCHASE_DatabaseEntries_Text"
+						Text="{}{0} Entries" TextAlignment="Center" TextWrapping="Wrap"
+						HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="20"
+						MaxWidth="{Binding ElementName=PURCHASE_ShopLogo_Image, Path=MaxWidth}">
+			</TextBlock>
 
-		<Image Grid.Row="0" Grid.Column="0"/>
-	</Grid>
+			<Border Grid.Row="0" Grid.Column="1" Padding="5,0,0,0" BorderThickness="1,0,1,1" BorderBrush="Black" Background="LightBlue">
+				<Grid>
+					<Grid.RowDefinitions>
+						<RowDefinition/>
+						<RowDefinition/>
+						<RowDefinition/>
+					</Grid.RowDefinitions>
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition/>
+						<ColumnDefinition/>
+					</Grid.ColumnDefinitions>
+					
+					<TextBlock Grid.Row="0" Grid.Column="0" x:Name="PURCHASE_LatestPurchase_Text"		FontSize="{Binding ElementName=PURCHASE_DatabaseEntries_Text, Path=FontSize}" Text="Purchased at:{0}"/>
+					<TextBlock Grid.Row="1" Grid.Column="0" x:Name="PURCHASE_DETAIL_Location_Text"			FontSize="{Binding ElementName=PURCHASE_DatabaseEntries_Text, Path=FontSize}" Text="In {0}"/>
+					<TextBlock Grid.Row="1" Grid.Column="1" x:Name="PURCHASE_DETAIL_ItemsBought_Text"	FontSize="{Binding ElementName=PURCHASE_DatabaseEntries_Text, Path=FontSize}" Text="{}{0} Items"/>
+					<TextBlock Grid.Row="2" Grid.Column="1" x:Name="PURCHASE_DETAIL_TotalCost_Text"		FontSize="{Binding ElementName=PURCHASE_DatabaseEntries_Text, Path=FontSize}" Text="{}{0} Kč total"/>
+
+				</Grid>
+			</Border>
+			<Grid Grid.Row="1" Grid.Column="1" HorizontalAlignment="Right">
+				<Button Content="Show details" Padding="5 0" MinWidth="128"/>
+			</Grid>
+		</Grid>
+	</Border>
 </UserControl>
