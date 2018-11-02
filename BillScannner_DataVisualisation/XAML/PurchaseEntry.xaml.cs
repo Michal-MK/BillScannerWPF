@@ -8,9 +8,11 @@ namespace BillScannner_DataVisualisation {
 	/// Code for PurchaseEntry.xaml
 	/// </summary>
 	public partial class PurchaseEntry : UserControl {
-		public PurchaseEntry() {
-			InitializeComponent();
-		}
+
+		
+
+		public Shop shop;
+		private static ShopInteractionDetails shopInteractionDetails;
 
 		/// <summary>
 		/// Initialize all controls in the UserControl with data
@@ -21,7 +23,7 @@ namespace BillScannner_DataVisualisation {
 		/// <param name="purchaseCost">Total cost</param>
 		/// <param name="shopPurchaseEntries">How many entries are recorded under this <see cref="Shop"/></param>
 		public PurchaseEntry(DateTime purchaseDate, string purchaseLocation,
-							 int itemsPurchased, decimal purchaseCost, int shopPurchaseEntries) {
+							 int itemsPurchased, decimal purchaseCost, int shopPurchaseEntries, Shop shop) {
 			InitializeComponent();
 
 			PURCHASE_DatabaseEntries_Text.Text = string.Format(PURCHASE_DatabaseEntries_Text.Text, shopPurchaseEntries);
@@ -29,6 +31,21 @@ namespace BillScannner_DataVisualisation {
 			PURCHASE_DETAIL_ItemsBought_Text.Text = string.Format(PURCHASE_DETAIL_ItemsBought_Text.Text, itemsPurchased);
 			PURCHASE_DETAIL_Location_Text.Text = string.Format(PURCHASE_DETAIL_Location_Text.Text, purchaseLocation);
 			PURCHASE_DETAIL_TotalCost_Text.Text = string.Format(PURCHASE_DETAIL_TotalCost_Text.Text, purchaseCost);
+			this.shop = shop;
+
+			PurchaseEntry_ShowDetails_Button.Click += PurchaseEntry_ShowDetails_Button_Click;
+		}
+
+		private void PurchaseEntry_ShowDetails_Button_Click(object sender, System.Windows.RoutedEventArgs e) {
+			if(shopInteractionDetails != null) {
+				((MainWindow)App.Current.MainWindow).MainWindow_Grid_Grid.Children.Remove(shopInteractionDetails);
+			}
+
+			
+			DatabaseAccess databaseAccess = DatabaseAccess.LoadDatabase(this.shop);
+			shopInteractionDetails = new ShopInteractionDetails(databaseAccess);
+
+			((MainWindow) App.Current.MainWindow).MainWindow_Grid_Grid.Children.Add(shopInteractionDetails	);
 		}
 
 		/// <summary>
@@ -37,5 +54,6 @@ namespace BillScannner_DataVisualisation {
 		public void SetShopLogo(Shop shop) {
 			PURCHASE_ShopLogo_Image.Source = new BitmapImage(new Uri(VisualisationHelper.shopLogosPath + shop.ToString()));
 		}
+
 	}
 }

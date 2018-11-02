@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:BillScannner_DataVisualisation"
         mc:Ignorable="d"
         Title="MainWindow" Height="720" Width="1280" WindowState="Maximized">
-	<Grid>
+	<Grid x:Name="MainWindow_Grid_Grid">
 		<Grid.ColumnDefinitions>
 			<ColumnDefinition Width="10"></ColumnDefinition>
 			<ColumnDefinition></ColumnDefinition>
@@ -30,10 +30,9 @@
 				 TextAlignment="Center" VerticalContentAlignment="Center"></TextBox>
 
 		<ScrollViewer Grid.Row="2" Grid.Column="2" VerticalScrollBarVisibility="Hidden">
-			<StackPanel>
-				<local:PurchaseEntry></local:PurchaseEntry>
-				<local:PurchaseEntry></local:PurchaseEntry>
-			</StackPanel>
+            <StackPanel x:Name="MAIN_Shops_StackPanel">
+                
+            </StackPanel>
 		</ScrollViewer>
 	</Grid>
 </Window>
