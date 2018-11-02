@@ -8,21 +8,29 @@
         Title="MainWindow" Height="720" Width="1280" WindowState="Maximized">
 	<Grid>
 		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="10"></ColumnDefinition>
 			<ColumnDefinition></ColumnDefinition>
 			<ColumnDefinition></ColumnDefinition>
 			<ColumnDefinition></ColumnDefinition>
+			<ColumnDefinition Width="10"></ColumnDefinition>
 		</Grid.ColumnDefinitions>
 
 		<Grid.RowDefinitions>
+			<RowDefinition Height="10"></RowDefinition>
 			<RowDefinition></RowDefinition>
 			<RowDefinition></RowDefinition>
 			<RowDefinition></RowDefinition>
+			<RowDefinition Height="10"></RowDefinition>
 		</Grid.RowDefinitions>
 
-		<ScrollViewer Grid.Row="1" Grid.Column="1" VerticalScrollBarVisibility="Hidden">
+		<TextBlock Grid.Row="1" Grid.Column="1" Text="BillScanner Visualisation" FontSize="32"/>
+
+		<Slider x:Name="MAIN_Offset_Slider" Grid.Row="2" Grid.Column="1" Value="{Binding ElementName=MAIN_Box , Path=Text}" Minimum="0" Maximum="1" TickFrequency="0.1" IsSnapToTickEnabled="False"  />
+		<TextBox x:Name="MAIN_Box" Grid.Row="2" Grid.Column="1" MaxWidth="50" MaxHeight="30" Text="{Binding ElementName=MAIN_Offset_Slider, Path=Value}"
+				 TextAlignment="Center" VerticalContentAlignment="Center"></TextBox>
+
+		<ScrollViewer Grid.Row="2" Grid.Column="2" VerticalScrollBarVisibility="Hidden">
 			<StackPanel>
-				<local:PurchaseEntry></local:PurchaseEntry>
-				<local:PurchaseEntry></local:PurchaseEntry>
 				<local:PurchaseEntry></local:PurchaseEntry>
 				<local:PurchaseEntry></local:PurchaseEntry>
 			</StackPanel>

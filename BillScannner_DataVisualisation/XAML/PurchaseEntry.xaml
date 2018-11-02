@@ -38,7 +38,7 @@
 					</Grid.ColumnDefinitions>
 					
 					<TextBlock Grid.Row="0" Grid.Column="0" x:Name="PURCHASE_LatestPurchase_Text"		FontSize="{Binding ElementName=PURCHASE_DatabaseEntries_Text, Path=FontSize}" Text="Purchased at:{0}"/>
-					<TextBlock Grid.Row="1" Grid.Column="0" x:Name="PURCHASE_DETAIL_Location_Text"			FontSize="{Binding ElementName=PURCHASE_DatabaseEntries_Text, Path=FontSize}" Text="In {0}"/>
+					<TextBlock Grid.Row="1" Grid.Column="0" x:Name="PURCHASE_DETAIL_Location_Text"		FontSize="{Binding ElementName=PURCHASE_DatabaseEntries_Text, Path=FontSize}" Text="In {0}"/>
 					<TextBlock Grid.Row="1" Grid.Column="1" x:Name="PURCHASE_DETAIL_ItemsBought_Text"	FontSize="{Binding ElementName=PURCHASE_DatabaseEntries_Text, Path=FontSize}" Text="{}{0} Items"/>
 					<TextBlock Grid.Row="2" Grid.Column="1" x:Name="PURCHASE_DETAIL_TotalCost_Text"		FontSize="{Binding ElementName=PURCHASE_DatabaseEntries_Text, Path=FontSize}" Text="{}{0} Kč total"/>
 
