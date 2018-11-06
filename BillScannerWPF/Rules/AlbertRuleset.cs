@@ -20,7 +20,7 @@ namespace BillScannerWPF.Rules {
 
 		public bool skipInitiatingString { get { return true; } }
 
-		public int itemLineSpan { get; } = -1;
+		public int itemLineSpan { get; } = 1;
 
 		public Regex dateTimeFormat { get { return genericDateTimeFormat; } }
 

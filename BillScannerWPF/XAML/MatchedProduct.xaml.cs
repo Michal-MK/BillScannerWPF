@@ -38,7 +38,7 @@ namespace BillScannerWPF {
 				UITEM_OriginalName_Text.Text = item.userFriendlyName + " | Price: " + string.Format("{0:f2}",item.currentPrice) + "Kč";
 			}
 			else {
-				UITEM_OriginalName_Text.Text = item.tirggerForMatch + " | Price: " + string.Format("{0:f2}", item.currentPrice) + "Kč";
+				UITEM_OriginalName_Text.Text = item.tirggerForMatch??item.userFriendlyName + " | Price: " + string.Format("{0:f2}", item.currentPrice) + "Kč";
 			}
 			asociatedItem = item;
 			this.quality = quality;

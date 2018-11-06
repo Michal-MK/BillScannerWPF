@@ -10,6 +10,7 @@ using System.Diagnostics;
 using Igor.TCP;
 using BillScannerWPF.Rules;
 using BillScannerCore;
+using BillScannerStartup;
 
 namespace BillScannerWPF {
 	/// <summary>
@@ -50,9 +51,9 @@ namespace BillScannerWPF {
 		internal IRuleset selectedShopRuleset { get; }
 
 		/// <summary>
-		/// Create a default Lidl window (Debug)
+		/// Create a default Albert window (Debug)
 		/// </summary>
-		public MainWindow() : this(Shop.Lidl) { }
+		public MainWindow() : this(Shop.Albert) { }
 
 		/// <summary>
 		/// Create a new Main window and prepare it for the selected shop type
@@ -67,16 +68,28 @@ namespace BillScannerWPF {
 			MAIN_DatabaseStatus_Text.Text = "Loaded | Intact";
 			MAIN_DatabaseStatus_Text.Foreground = Brushes.BlueViolet;
 
-			server = new TCPServer(new ServerConfiguration());
+			MAIN_CurrentLoadedShop_Text.Text = selectedShop.ToString();
 
-			for (ushort i = 0; i < PORT_RANGE; i++) {
-				try {
-					server.Start((ushort)(START_PORT + i));
-					server.OnConnectionEstablished += Server_OnConnectionEstablished;
-					server.OnClientDisconnected += Server_OnClientDisconnected;
-					break;
+			MAIN_CurrentLoadedShop_Text.MouseLeftButtonDown += OnShopClicked;
+
+			this.Closed += OnMainWindowClose;
+			if (ServerStateManager.isHoldingInstance) {
+				server = ServerStateManager.RestoreServerInstance();
+				server.OnConnectionEstablished += Server_OnConnectionEstablished;
+				server.OnClientDisconnected += Server_OnClientDisconnected;
+			}
+			else {
+				server = new TCPServer(new ServerConfiguration());
+	
+				for (ushort i = 0; i < PORT_RANGE; i++) {
+					try {
+						server.Start("192.168.137.1", (ushort)(START_PORT + i));
+						server.OnConnectionEstablished += Server_OnConnectionEstablished;
+						server.OnClientDisconnected += Server_OnClientDisconnected;
+						break;
+					}
+					catch { }
 				}
-				catch { }
 			}
 
 			//if (!server) {
@@ -100,6 +113,20 @@ namespace BillScannerWPF {
 			MAIN_ClientStatusImage_Image.Visibility = Visibility.Collapsed;
 			MAIN_ClientStatusPostImage_Text.Visibility = Visibility.Collapsed;
 			DebugDelay();
+		}
+
+		private void OnShopClicked(object sender, MouseButtonEventArgs e) {
+			SetupWindow w = new SetupWindow();
+			App.Current.MainWindow.Close();
+			App.Current.MainWindow = w;
+			App.Current.MainWindow.Show();
+			ServerStateManager.StoreServerInstance(server);
+		}
+
+		private void OnMainWindowClose(object sender, EventArgs e) {
+			server.OnConnectionEstablished += Server_OnConnectionEstablished;
+			server.OnClientDisconnected += Server_OnClientDisconnected;
+			//server.Stop();
 		}
 
 		#region Server Connection/Disconnection events

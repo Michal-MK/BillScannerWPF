@@ -17,17 +17,22 @@
 				<ColumnDefinition Width="auto"></ColumnDefinition>
 				<ColumnDefinition Width="auto"></ColumnDefinition>
 				<ColumnDefinition Width="auto"></ColumnDefinition>
+				<ColumnDefinition Width="21.733"></ColumnDefinition>
+				<ColumnDefinition Width="86.267"/>
+				<ColumnDefinition Width="auto"></ColumnDefinition>
 				<ColumnDefinition Width="auto"></ColumnDefinition>
 				<ColumnDefinition Width="auto"></ColumnDefinition>
 			</Grid.ColumnDefinitions>
-			<TextBlock	Grid.Column="1" Text="Server:"			></TextBlock>
-			<TextBlock	Grid.Column="2" Text="Offline"			x:Name="MAIN_ServerStatus_Text"				Margin="5,0,0,0"	Foreground="Red" FontWeight="DemiBold"></TextBlock>
-			<TextBlock	Grid.Column="3" Text="Client Status:"	Margin="20,0,0,0" ></TextBlock>
-			<TextBlock	Grid.Column="4" Text="1"				x:Name="MAIN_ClientStatusPreImage_Text"		Margin="5,0,0,0"	Foreground="LawnGreen" FontWeight="DemiBold"></TextBlock>
-			<Image		Grid.Column="5"							x:Name="MAIN_ClientStatusImage_Image"		Margin="20,0,0,0"	MaxHeight="16" VerticalAlignment="Top" Source="/BillScannerWPF;component/Resources/MatchRating/Success.png"></Image>
-			<TextBlock	Grid.Column="6"	Text=""					x:Name="MAIN_ClientStatusPostImage_Text"	Margin="20,0,0,0"	Foreground="BlueViolet" FontWeight="DemiBold"></TextBlock>
-			<TextBlock	Grid.Column="7"	Text="Database Status:" Margin="20,0,0,0" ></TextBlock>
-			<TextBlock	Grid.Column="8" Text="Unloaded"			x:Name="MAIN_DatabaseStatus_Text"			Margin="5,0,0,0"	Foreground="BlueViolet" FontWeight="DemiBold"></TextBlock>
+			<TextBlock Text="Server:" Grid.ColumnSpan="2" Margin="10,0,0.2,0"			/>
+			<TextBlock	Grid.Column="2" Text="Offline"			x:Name="MAIN_ServerStatus_Text"				Margin="4.8,0,88.4,0"	Foreground="Red" FontWeight="DemiBold" Grid.ColumnSpan="2"></TextBlock>
+			<TextBlock	Grid.Column="3" Text="Client Status:"												Margin="20.4,0,9.8,0" Grid.ColumnSpan="2" ></TextBlock>
+			<TextBlock	Grid.Column="4" Text="1"				x:Name="MAIN_ClientStatusPreImage_Text"		Margin="4.6,0,36.6,0"	Foreground="LawnGreen" FontWeight="DemiBold" Grid.ColumnSpan="2"></TextBlock>
+			<Image		Grid.Column="5"							x:Name="MAIN_ClientStatusImage_Image"		Margin="20.2,0,20.4,0"	MaxHeight="16" VerticalAlignment="Top" Source="/BillScannerWPF;component/Resources/MatchRating/Success.png" Grid.ColumnSpan="2"></Image>
+			<TextBlock	Grid.Column="6"	Text=""					x:Name="MAIN_ClientStatusPostImage_Text"	Margin="20.4,0,21.133,0"	Foreground="BlueViolet" FontWeight="DemiBold" Grid.ColumnSpan="2"></TextBlock>
+			<TextBlock	Grid.Column="7"	Text="Database Status:"												Margin="19.6,0,0.4,0" Grid.ColumnSpan="2" ></TextBlock>
+			<TextBlock	Grid.Column="9" Text="Unloaded"			x:Name="MAIN_DatabaseStatus_Text"			Margin="4.6,0,92.6,0"	Foreground="BlueViolet" FontWeight="DemiBold" Grid.ColumnSpan="2"></TextBlock>
+			<TextBlock	Grid.Column="10"	Text="Loaded Shop:"													Margin="20.2,0,5.2,0" Grid.ColumnSpan="2"></TextBlock>
+			<TextBlock	Grid.Column="11"						x:Name="MAIN_CurrentLoadedShop_Text"		Margin="5.4,0,-0.8,0"	Foreground="OrangeRed" FontWeight="DemiBold"></TextBlock>
 		</Grid>
 		<!--Base-->
 		<Grid Margin="0,16,0,0">

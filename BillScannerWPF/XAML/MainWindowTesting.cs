@@ -9,10 +9,10 @@ namespace BillScannerWPF {
 		private async void DebugDelay() {
 			await Task.Run(() => { Thread.Sleep(1000); });
 			//await DebugListAsync();
-			//await DebugManualResolveAsync();
-			while (true) {
-				await DebugDateBoxAsync();
-			}
+			///await DebugManualResolveAsync();
+			//while (true) {
+			//	await DebugDateBoxAsync();
+			//}
 		}
 
 		public async Task DebugListAsync() {

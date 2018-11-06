@@ -41,7 +41,7 @@ namespace BillScannerWPF {
 
 			DateTime purchaseTime = DateTime.MinValue;
 
-			for (int i = 0; i < split.Length; i += rulesHandleItemLineSpan ? 1 : rules.itemLineSpan) {
+			for (int i = 0; i < split.Length; i += rulesHandleItemLineSpan ? rules.itemLineSpan : 1) {
 				bool matched = false;
 
 				if (string.IsNullOrWhiteSpace(split[i])) {
@@ -258,13 +258,13 @@ namespace BillScannerWPF {
 				return (true, DateTime.Now);
 			}
 			else {
-				if (DateTime.TryParseExact(resolveChoice.MANUAL_RESOLUTION_Solution5_Box.Text, "dd:MM:yyyy hh:mm:ss", CultureInfo.GetCultureInfo("cs"), DateTimeStyles.AllowWhiteSpaces, out DateTime time)) {
+				if (DateTime.TryParseExact(resolveChoice.MANUAL_RESOLUTION_Solution5_DateBox.DATEBOX_Input_Box.Text, "dd:MM:yyyy HH:mm:ss", CultureInfo.GetCultureInfo("cs"), DateTimeStyles.AllowWhiteSpaces, out DateTime time)) {
 					return (true, time);
 				}
-				else if (DateTime.TryParseExact(resolveChoice.MANUAL_RESOLUTION_Solution5_Box.Text, "dd:MM:yyyy", CultureInfo.GetCultureInfo("cs"), DateTimeStyles.AllowWhiteSpaces, out DateTime time1)) {
+				else if (DateTime.TryParseExact(resolveChoice.MANUAL_RESOLUTION_Solution5_DateBox.DATEBOX_Input_Box.Text, "dd:MM:yyyy", CultureInfo.GetCultureInfo("cs"), DateTimeStyles.AllowWhiteSpaces, out DateTime time1)) {
 					return (true, time1);
 				}
-				else if (DateTime.TryParseExact(resolveChoice.MANUAL_RESOLUTION_Solution5_Box.Text, "hh:mm:ss", CultureInfo.GetCultureInfo("cs"), DateTimeStyles.AllowWhiteSpaces, out DateTime time2)) {
+				else if (DateTime.TryParseExact(resolveChoice.MANUAL_RESOLUTION_Solution5_Box.Text, "HH:mm:ss", CultureInfo.GetCultureInfo("cs"), DateTimeStyles.AllowWhiteSpaces, out DateTime time2)) {
 					return (true, new DateTime(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day, time2.Hour, time2.Minute, time2.Second));
 				}
 				else {

@@ -17,16 +17,16 @@ namespace BillScannerWPF {
 
 		private readonly Dictionary<Choices, string> texts = new Dictionary<Choices, string>() {
 			{ Choices.NOOP, "NOOP" },
-			{ Choices.MatchAnyway, "[{0}] - Match!" },
-			{ Choices.MatchWithoutAddingAmbiguities, "[{0}] - Match without modifying database." },
-			{ Choices.NotAnItem, "[{0}] - Treat this text as not being an item (Nothing will be preformed)" },
-			{ Choices.ManuallyEnterDate, "[{0}] - Enter date here manually:" },
-			{ Choices.UseCurrentTime, "[{0}] - Use 'today' as the purchase date." },
-			{ Choices.ManuallyEnterPrice, "[{0}] - Enter its price here manually:" },
-			{ Choices.UseLatestValue, "[{0}] - Use last known value for this item from database."},
-			{ Choices.FindExistingItemFromList, "[{0}] - Search database and select an item this string is supposed to match."},
-			{ Choices.DefineNewItem, "[{0}] - Define new item from what we got..."},
-			{ Choices.ManuallyEnterQuantity, "[{0}] - Enter the amount here manually: " }
+			{ Choices.MatchAnyway, "Match!" },
+			{ Choices.MatchWithoutAddingAmbiguities, "Match without modifying database." },
+			{ Choices.NotAnItem, "Treat this text as not being an item (Nothing will be preformed)" },
+			{ Choices.ManuallyEnterDate, "Enter date here manually:" },
+			{ Choices.UseCurrentTime, "Use 'today' as the purchase date." },
+			{ Choices.ManuallyEnterPrice, "Enter its price here manually:" },
+			{ Choices.UseLatestValue, "Use last known value for this item from database."},
+			{ Choices.FindExistingItemFromList, "Search database and select an item this string is supposed to match."},
+			{ Choices.DefineNewItem, "Define new item from what we got..."},
+			{ Choices.ManuallyEnterQuantity, "Enter the amount here manually: " }
 		};
 
 		private Button focusableElement;
@@ -64,40 +64,31 @@ namespace BillScannerWPF {
 			};
 
 			Button solution5Button = MANUAL_RESOLUTION_Solution5_Button;
-			TextBox solution5Box = MANUAL_RESOLUTION_Solution5_Box;
 
 			MANUAL_RESOLUTION_ErrorType_Text.Text = errorText;
 
-			int choiceNumbering = 0;
+			SelectivelyEnableInput(choices, solutionTexts1to4);
 
 			for (int i = 0; i < choices.Length; i++) {
-				solutionTexts1to4[i].Visibility = choices[i] == Choices.NOOP || (int)choices[i] >= 20 ? Visibility.Collapsed : Visibility.Visible;
-
 				if ((int)choices[i] >= 20) {
 					solution5Button.Visibility = Visibility.Visible;
-					solution5Button.Content = string.Format(texts[choices[i]], choiceNumbering);
+					solution5Button.Content = texts[choices[i]];
 					solution5Button.Click += ManualResolveChoice_Click;
 					solution5Button.Name = choices[i].ToString();
+					if (choices[i] == Choices.ManuallyEnterDate) {
+						MANUAL_RESOLUTION_Solution5_DateBox.Visibility = Visibility;
+					}
+					if (choices[i] == Choices.ManuallyEnterPrice) {
+						MANUAL_RESOLUTION_Solution5_Box.Text = "0.0";
+						MANUAL_RESOLUTION_Solution5_Box.Visibility = Visibility.Visible;
+					}
+					if (choices[i] == Choices.ManuallyEnterQuantity) {
+						MANUAL_RESOLUTION_Solution5_Box.Text = "1";
+						MANUAL_RESOLUTION_Solution5_Box.Visibility = Visibility.Visible;
+					}
 				}
-
-				if (choices[i] == Choices.ManuallyEnterDate) {
-					solution5Box.Text = DateTime.Now.ToString("dd:MM:yyyy hh:mm:ss");
-				}
-				if (choices[i] == Choices.ManuallyEnterPrice) {
-					solution5Box.Text = "29.90";
-				}
-				if (choices[i] == Choices.ManuallyEnterQuantity) {
-					solution5Box.Text = "1";
-				}
-
-				solutionTexts1to4[i].Content = string.Format(texts[choices[i]], choiceNumbering);
-				solutionTexts1to4[i].Click += ManualResolveChoice_Click;
-				solutionTexts1to4[i].Name = choices[i].ToString();
 				if (focusableElement == null) {
 					focusableElement = solutionTexts1to4[i];
-				}
-				if (choices[i] != Choices.NOOP) {
-					choiceNumbering++;
 				}
 			}
 		}
@@ -131,5 +122,32 @@ namespace BillScannerWPF {
 		}
 
 		#endregion
+
+		private void SelectivelyEnableInput(Choices[] choices, Button[] buttons) {
+			for (int i = 0; i < choices.Length; i++) {
+				switch (choices[i]) {
+					case Choices.NOOP: {
+						buttons[i].Visibility = Visibility.Collapsed;
+						break;
+					}
+					case Choices.MatchAnyway:
+					case Choices.MatchWithoutAddingAmbiguities:
+					case Choices.NotAnItem:
+					case Choices.UseCurrentTime:
+					case Choices.UseLatestValue:
+					case Choices.DefineNewItem:
+					case Choices.FindExistingItemFromList: {
+						buttons[i].Visibility = Visibility.Visible;
+						buttons[i].Content = texts[choices[i]];
+						buttons[i].Click += ManualResolveChoice_Click;
+						buttons[i].Name = choices[i].ToString();
+						break;
+					}
+					default: {
+						break;
+					}
+				}
+			}
+		}
 	}
 }
