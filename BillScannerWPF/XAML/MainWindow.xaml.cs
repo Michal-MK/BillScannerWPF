@@ -67,21 +67,23 @@ namespace BillScannerWPF {
 			MAIN_DatabaseStatus_Text.Text = "Loaded | Intact";
 			MAIN_DatabaseStatus_Text.Foreground = Brushes.BlueViolet;
 
-			server = new TCPServer();
+			server = new TCPServer(new ServerConfiguration());
+
 			for (ushort i = 0; i < PORT_RANGE; i++) {
 				try {
 					server.Start((ushort)(START_PORT + i));
 					server.OnConnectionEstablished += Server_OnConnectionEstablished;
 					server.OnClientDisconnected += Server_OnClientDisconnected;
+					break;
 				}
 				catch { }
 			}
 
-			if (!server.isRunning) {
-				MessageBox.Show("Unable to start server at " + Helper.GetActiveIPv4Address() + " " + START_PORT + "\n" +
-								"Either the port is already taken of you are not connected to the Internet!"
-								, "Server Off-line!", MessageBoxButton.OK, MessageBoxImage.Exclamation);
-			}
+			//if (!server) {
+			//	MessageBox.Show("Unable to start server at " + Helper.GetActiveIPv4Address() + " " + START_PORT + "\n" +
+			//					"Either the port is already taken of you are not connected to the Internet!"
+			//					, "Server Off-line!", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+			//}
 
 			MAIN_ServerStatus_Text.Text = "Running";
 			MAIN_ServerStatus_Text.Foreground = Brushes.LawnGreen;
@@ -97,7 +99,7 @@ namespace BillScannerWPF {
 
 			MAIN_ClientStatusImage_Image.Visibility = Visibility.Collapsed;
 			MAIN_ClientStatusPostImage_Text.Visibility = Visibility.Collapsed;
-			//DebugDelay();
+			DebugDelay();
 		}
 
 		#region Server Connection/Disconnection events

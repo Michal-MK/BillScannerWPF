@@ -4,6 +4,22 @@
         <name>SimpleTCP</name>
     </assembly>
     <members>
+        <member name="T:Igor.TCP.ClientToServerConnection">
+            <summary>
+            Client to server connection holder, processes higher level data
+            </summary>
+        </member>
+        <member name="M:Igor.TCP.ClientToServerConnection.DisconnectFromServer(System.Byte)">
+            <summary>
+            Disconnect and let server know that this client is disconnecting
+            </summary>
+        </member>
+        <member name="M:Igor.TCP.ClientToServerConnection.HigherLevelDataReceived(Igor.TCP.ReceivedData)">
+            <summary>
+            Handle higher level data that only a Client can react to
+            </summary>
+            <param name="data"></param>
+        </member>
         <member name="T:Igor.TCP.ClientConnectedEventArgs">
             <summary>
             OnConnectionReceived event arguments
@@ -31,7 +47,7 @@
         </member>
         <member name="T:Igor.TCP.ConnectionData">
             <summary>
-            Holds ip address and port for connection
+            Holds IP address and port for connection
             </summary>
         </member>
         <member name="P:Igor.TCP.ConnectionData.ipAddress">
@@ -107,6 +123,11 @@
         <member name="F:Igor.TCP.DataIDs.PACKET_ID_COMPLEXITY">
             <summary>
             How many bytes are used to identify a packet
+            </summary>
+        </member>
+        <member name="F:Igor.TCP.DataIDs.PACKET_TOTAL_SIZE_COMPLEXITY">
+            <summary>
+            How many bytes are used to describe packets size, maximum is now 2^8 bytes
             </summary>
         </member>
         <member name="M:Igor.TCP.DataIDs.DefineCustomDataTypeForID``1(System.Byte,System.Action{``0,System.Byte})">
@@ -186,6 +207,11 @@
             Convert numeric value of bytes to an integer, lower index >> less important byte
             </summary>
         </member>
+        <member name="T:Igor.TCP.ReceivedData">
+            <summary>
+            Internal data holder that is constructed after parsing all of the bytes
+            </summary>
+        </member>
         <member name="T:Igor.TCP.ResponseManager">
             <summary>
             Class handing requests from the other side
@@ -194,6 +220,37 @@
         <member name="M:Igor.TCP.ResponseManager.GetResponseType(System.Byte)">
             <summary>
             Get response type of custom defined packet 'ID'
+            </summary>
+        </member>
+        <member name="T:Igor.TCP.ServerConfiguration">
+            <summary>
+            Server configuration class
+            </summary>
+        </member>
+        <member name="P:Igor.TCP.ServerConfiguration.clientCanShutdownServer">
+            <summary>
+            Allows clients to send a '255' packet to shutdown the server
+            </summary>
+        </member>
+        <member name="M:Igor.TCP.ServerConfiguration.#ctor(System.Boolean)">
+            <summary>
+            Default constructor, select which values you want to modify, the rest is set to defaults
+            </summary>
+            <param name="allowClientsToShutdownTheServer"></param>
+        </member>
+        <member name="T:Igor.TCP.ServerToClientConnection">
+            <summary>
+            Server to client connection holder, processes higher level data
+            </summary>
+        </member>
+        <member name="M:Igor.TCP.ServerToClientConnection.HigherLevelDataReceived(Igor.TCP.ReceivedData)">
+            <summary>
+            Handle higher level data that only server can receive and react to
+            </summary>
+        </member>
+        <member name="M:Igor.TCP.ServerToClientConnection.DisconnectClient(System.Byte)">
+            <summary>
+            Send a disconnect packet to the client server disconnected for a reason
             </summary>
         </member>
         <member name="T:Igor.TCP.TCPClient">
@@ -209,6 +266,11 @@
         <member name="P:Igor.TCP.TCPClient.getConnection">
             <summary>
             Get connection to the server, allows client to server communication, holds send and receive functionality
+            </summary>
+        </member>
+        <member name="P:Igor.TCP.TCPClient.requestHandler">
+            <summary>
+            Handle Requests TODO
             </summary>
         </member>
         <member name="P:Igor.TCP.TCPClient.responseHandler">
@@ -307,7 +369,7 @@
         </member>
         <member name="M:Igor.TCP.TCPClient.Disconnect">
             <summary>
-            Disconnect from current server
+            Disconnect from current server and dispose of this client
             </summary>
         </member>
         <member name="T:Igor.TCP.TCPClientInfo">
@@ -382,12 +444,12 @@
         </member>
         <member name="P:Igor.TCP.TCPConnection.dataIDs">
             <summary>
-            Define simple data packets and get internal/externally defined packet IDs
+            Define simple data packets and get internally/externally defined packet IDs
             </summary>
         </member>
         <member name="M:Igor.TCP.TCPConnection.SendData(System.String)">
             <summary>
-            Send string to connected device
+            Send UTF-8 encoded string to connected device
             </summary>
         </member>
         <member name="M:Igor.TCP.TCPConnection.SendData(System.Int64)">
@@ -414,6 +476,15 @@
             <summary>
             Send user defined byte[] 'data' with 'dataID' as the first element, sent via <see cref="F:Igor.TCP.DataIDs.UserDefined"/> packet ID
             </summary>
+            <exception cref="T:System.NotImplementedException"></exception>
+        </member>
+        <member name="M:Igor.TCP.TCPConnection.HigherLevelDataReceived(Igor.TCP.ReceivedData)">
+            <summary>
+            Override in specific connection to handle higher level data
+            </summary>
+            <param name="clientID">The ID of the sender</param>
+            <param name="objectType">The type of the object</param>
+            <param name="data">The data received</param>
         </member>
         <member name="M:Igor.TCP.TCPConnection.Dispose(System.Boolean)">
             <summary>
@@ -532,6 +603,11 @@
             Used by packets coming from the server TODO
             </summary>
         </member>
+        <member name="P:Igor.TCP.TCPServer.serverConfiguration">
+            <summary>
+            Configuration of this server
+            </summary>
+        </member>
         <member name="E:Igor.TCP.TCPServer.OnConnectionEstablished">
             <summary>
             Called when client connects to this server
@@ -547,20 +623,28 @@
             Called when server reroutes data
             </summary>
         </member>
+        <member name="M:Igor.TCP.TCPServer.#ctor(Igor.TCP.ServerConfiguration)">
+            <summary>
+            Create new <see cref="T:Igor.TCP.TCPServer"/>
+            </summary>
+        </member>
         <member name="M:Igor.TCP.TCPServer.Start(System.UInt16)">
             <summary>
             Start server using specified 'port' and internally found IP
             </summary>
+            <exception cref="T:Igor.TCP.ServerStartException"></exception>
         </member>
         <member name="M:Igor.TCP.TCPServer.Start(System.String,System.UInt16)">
             <summary>
             Start server using specified 'port' and explicitly specified 'ipAddress'
             </summary>
+            <exception cref="T:Igor.TCP.ServerStartException"></exception>
         </member>
         <member name="M:Igor.TCP.TCPServer.Start(System.Net.IPAddress,System.UInt16)">
             <summary>
             Start server using specified 'port' and explicitly specified 'ipAddress'
             </summary>
+            <exception cref="T:Igor.TCP.ServerStartException"></exception>
         </member>
         <member name="M:Igor.TCP.TCPServer.GetConnection(System.Byte)">
             <summary>
@@ -585,7 +669,7 @@
             </summary>
             <exception cref="T:System.NullReferenceException"></exception>
         </member>
-        <member name="M:Igor.TCP.TCPServer.SetIncommingClientConnection(System.Boolean)">
+        <member name="P:Igor.TCP.TCPServer.isListeningForClients">
             <summary>
             Set listening for incoming client connection attempts
             </summary>

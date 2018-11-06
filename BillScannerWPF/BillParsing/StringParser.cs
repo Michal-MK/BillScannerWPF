@@ -160,7 +160,7 @@ namespace BillScannerWPF {
 							matchedItems.Add(nowKnown);
 						}
 						else if (c == Choices.NotAnItem) {
-							unmatchedItems.Add(new UIItemCreationInfo(new Item("Unknown Item", -1), false, -1, -1, MatchRating.Fail));
+							unmatchedItems.Add(new UIItemCreationInfo(new Item(split[i], -1), false, -1, -1, MatchRating.Fail));
 						}
 					}
 				}

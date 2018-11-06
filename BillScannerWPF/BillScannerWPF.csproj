@@ -74,6 +74,9 @@
     <Compile Include="Exceptions\QuantityParsingException.cs" />
     <Compile Include="BillParsing\UIItemCreationInfo.cs" />
     <Compile Include="ScannerHelper.cs" />
+    <Compile Include="XAML\DateBox.xaml.cs">
+      <DependentUpon>DateBox.xaml</DependentUpon>
+    </Compile>
     <Compile Include="XAML\ItemList.xaml.cs">
       <DependentUpon>ItemList.xaml</DependentUpon>
     </Compile>
@@ -106,6 +109,10 @@
     <Compile Include="XAML\SetupWindow.xaml.cs">
       <DependentUpon>SetupWindow.xaml</DependentUpon>
     </Compile>
+    <Page Include="XAML\DateBox.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="XAML\ItemList.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

@@ -44,8 +44,9 @@
 							<ColumnDefinition Width="3*"></ColumnDefinition>
 						</Grid.ColumnDefinitions>
 
-						<Button Grid.Column="0" Content="$Solution 5" HorizontalContentAlignment="Left" x:Name="MANUAL_RESOLUTION_Solution5_Button"	Margin="4" Visibility="Collapsed" Padding="10,2"></Button>
-						<TextBox Grid.Column="1" Text="$Solution 5.1" x:Name="MANUAL_RESOLUTION_Solution5_Box"		Margin="4" Visibility="{Binding ElementName=MANUAL_RESOLUTION_Solution5_Button, Path=Visibility}"></TextBox>
+						<Button			Grid.Column="0" Content="$Solution 5"	x:Name="MANUAL_RESOLUTION_Solution5_Button"		Margin="4" Visibility="Collapsed" Padding="10,2" HorizontalContentAlignment="Left"></Button>
+						<TextBox		Grid.Column="1" Text="$Solution 5.1"	x:Name="MANUAL_RESOLUTION_Solution5_Box"		Margin="4" Visibility="{Binding ElementName=MANUAL_RESOLUTION_Solution5_Button, Path=Visibility}"></TextBox>
+						<local:DateBox	Grid.Column="1"							x:Name="MANUAL_RESOLUTION_Solution5_DateBox"	Margin="4" Visibility="{Binding ElementName=MANUAL_RESOLUTION_Solution5_Button, Path=Visibility}"></local:DateBox>
 					</Grid>
 
 				</Grid>

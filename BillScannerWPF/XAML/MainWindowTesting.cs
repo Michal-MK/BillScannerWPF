@@ -9,7 +9,10 @@ namespace BillScannerWPF {
 		private async void DebugDelay() {
 			await Task.Run(() => { Thread.Sleep(1000); });
 			//await DebugListAsync();
-			await DebugManualResolveAsync();
+			//await DebugManualResolveAsync();
+			while (true) {
+				await DebugDateBoxAsync();
+			}
 		}
 
 		public async Task DebugListAsync() {
@@ -20,8 +23,13 @@ namespace BillScannerWPF {
 
 		public async Task DebugManualResolveAsync() {
 			ManualResolveChoice choice = new ManualResolveChoice("Some generic error"
-				, Choices.FindExistingItemFromList, Choices.ManuallyEnterQuantity);
+				, Choices.FindExistingItemFromList, Choices.ManuallyEnterDate);
 			await choice.SelectChoiceAsync();
+		}
+
+		public async Task DebugDateBoxAsync() {
+			DateBox db = new DateBox();
+			await db.FinalizeDateAsync();
 		}
 	}
 }
