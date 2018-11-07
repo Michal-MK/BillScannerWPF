@@ -12,11 +12,7 @@ namespace BillScannerWPF.Rules {
 
 		public Regex correctItemLine { get; } = new Regex(@"(\d+) (.+) (\d+\.\d+) B");
 
-		public bool skipInitiatingString { get { return true; } }
-
 		public Regex dateTimeFormat { get { return genericDateTimeFormat; } }
-
-		public int itemLineSpan { get; } = 1;
 
 		public long GetQuantity(string[] ocrText, int index) {
 			string[] split = ocrText[index].Split(null);

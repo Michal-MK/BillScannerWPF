@@ -83,7 +83,10 @@ namespace BillScannerWPF {
 	
 				for (ushort i = 0; i < PORT_RANGE; i++) {
 					try {
-						server.Start("192.168.137.1", (ushort)(START_PORT + i));
+						server.Start(
+							//Helper.GetActiveIPv4Address()
+							"192.168.137.1"
+							, (ushort)(START_PORT + i));
 						server.OnConnectionEstablished += Server_OnConnectionEstablished;
 						server.OnClientDisconnected += Server_OnClientDisconnected;
 						break;
@@ -117,16 +120,24 @@ namespace BillScannerWPF {
 
 		private void OnShopClicked(object sender, MouseButtonEventArgs e) {
 			SetupWindow w = new SetupWindow();
+			MAIN_PhotoPreview_Image.Source = null;
 			App.Current.MainWindow.Close();
 			App.Current.MainWindow = w;
 			App.Current.MainWindow.Show();
 			ServerStateManager.StoreServerInstance(server);
+			Dispose();
 		}
 
 		private void OnMainWindowClose(object sender, EventArgs e) {
-			server.OnConnectionEstablished += Server_OnConnectionEstablished;
-			server.OnClientDisconnected += Server_OnClientDisconnected;
-			//server.Stop();
+			server.OnConnectionEstablished -= Server_OnConnectionEstablished;
+			server.OnClientDisconnected -= Server_OnClientDisconnected;
+
+			MAIN_Analyze_Button.Click -= imgProcessing.Analyze;
+			MAIN_OpenDatabaseFile_Button.Click -= MAIN_OpenDatabaseFile_Click;
+			MAIN_Finalize_Button.Click -= MAIN_FinalizePurchase_Click;
+
+			MAIN_CurrentLoadedShop_Text.MouseLeftButtonDown -= OnShopClicked;
+			this.Closed -= OnMainWindowClose;
 		}
 
 		#region Server Connection/Disconnection events
@@ -165,6 +176,7 @@ namespace BillScannerWPF {
 		internal void SetPrevImage(Uri imgUri) {
 			BitmapImage image = new BitmapImage();
 			image.BeginInit();
+			image.CacheOption = BitmapCacheOption.OnLoad;
 			image.UriSource = imgUri;
 			image.EndInit();
 			currentImageSource = imgUri.AbsolutePath;

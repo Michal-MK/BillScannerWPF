@@ -52,15 +52,5 @@ namespace BillScannerWPF.Rules {
 		/// A character that is used to separate items purchased and the price of one item
 		/// </summary>
 		char costPlusQuantitySeparator { get; }
-
-		/// <summary>
-		/// Indicates whether the start marker should be skipped or parsed as the first item
-		/// </summary>
-		bool skipInitiatingString { get; }
-
-		/// <summary>
-		/// NUmber of lines an item takes up
-		/// </summary>
-		int itemLineSpan { get; }
 	}
 }

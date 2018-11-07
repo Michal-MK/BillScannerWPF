@@ -9,7 +9,7 @@ namespace BillScannerWPF.Rules {
 		public Regex correctItemLine { get; } = new Regex(@"(.+)( (\d+)[g0Ll1])? (\d+[,.]\d+) A");
 
 		public string[] startMarkers {
-			get { return new string[] { "kc", "-----", "oddil", "oddíl", "vlozka", "vložka", "19737" }; }
+			get { return new string[] { "kc", "-----", "oddil", "oddll", "oddíl", "vlozka", "vložka", "19737" }; }
 		}
 
 		public string[] endMarkers {
@@ -17,10 +17,6 @@ namespace BillScannerWPF.Rules {
 		}
 
 		public char costPlusQuantitySeparator { get { return 'x'; } }
-
-		public bool skipInitiatingString { get { return true; } }
-
-		public int itemLineSpan { get; } = 1;
 
 		public Regex dateTimeFormat { get { return genericDateTimeFormat; } }
 
@@ -92,6 +88,7 @@ namespace BillScannerWPF.Rules {
 				ocrText[index + 1] = ReplaceAmbiguous(ocrText[index + 1]);
 				return false;
 			}
+			return true;
 			throw new GenericParsingException(ocrText, index);
 		}
 	}

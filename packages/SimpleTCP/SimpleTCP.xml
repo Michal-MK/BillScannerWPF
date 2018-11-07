@@ -482,8 +482,6 @@
             <summary>
             Override in specific connection to handle higher level data
             </summary>
-            <param name="clientID">The ID of the sender</param>
-            <param name="objectType">The type of the object</param>
             <param name="data">The data received</param>
         </member>
         <member name="M:Igor.TCP.TCPConnection.Dispose(System.Boolean)">
@@ -623,6 +621,11 @@
             Called when server reroutes data
             </summary>
         </member>
+        <member name="E:Igor.TCP.TCPServer.OnServerStarted">
+            <summary>
+            Called when the server successfully starts
+            </summary>
+        </member>
         <member name="M:Igor.TCP.TCPServer.#ctor(Igor.TCP.ServerConfiguration)">
             <summary>
             Create new <see cref="T:Igor.TCP.TCPServer"/>
@@ -739,6 +742,11 @@
             Send 'data' to all connected clients, sent under <see cref="F:Igor.TCP.DataIDs.UserDefined"/> packet.
             </summary>
             <exception cref="T:Igor.TCP.UndefinedPacketException"></exception>
+        </member>
+        <member name="M:Igor.TCP.TCPServer.Stop">
+            <summary>
+            Stops the server
+            </summary>
         </member>
     </members>
 </doc>

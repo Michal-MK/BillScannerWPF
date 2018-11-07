@@ -88,7 +88,6 @@ namespace BillScannerWPF.Rules {
 		/// Helper class to create an instance of <see cref="IRuleset"/> for provided shop
 		/// </summary>
 		/// <param name="selectedShop">The shop for which to create a <see cref="IRuleset"/></param>
-		/// <returns></returns>
 		internal static IRuleset GetRuleset(Shop selectedShop) {
 			switch (selectedShop) {
 				case Shop.Lidl: {

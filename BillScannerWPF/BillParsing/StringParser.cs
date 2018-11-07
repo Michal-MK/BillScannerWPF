@@ -37,11 +37,9 @@ namespace BillScannerWPF {
 			bool finalized = false;
 			bool purchaseTimeFound = false;
 
-			bool rulesHandleItemLineSpan = rules.itemLineSpan == -1;
-
 			DateTime purchaseTime = DateTime.MinValue;
 
-			for (int i = 0; i < split.Length; i += rulesHandleItemLineSpan ? rules.itemLineSpan : 1) {
+			for (int i = 0; i < split.Length; i += 1) {
 				bool matched = false;
 
 				if (string.IsNullOrWhiteSpace(split[i])) {
@@ -50,7 +48,7 @@ namespace BillScannerWPF {
 
 				if (!initiated) {
 					initiated = IsInitiatingString(split[i].ToLower().Trim(), ref i);
-					if (initiated && rules.skipInitiatingString) {
+					if (initiated) {
 						continue;
 					}
 				}
@@ -150,7 +148,7 @@ namespace BillScannerWPF {
 							ItemList list = new ItemList(DatabaseAccess.access.GetItems());
 							Item manuallyMatchedItem = await list.SelectItemAsync();
 							if (manuallyMatchedItem == null) {
-								i -= rulesHandleItemLineSpan ? 1 : rules.itemLineSpan;
+								i--;
 								continue;
 							}
 							long quantity = await GetQuantityAsync(split, i, manuallyMatchedItem.userFriendlyName);
@@ -193,9 +191,6 @@ namespace BillScannerWPF {
 		private bool IsInitiatingString(string s, ref int index) {
 			if (rules.startMarkers.Length == 0) {
 				Debug.WriteLine("This shop does not have any start markers, attempting to match immediately");
-				if (rules.skipInitiatingString) {
-					index++;
-				}
 				return true;
 			}
 			for (int i = 0; i < rules.startMarkers.Length; i++) {
