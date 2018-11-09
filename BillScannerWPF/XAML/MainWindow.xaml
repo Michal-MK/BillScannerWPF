@@ -41,7 +41,7 @@
 				<ColumnDefinition Width="3*"></ColumnDefinition>
 				<ColumnDefinition Width="3*"></ColumnDefinition>
 			</Grid.ColumnDefinitions>
-			<Image x:Name="MAIN_PhotoPreview_Image" Grid.Column="0" MouseLeftButtonDown="PreviewImgMouse" MouseRightButtonDown="MAIN_PhotoPreview_RightClick" Stretch="Fill" Margin="10" Source="/BillScannerWPF;component/Resources/Transparent.png"/>
+			<Image x:Name="MAIN_PhotoPreview_Image" Grid.Column="0" MouseLeftButtonDown="PreviewImgMouse" MouseRightButtonDown="MAIN_PhotoPreview_RightClick" HorizontalAlignment="Center" VerticalAlignment="Center" Stretch="Uniform" Margin="10" Source="/BillScannerWPF;component/Resources/Transparent.png"/>
 
 			<Label Content="Matched Products" Grid.Column="1" />
 			<ScrollViewer Grid.Column="1"  Margin="0,30,0,70">
@@ -70,13 +70,14 @@
 		</Grid>
 		<Grid HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="10,0,10,10" Height="50">
 			<Grid.ColumnDefinitions>
-				<ColumnDefinition Width="Auto"></ColumnDefinition>
-				<ColumnDefinition Width="Auto"></ColumnDefinition>
-				<ColumnDefinition Width="Auto"></ColumnDefinition>
+				<ColumnDefinition Width="120"></ColumnDefinition>
+				<ColumnDefinition Width="120"></ColumnDefinition>
+				<ColumnDefinition Width="120"></ColumnDefinition>
 			</Grid.ColumnDefinitions>
-			<Button x:Name="MAIN_Finalize_Button" Grid.Column="2" MinWidth="120" Content="Finalize" Margin="10,0,0,0"/>
-			<Button x:Name="MAIN_Analyze_Button" Content="Analyze" Grid.Column="1" MinWidth="120" Margin="10,0,0,0"/>
-			<Button x:Name="MAIN_OpenDatabaseFile_Button" Content="Open Database File" Grid.Column="0" MinWidth="120" Margin="10,0,0,0"></Button>
+			<Button x:Name="MAIN_Finalize_Button"			Grid.Column="2" Content="Finalize"				Margin="10,0,0,0"/>
+			<Button x:Name="MAIN_Clear_Button"				Grid.Column="2" Content="Finalize"				Margin="10,0,0,0" Visibility="Collapsed"/>
+			<Button x:Name="MAIN_Analyze_Button"			Grid.Column="1" Content="Analyze"				Margin="10,0,0,0"/>
+			<Button x:Name="MAIN_OpenDatabaseFile_Button"	Grid.Column="0" Content="Open Database File"	Margin="10,0,0,0"></Button>
 		</Grid>
 	</Grid>
 </Window>

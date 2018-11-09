@@ -11,6 +11,7 @@ using Igor.TCP;
 using BillScannerWPF.Rules;
 using BillScannerCore;
 using BillScannerStartup;
+using System.Windows.Controls;
 
 namespace BillScannerWPF {
 	/// <summary>
@@ -84,8 +85,8 @@ namespace BillScannerWPF {
 				for (ushort i = 0; i < PORT_RANGE; i++) {
 					try {
 						server.Start(
-							//Helper.GetActiveIPv4Address()
-							"192.168.137.1"
+							Helper.GetActiveIPv4Address()
+							//"192.168.137.1"
 							, (ushort)(START_PORT + i));
 						server.OnConnectionEstablished += Server_OnConnectionEstablished;
 						server.OnClientDisconnected += Server_OnClientDisconnected;
@@ -109,6 +110,7 @@ namespace BillScannerWPF {
 			MAIN_Analyze_Button.Click += imgProcessing.Analyze;
 			MAIN_OpenDatabaseFile_Button.Click += MAIN_OpenDatabaseFile_Click;
 			MAIN_Finalize_Button.Click += MAIN_FinalizePurchase_Click;
+			MAIN_Clear_Button.Click += MAIN_Clear_Click;
 
 			MAIN_ClientStatusPreImage_Text.Text = "Client not connected!";
 			MAIN_ClientStatusPreImage_Text.Foreground = Brushes.Red;
@@ -180,9 +182,6 @@ namespace BillScannerWPF {
 			image.UriSource = imgUri;
 			image.EndInit();
 			currentImageSource = imgUri.AbsolutePath;
-			MAIN_PhotoPreview_Image.HorizontalAlignment = HorizontalAlignment.Center;
-			MAIN_PhotoPreview_Image.VerticalAlignment = VerticalAlignment.Center;
-			MAIN_PhotoPreview_Image.Stretch = Stretch.Uniform;
 			MAIN_PhotoPreview_Image.Source = image;
 		}
 
@@ -216,10 +215,21 @@ namespace BillScannerWPF {
 		}
 
 		private void MAIN_FinalizePurchase_Click(object sender, RoutedEventArgs e) {
-			ImageProcessor pr = ((MainWindow)App.Current.MainWindow).imgProcessing;
-			Purchase s = new Purchase(pr.currentParsingResult.meta.purchasedAt, pr.uiItemsMatched.Transform());
-			s.FinalizePurchase();
 			MAIN_Finalize_Button.IsEnabled = false;
+			Purchase s = new Purchase(imgProcessing.currentParsingResult.meta.purchasedAt, imgProcessing.uiItemsMatched.Transform());
+			s.FinalizePurchase();
+			MAIN_Clear_Button.Visibility = Visibility.Visible;
+			((Button)sender).Visibility = Visibility.Collapsed;
+		}
+
+		private void MAIN_Clear_Click(object sender, RoutedEventArgs e) {
+			imgProcessing.uiItemsMatched.Clear();
+			imgProcessing.uiItemsUnknown.Clear();
+
+			SetPrevImage(new Uri(WPFHelper.resourcesPath + "Transparent.png"));
+
+			MAIN_Finalize_Button.Visibility = Visibility.Visible;
+			((Button)sender).Visibility = Visibility.Collapsed;
 		}
 
 		#endregion
