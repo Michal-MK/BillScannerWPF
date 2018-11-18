@@ -75,7 +75,7 @@
 				<ColumnDefinition Width="120"></ColumnDefinition>
 			</Grid.ColumnDefinitions>
 			<Button x:Name="MAIN_Finalize_Button"			Grid.Column="2" Content="Finalize"				Margin="10,0,0,0"/>
-			<Button x:Name="MAIN_Clear_Button"				Grid.Column="2" Content="Finalize"				Margin="10,0,0,0" Visibility="Collapsed"/>
+			<Button x:Name="MAIN_Clear_Button"				Grid.Column="2" Content="Clear Contents"		Margin="10,0,0,0" Visibility="Collapsed"/>
 			<Button x:Name="MAIN_Analyze_Button"			Grid.Column="1" Content="Analyze"				Margin="10,0,0,0"/>
 			<Button x:Name="MAIN_OpenDatabaseFile_Button"	Grid.Column="0" Content="Open Database File"	Margin="10,0,0,0"></Button>
 		</Grid>

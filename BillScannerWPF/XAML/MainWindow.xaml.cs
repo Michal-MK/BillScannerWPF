@@ -215,7 +215,6 @@ namespace BillScannerWPF {
 		}
 
 		private void MAIN_FinalizePurchase_Click(object sender, RoutedEventArgs e) {
-			MAIN_Finalize_Button.IsEnabled = false;
 			Purchase s = new Purchase(imgProcessing.currentParsingResult.meta.purchasedAt, imgProcessing.uiItemsMatched.Transform());
 			s.FinalizePurchase();
 			MAIN_Clear_Button.Visibility = Visibility.Visible;
