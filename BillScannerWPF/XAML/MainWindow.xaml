@@ -8,32 +8,6 @@
         Title="Bill Scanner" Height="500" Width="1000">
 
 	<Grid Name="MAIN_Grid">
-		<Grid HorizontalAlignment="Stretch" VerticalAlignment="Top" Height="16" Background="LightSlateGray">
-			<Grid.ColumnDefinitions>
-				<ColumnDefinition Width="10"></ColumnDefinition>
-				<ColumnDefinition Width="auto"></ColumnDefinition>
-				<ColumnDefinition Width="auto"></ColumnDefinition>
-				<ColumnDefinition Width="auto"></ColumnDefinition>
-				<ColumnDefinition Width="auto"></ColumnDefinition>
-				<ColumnDefinition Width="auto"></ColumnDefinition>
-				<ColumnDefinition Width="auto"></ColumnDefinition>
-				<ColumnDefinition Width="auto"></ColumnDefinition>
-				<ColumnDefinition Width="auto"/>
-				<ColumnDefinition Width="auto"></ColumnDefinition>
-				<ColumnDefinition Width="auto"></ColumnDefinition>
-			</Grid.ColumnDefinitions>
-			<TextBlock	Grid.Column="1"		Text="Server:"																																></TextBlock>
-			<TextBlock	Grid.Column="2"		Text="Offline"			x:Name="MAIN_ServerStatus_Text"				Margin="5,0,0,0"	Foreground="Red"		FontWeight="DemiBold"				></TextBlock>
-			<TextBlock	Grid.Column="3"		Text="Client Status:"												Margin="20,0,0,0"														></TextBlock>
-			<TextBlock	Grid.Column="4"								x:Name="MAIN_ClientStatusPreImage_Text"		Margin="5,0,0,0"	Foreground="LawnGreen"	FontWeight="DemiBold"		></TextBlock>
-			<Image		Grid.Column="5"								x:Name="MAIN_ClientStatusImage_Image"		Margin="20,0,0,0"	MaxHeight="16" VerticalAlignment="Top" Source="/BillScannerWPF;component/Resources/MatchRating/Success.png"></Image>
-			<TextBlock	Grid.Column="6"								x:Name="MAIN_ClientStatusPostImage_Text"	Margin="20,0,0,0"	Foreground="BlueViolet" FontWeight="DemiBold"		></TextBlock>
-			<TextBlock	Grid.Column="7"		Text="Database Status:"												Margin="20,0,0,0"														></TextBlock>
-			<TextBlock	Grid.Column="8"								x:Name="MAIN_DatabaseStatus_Text"			Margin="5,0,0,0"	Foreground="BlueViolet" FontWeight="DemiBold"		></TextBlock>
-			<TextBlock	Grid.Column="9"		Text="Loaded Shop:"													Margin="20,0,0,0"														></TextBlock>
-			<TextBlock	Grid.Column="10"							x:Name="MAIN_CurrentLoadedShop_Text"		Margin="20,0,0,0"	Foreground="OrangeRed"	FontWeight="DemiBold"		></TextBlock>
-		</Grid>
-		
 		<!--Base-->
 		<Grid Margin="0,16,0,0">
 			<Grid.ColumnDefinitions>

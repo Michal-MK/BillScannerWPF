@@ -75,6 +75,7 @@
     <Compile Include="BillParsing\UIItemCreationInfo.cs" />
     <Compile Include="ScannerHelper.cs" />
     <Compile Include="ServerStateManager.cs" />
+    <Compile Include="StatusBarViewModel.cs" />
     <Compile Include="XAML\DateBox.xaml.cs">
       <DependentUpon>DateBox.xaml</DependentUpon>
     </Compile>
@@ -109,6 +110,9 @@
     <Compile Include="Exceptions\WindowInitExpection.cs" />
     <Compile Include="XAML\SetupWindow.xaml.cs">
       <DependentUpon>SetupWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="XAML\StatusBar.xaml.cs">
+      <DependentUpon>StatusBar.xaml</DependentUpon>
     </Compile>
     <Page Include="XAML\DateBox.xaml">
       <SubType>Designer</SubType>
@@ -151,6 +155,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="XAML\SetupWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="XAML\StatusBar.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

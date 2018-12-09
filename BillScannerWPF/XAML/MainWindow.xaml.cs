@@ -12,6 +12,8 @@ using BillScannerWPF.Rules;
 using BillScannerCore;
 using BillScannerStartup;
 using System.Windows.Controls;
+using System.Threading.Tasks;
+using System.Threading;
 
 namespace BillScannerWPF {
 	/// <summary>
@@ -52,6 +54,11 @@ namespace BillScannerWPF {
 		internal IRuleset selectedShopRuleset { get; }
 
 		/// <summary>
+		/// The status bar at the top, provides general information about the state of the program
+		/// </summary>
+		internal StatusBar statusBar { get; }
+
+		/// <summary>
 		/// Create a default Albert window (Debug)
 		/// </summary>
 		public MainWindow() : this(Shop.Albert) { }
@@ -62,48 +69,28 @@ namespace BillScannerWPF {
 		/// <param name="selectedShop">The shop to load data for</param>
 		public MainWindow(Shop selectedShop) {
 			InitializeComponent();
-
 			DatabaseAccess.LoadDatabase(selectedShop);
 			selectedShopRuleset = BaseRuleset.GetRuleset(selectedShop);
 
-			MAIN_DatabaseStatus_Text.Text = "Loaded | Intact";
-			MAIN_DatabaseStatus_Text.Foreground = Brushes.BlueViolet;
+			statusBar = new StatusBar(new StatusBarViewModel());
+			MAIN_Grid.Children.Add(statusBar);
 
-			MAIN_CurrentLoadedShop_Text.Text = selectedShop.ToString();
-
-			MAIN_CurrentLoadedShop_Text.MouseLeftButtonDown += OnShopClicked;
+			statusBar.model.CurrentShop = selectedShop;
+			statusBar.BAR_CurrentLoadedShop_Text.MouseLeftButtonDown += OnShopClicked;
 
 			this.Closed += OnMainWindowClose;
-			if (ServerStateManager.isHoldingInstance) {
-				server = ServerStateManager.RestoreServerInstance();
-				server.OnConnectionEstablished += Server_OnConnectionEstablished;
-				server.OnClientDisconnected += Server_OnClientDisconnected;
-			}
-			else {
-				server = new TCPServer(new ServerConfiguration());
-	
-				for (ushort i = 0; i < PORT_RANGE; i++) {
-					try {
-						server.Start(
-							Helper.GetActiveIPv4Address()
-							//"192.168.137.1"
-							, (ushort)(START_PORT + i));
-						server.OnConnectionEstablished += Server_OnConnectionEstablished;
-						server.OnClientDisconnected += Server_OnClientDisconnected;
-						break;
-					}
-					catch { }
-				}
+
+
+			StartServer();
+			Thread.Sleep(200);
+
+			if (server == null) {
+				MessageBox.Show("Unable to start server at " + SimpleTCPHelper.GetActiveIPv4Address() + " " + START_PORT + "\n" +
+								"Either the port is already taken of you are not connected to the Internet!"
+								, "Server Off-line!", MessageBoxButton.OK, MessageBoxImage.Exclamation);
 			}
 
-			//if (!server) {
-			//	MessageBox.Show("Unable to start server at " + Helper.GetActiveIPv4Address() + " " + START_PORT + "\n" +
-			//					"Either the port is already taken of you are not connected to the Internet!"
-			//					, "Server Off-line!", MessageBoxButton.OK, MessageBoxImage.Exclamation);
-			//}
-
-			MAIN_ServerStatus_Text.Text = "Running";
-			MAIN_ServerStatus_Text.Foreground = Brushes.LawnGreen;
+			statusBar.model.ServerOnline = true;
 
 			imgProcessing = new ImageProcessor(selectedShopRuleset, this);
 
@@ -112,13 +99,11 @@ namespace BillScannerWPF {
 			MAIN_Finalize_Button.Click += MAIN_FinalizePurchase_Click;
 			MAIN_Clear_Button.Click += MAIN_Clear_Click;
 
-			MAIN_ClientStatusPreImage_Text.Text = "Client not connected!";
-			MAIN_ClientStatusPreImage_Text.Foreground = Brushes.Red;
+			statusBar.model.ClientConnected = false;
 
-			MAIN_ClientStatusImage_Image.Visibility = Visibility.Collapsed;
-			MAIN_ClientStatusPostImage_Text.Visibility = Visibility.Collapsed;
 			DebugDelay();
 		}
+
 
 		private void OnShopClicked(object sender, MouseButtonEventArgs e) {
 			SetupWindow w = new SetupWindow();
@@ -138,26 +123,47 @@ namespace BillScannerWPF {
 			MAIN_OpenDatabaseFile_Button.Click -= MAIN_OpenDatabaseFile_Click;
 			MAIN_Finalize_Button.Click -= MAIN_FinalizePurchase_Click;
 
-			MAIN_CurrentLoadedShop_Text.MouseLeftButtonDown -= OnShopClicked;
+			statusBar.BAR_CurrentLoadedShop_Text.MouseLeftButtonDown -= OnShopClicked;
 			this.Closed -= OnMainWindowClose;
 		}
 
-		#region Server Connection/Disconnection events
+		#region Server Startup/Events
+
+
+		private async Task StartServer() {
+			if (ServerStateManager.isHoldingInstance) {
+				server = ServerStateManager.RestoreServerInstance();
+				server.OnConnectionEstablished += Server_OnConnectionEstablished;
+				server.OnClientDisconnected += Server_OnClientDisconnected;
+			}
+			else {
+				server = new TCPServer(new ServerConfiguration());
+
+				for (ushort i = 0; i < PORT_RANGE; i++) {
+					try {
+					 await server.Start(
+							SimpleTCPHelper.GetActiveIPv4Address()
+							//"192.168.137.1"
+							, (ushort)(START_PORT + i));
+						server.OnConnectionEstablished += Server_OnConnectionEstablished;
+						server.OnClientDisconnected += Server_OnClientDisconnected;
+						break;
+					}
+					catch { }
+				}
+			}
+		}
 
 		private void Server_OnConnectionEstablished(object sender, ClientConnectedEventArgs e) {
-			server.GetConnection(e.clientInfo.clientID).dataIDs.DefineCustomDataTypeForID<byte[]>(1, imgProcessing.OnImageDataReceived);
+			server.GetConnection(e.clientInfo.clientID).dataIDs.DefineCustomDataTypeForID<byte[]>(55, imgProcessing.OnImageDataReceived);
 			Dispatcher.Invoke(() => {
-				MAIN_ClientStatusPreImage_Text.Text = e.myServer.getConnectedClients.Length.ToString();
-				MAIN_ClientStatusPreImage_Text.Foreground = Brushes.LawnGreen;
-				MAIN_ClientStatusImage_Image.Visibility = Visibility.Visible;
+				statusBar.model.ClientConnected = true;
 			});
 		}
 
 		private void Server_OnClientDisconnected(object sender, ClientDisconnectedEventArgs e) {
 			Dispatcher.Invoke(() => {
-				MAIN_ClientStatusPreImage_Text.Text = "Client disconnected successfully!";
-				MAIN_ClientStatusPreImage_Text.Foreground = Brushes.Blue;
-				MAIN_ClientStatusImage_Image.Visibility = Visibility.Collapsed;
+				statusBar.model.ClientConnected = false;
 			});
 		}
 
