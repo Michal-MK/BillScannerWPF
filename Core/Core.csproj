@@ -57,10 +57,12 @@
     <Compile Include="Serialization\ItemPurchaseHistory.cs" />
     <Compile Include="Serialization\Purchase.cs" />
     <Compile Include="Serialization\PurchaseMeta.cs" />
+    <Compile Include="ViewModels\StatusBarViewModel.cs" />
     <Compile Include="WPFHelper.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Configuration\packages.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
