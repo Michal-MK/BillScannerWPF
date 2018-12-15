@@ -13,6 +13,7 @@ using BillScannerCore;
 using BillScannerStartup;
 using System.Windows.Controls;
 using System.Threading.Tasks;
+using System.Drawing.Imaging;
 using System.Threading;
 
 namespace BillScannerWPF {
@@ -25,8 +26,6 @@ namespace BillScannerWPF {
 		/// The constant port the server is listening on for incoming phone connections
 		/// </summary>
 		public const ushort START_PORT = 6689;
-
-		public const ushort PORT_RANGE = 10;
 
 		/// <summary>
 		/// Static reference to the server
@@ -81,16 +80,16 @@ namespace BillScannerWPF {
 			this.Closed += OnMainWindowClose;
 
 
-			StartServer();
-			Thread.Sleep(200);
+			Task.Run(async () => {
+				await StartServer();
+				if (server == null) {
+					MessageBox.Show("Unable to start server at " + SimpleTCPHelper.GetActiveIPv4Address() + " " + START_PORT + "\n" +
+									"Either the port is already taken of you are not connected to the Internet!"
+									, "Server Off-line!", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+				}
 
-			if (server == null) {
-				MessageBox.Show("Unable to start server at " + SimpleTCPHelper.GetActiveIPv4Address() + " " + START_PORT + "\n" +
-								"Either the port is already taken of you are not connected to the Internet!"
-								, "Server Off-line!", MessageBoxButton.OK, MessageBoxImage.Exclamation);
-			}
-
-			statusBar.model.ServerOnline = true;
+				statusBar.model.ServerOnline = true;
+			});
 
 			imgProcessing = new ImageProcessor(selectedShopRuleset, this);
 
@@ -138,18 +137,16 @@ namespace BillScannerWPF {
 			}
 			else {
 				server = new TCPServer(new ServerConfiguration());
-
-				for (ushort i = 0; i < PORT_RANGE; i++) {
-					try {
-					 await server.Start(
-							SimpleTCPHelper.GetActiveIPv4Address()
-							//"192.168.137.1"
-							, (ushort)(START_PORT + i));
-						server.OnConnectionEstablished += Server_OnConnectionEstablished;
-						server.OnClientDisconnected += Server_OnClientDisconnected;
-						break;
-					}
-					catch { }
+				try {
+					await server.Start(
+						   SimpleTCPHelper.GetActiveIPv4Address()
+						   //"192.168.137.1"
+						   ,START_PORT);
+					server.OnConnectionEstablished += Server_OnConnectionEstablished;
+					server.OnClientDisconnected += Server_OnClientDisconnected;
+				}
+				catch {
+					MessageBox.Show("Unable to start server at " + SimpleTCPHelper.GetActiveIPv4Address() + " and port: " + START_PORT + "!");
 				}
 			}
 		}
@@ -188,6 +185,7 @@ namespace BillScannerWPF {
 			image.UriSource = imgUri;
 			image.EndInit();
 			currentImageSource = imgUri.AbsolutePath;
+
 			MAIN_PhotoPreview_Image.Source = image;
 		}
 
