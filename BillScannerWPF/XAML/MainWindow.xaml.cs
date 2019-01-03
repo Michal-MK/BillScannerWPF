@@ -3,7 +3,6 @@ using System;
 using System.IO;
 using System.Windows;
 using System.Windows.Input;
-using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Diagnostics;
 
@@ -13,8 +12,6 @@ using BillScannerCore;
 using BillScannerStartup;
 using System.Windows.Controls;
 using System.Threading.Tasks;
-using System.Drawing.Imaging;
-using System.Threading;
 
 namespace BillScannerWPF {
 	/// <summary>

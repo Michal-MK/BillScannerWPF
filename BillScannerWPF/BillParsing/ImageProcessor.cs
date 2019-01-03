@@ -62,7 +62,7 @@ namespace BillScannerWPF {
 		}
 
 		/// <summary>
-		/// Main function that start image analysis, triggered a UI element
+		/// Main function that starts image analysis, triggered by a UI element
 		/// </summary>
 		internal async void Analyze(object sender, RoutedEventArgs e) {
 			Button bSender = (Button)sender;
@@ -74,25 +74,30 @@ namespace BillScannerWPF {
 			uiItemsMatched.Clear();
 			uiItemsUnknown.Clear();
 
+			string[] lines = GetOCRLines();
+			ParsingResult result = null;
+			StringParser parser = new StringParser(ruleset);
+
+			try {
+				result = await parser.ParseAsync(lines);
+			}
+			catch (ParsingEntryNotFoundException) {
+				parser.tryMatchFromBeginning = true;
+				result = await parser.ParseAsync(lines);
+			}
+			ConstructUI(result.parsed, uiItemsMatched);
+			ConstructUI(result.unknown, uiItemsUnknown);
+			currentParsingResult = result;
+
+			bSender.IsEnabled = true;
+		}
+
+		private string[] GetOCRLines() {
 			using (Tesseract.Page p = engine.Process((Bitmap)Bitmap.FromFile(((MainWindow)App.Current.MainWindow).currentImageSource), PageSegMode.Auto)) {
-				StringParser instance = new StringParser(ruleset);
-				ParsingResult result = null;
 				string[] split = p.GetText().Split('\n');
 				string[] ready = split.Where((s) => { return !string.IsNullOrWhiteSpace(s); }).ToArray();
-				try {
-					result = await instance.ParseAsync(ready);
-				}
-				catch (ParsingEntryNotFoundException) {
-					string[] modified = new string[ready.Length + 1];
-					modified[0] = ruleset.startMarkers[0];
-					ready.CopyTo(modified, 1);
-					result = await instance.ParseAsync(modified);
-				}
-				ConstructUI(result.parsed, uiItemsMatched);
-				ConstructUI(result.unknown, uiItemsUnknown);
-				currentParsingResult = result;
+				return ready;
 			}
-			bSender.IsEnabled = true;
 		}
 
 		private void ConstructUI(ObservableCollection<UIItemCreationInfo> from, ObservableCollection<UIItem> destination) {
@@ -114,8 +119,8 @@ namespace BillScannerWPF {
 		}
 
 		~ImageProcessor() {
-		   // Do not change this code. Put cleanup code in Dispose(bool disposing) above.
-		   Dispose(false);
+			// Do not change this code. Put cleanup code in Dispose(bool disposing) above.
+			Dispose(false);
 		}
 
 		// This code added to correctly implement the disposable pattern.
