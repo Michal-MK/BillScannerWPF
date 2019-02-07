@@ -1,9 +1,5 @@
-AboutAssets.txt
-AboutResources.txt
-.vs
-bin
 obj
-Assets
-mipmap*
-*/Resources/values
+bin
+.vs
 *.user
+Properties
