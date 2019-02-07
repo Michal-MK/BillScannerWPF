@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-
+using System.Data;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json;
+using System.Data.SqlClient;
 
 namespace BillScannerCore {
 
@@ -59,6 +60,27 @@ namespace BillScannerCore {
 			itemDatabaseFile = new FileInfo(WPFHelper.dataPath + selectedShop.ToString() + "_itemsdb.json");
 			LoadItemDatabase();
 			LoadPurchaseDatabase();
+
+			SqlConnection connection = new SqlConnection(@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=D:\BillScanner_WPF\Core\Database\Database1.mdf;Integrated Security=True");
+
+			connection.Open();
+			Random r = new Random();
+			int[] s = new[] { 0, 1, 2, 3, 4, 5 };
+			string[] cities = new[] { "Me", "Test", "Brod", "NY", "Some", " Other", "Town", "Please", "Why", " So", "Many", "Words", "AAAAAA" };
+
+
+			using (SqlCommand command1 = connection.CreateCommand()) {
+				command1.CommandText = "SELECT * FROM Item";
+				using (SqlDataReader rr = command1.ExecuteReader()) {
+					while (rr.Read()) {
+						int index = rr.GetInt32(0);
+						using (SqlCommand command = connection.CreateCommand()) {
+							command.CommandText = string.Format("INSERT INTO ItemOCRNames VALUES ({0},{1})", index, Guid.NewGuid().ToString().Split('-')[0]);
+							command.ExecuteNonQuery();
+						}
+					}
+				}
+			}
 		}
 
 		/// <summary>
@@ -84,7 +106,7 @@ namespace BillScannerCore {
 			using (StreamReader sr = File.OpenText(selectedShopDBFile.FullName))
 			using (JsonTextReader jr = new JsonTextReader(sr)) {
 				shoppingDatabaseJson = JToken.ReadFrom(jr);
-				JArray array = ((JArray)shoppingDatabaseJson[nameof(Purchase.purchasedItems)]);
+				JArray array = (JArray)shoppingDatabaseJson[nameof(Purchase.purchasedItems)];
 				for (int i = 0; i < array.Count; i++) {
 					Purchase item = array[i].ToObject<Purchase>();
 					purchaseDatabase.Add(item.GUIDString, item);
@@ -95,7 +117,6 @@ namespace BillScannerCore {
 		/// <summary>
 		/// Add item to internal <see cref="itemDatabase"/>
 		/// </summary>
-		/// <param name="item"></param>
 		private void AddToDB(Item item) {
 			if (itemDatabase.ContainsKey(item.identifier)) {
 				throw new Exception("What ? " + item.identifier);

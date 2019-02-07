@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using System.IO;
 using Newtonsoft.Json.Linq;
+using System.Data.SqlClient;
 
 namespace BillScannerCore {
 
@@ -228,6 +229,16 @@ namespace BillScannerCore {
 			((JArray)shoppingDatabaseJson[nameof(Purchase.purchasedItems)]).Add(JObject.FromObject(purchaseInstance));
 			purchaseDatabase.Add(purchaseInstance.GUIDString, purchaseInstance);
 			File.WriteAllText(WPFHelper.dataPath + current.ToString() + "_purchasedb.json", shoppingDatabaseJson.ToString());
+		}
+
+
+		public void AddNewItemToDatabase(Item i) {
+			SqlConnection con = new SqlConnection(@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=D:\BillScanner_WPF\Core\Database\Database1.mdf;Integrated Security=True");
+			con.Open();
+			SqlCommand command = con.CreateCommand();
+
+			command.CommandText = "INSERT INTO Item VALUES ('{0}',{1},{2});";
+			command.CommandText += "INSERT INTO ItemOCRNames VALUES ('{0}',{1},{2});";
 		}
 	}
 }

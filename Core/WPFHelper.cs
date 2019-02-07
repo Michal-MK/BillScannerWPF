@@ -43,5 +43,16 @@ namespace BillScannerCore {
 			}
 			return builder.ToString();
 		}
+
+		public static bool Contains<T>(this T[] t, IList<T> other) where T : IEquatable<T> {
+			foreach (T tt in other) {
+				for (int i = 0; i < t.Length; i++) {
+					if (tt.Equals(t[i])) {
+						return true;
+					}
+				}
+			}
+			return false;
+		}
 	}
 }

@@ -17,6 +17,12 @@ namespace BillScannerWPF {
 		private bool foundSomeKindOfMatch = false;
 
 		/// <summary>
+		/// Attempts to match items from the <see cref="string"/>[] from the very beginning, causing some unnecessary data to be processed,
+		/// but can match items, event though the <see cref="string"/>[] does not contain a start marker.
+		/// </summary>
+		public bool tryMatchFromBeginning { get; internal set; } = false;
+
+		/// <summary>
 		/// Create new <see cref="StringParser"/> with selected <see cref="Shop"/>'s rule-set
 		/// </summary>
 		/// <param name="rules"></param>
@@ -33,22 +39,18 @@ namespace BillScannerWPF {
 			ObservableCollection<UIItemCreationInfo> unmatchedItems = new ObservableCollection<UIItemCreationInfo>();
 
 			Item[] items = DatabaseAccess.access.GetItems();
-			bool initiated = false;
 			bool finalized = false;
 			bool purchaseTimeFound = false;
 
 			DateTime purchaseTime = DateTime.MinValue;
-
-			for (int i = 0; i < split.Length; i += 1) {
+			int inc = 1;
+			for (int i = 0; i < split.Length; i += inc) {
 				bool matched = false;
 
-				if (string.IsNullOrWhiteSpace(split[i])) {
-					continue;
-				}
-
-				if (!initiated) {
-					initiated = IsInitiatingString(split[i].ToLower().Trim(), ref i);
-					if (initiated) {
+				if (!tryMatchFromBeginning) {
+					tryMatchFromBeginning = IsInitiatingString(split[i].ToLower().Trim(), ref i);
+					if (tryMatchFromBeginning) {
+						inc = 2;
 						continue;
 					}
 				}
@@ -68,7 +70,7 @@ namespace BillScannerWPF {
 						}
 					}
 				}
-				if (!initiated || finalized) {
+				if (!tryMatchFromBeginning || finalized) {
 					continue;
 				}
 
@@ -163,7 +165,7 @@ namespace BillScannerWPF {
 					}
 				}
 			}
-			if (!initiated) {
+			if (!tryMatchFromBeginning) {
 				throw new ParsingEntryNotFoundException(rules.startMarkers, split);
 			}
 			while (!purchaseTimeFound) {
@@ -274,7 +276,6 @@ namespace BillScannerWPF {
 		/// <param name="split">OCR data</param>
 		/// <param name="splitIndex">Index at which to look for the price</param>
 		/// <param name="itemName">Name of the item for <see cref="ManualResolveChoice"/></param>
-		/// <returns></returns>
 		private async Task<long> GetQuantityAsync(string[] split, int splitIndex, string itemName) {
 			long quantity;
 			try {
