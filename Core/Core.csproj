@@ -88,6 +88,9 @@
     <None Include="App.config" />
     <None Include="Configuration\packages.config" />
     <None Include="packages.config" />
+    <None Include="Database\ShoppingDB.db">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.7.1">
