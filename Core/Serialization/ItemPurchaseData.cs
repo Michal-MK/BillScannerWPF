@@ -2,12 +2,12 @@
 	public class ItemPurchaseData {
 
 
-		public ItemPurchaseData(Item item, long quantityPurchased) {
+		public ItemPurchaseData(Item item, int amount) {
 			this.item = item;
-			this.quantityPurchased = quantityPurchased;
+			this.amount = amount;
 		}
 
 		public Item item { get; private set; }
-		public long quantityPurchased { get; private set; }
+		public int amount { get; private set; }
 	}
 }
