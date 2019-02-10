@@ -11,7 +11,7 @@ namespace BillScannerCore {
 		/// <summary>
 		/// Unique identifier of this purchase
 		/// </summary>
-		public string purchaseGUID { get; }
+		public int purchaseID { get; }
 
 		/// <summary>
 		/// How many items of this type were bought at that time
@@ -21,10 +21,10 @@ namespace BillScannerCore {
 		/// <summary>
 		/// The amount of money the item cost at that time
 		/// </summary>
-		public decimal price { get; }
+		public int price { get; }
 
-		public ItemPurchaseHistory(string purchaseGUID, long amount, decimal price) {
-			this.purchaseGUID = purchaseGUID;
+		public ItemPurchaseHistory(int purchaseID, long amount, int price) {
+			this.purchaseID = purchaseID;
 			this.amount = amount;
 			this.price = price;
 		}

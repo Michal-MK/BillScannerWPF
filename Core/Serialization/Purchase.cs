@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using Newtonsoft.Json;
+using Core.Database;
 
 namespace BillScannerCore {
 
@@ -14,7 +13,7 @@ namespace BillScannerCore {
 		/// <summary>
 		/// Unique identifier of this purchase
 		/// </summary>
-		public string GUIDString { get; private set; }
+		public int ID { get; private set; }
 
 		/// <summary>
 		/// The date this purchase was made
@@ -24,48 +23,47 @@ namespace BillScannerCore {
 		/// <summary>
 		/// Total amount paid for this purchase
 		/// </summary>
-		public decimal totalCost { get; private set; } = 0;
+		public int totalCost { get; private set; } = 0;
 
 		/// <summary>
 		/// List of item GUIDs that were bought
 		/// </summary>
-		public string[] purchasedItems { get; private set; }
+		public Item[] purchasedItems => DatabaseAccess.access.GetItems(ID);
 
-		[NonSerialized]
-		private List<long> internalItemsBought;
+		/// <summary>
+		/// The Shop this purchase was made in
+		/// </summary>
+		public Shop shop { get; }
 
-		[JsonConstructor]
-		public Purchase(string GUIDString, DateTime date, decimal totalCost, string[] purchasedItems) {
-			this.GUIDString = GUIDString;
-			this.date = date;
-			this.totalCost = totalCost;
-			this.purchasedItems = purchasedItems;
+		private DbItemPurchase[] purchasedDbItems { get; set; }
+
+		public Purchase(DbPurchase current) {
+			ID = current.ID;
+			date = DateTime.Parse(current.Date);
+			shop = (Shop)current.ShopID;
 		}
+
 
 		/// <summary>
 		/// Create a new <see cref="Purchase"/>
 		/// </summary>
 		/// <param name="date">The date this purchase was made</param>
-		/// <param name="collection">The items scanned from a bill visually represented by a <see cref="UIItem"/></param>
 		public Purchase(DateTime date, ItemPurchaseData[] collection) {
 			this.date = date;
-			purchasedItems = new string[collection.Length];
-			internalItemsBought = new List<long>(collection.Length);
+			purchasedDbItems = new DbItemPurchase[collection.Length];
 			for (int i = 0; i < collection.Length; i++) {
-				purchasedItems[i] = collection[i].item.identifier;
-				internalItemsBought.Add(collection[i].quantityPurchased);
+				purchasedDbItems[i] = new DbItemPurchase() { Amount = collection[i].amount, ValuePerItem = collection[i].item.currentPrice };
 			}
 		}
+
 
 		/// <summary>
 		/// Preforms the actual writing to the database
 		/// </summary>
 		public void FinalizePurchase() {
-			GUIDString = Guid.NewGuid().ToString();
 			for (int i = 0; i < purchasedItems.Length; i++) {
-				Item item = DatabaseAccess.access.GetItem(purchasedItems[i]);
-				DatabaseAccess.access.AddNewPurchaseForItemToDatabase(purchasedItems[i], new ItemPurchaseHistory(GUIDString, internalItemsBought[i], item.currentPrice));
-				totalCost += item.currentPrice;
+				DatabaseAccess.access.AddNewPurchaseForItemToDatabase(purchasedDbItems[i].ItemID, new ItemPurchaseHistory(ID, purchasedDbItems[i].Amount, purchasedDbItems[i].ValuePerItem),date);
+				totalCost += purchasedDbItems[i].Amount * purchasedDbItems[i].ValuePerItem;
 			}
 			DatabaseAccess.access.WriteNewPurchaseInstance(this);
 		}

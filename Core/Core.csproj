@@ -48,6 +48,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Dapper, Version=1.50.5.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Dapper.1.50.5\lib\net451\Dapper.dll</HintPath>
+    </Reference>
     <Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.11.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
@@ -68,9 +71,16 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Database\Database.cs" />
     <Compile Include="Database\DatabaseAccess.cs" />
     <Compile Include="Database\FolderInit.cs" />
+    <Compile Include="Database\Rows\DbItemOcrNames.cs" />
+    <Compile Include="Database\Rows\DbItemPurchase.cs" />
+    <Compile Include="Database\Rows\DbItemValueHistory.cs" />
+    <Compile Include="Database\Rows\DbLocation.cs" />
+    <Compile Include="Database\Rows\DbPurchase.cs" />
+    <Compile Include="Database\Rows\DbShop.cs" />
+    <Compile Include="Database\Rows\DbItemMetadata.cs" />
+    <Compile Include="Database\Rows\DbItem.cs" />
     <Compile Include="Enumerations\MeassurementUnit.cs" />
     <Compile Include="Enumerations\Shops.cs" />
     <Compile Include="Exceptions\ItemNotDefinedException.cs" />
@@ -85,12 +95,12 @@
     <Compile Include="WPFHelper.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
+    <None Include="app.config" />
     <None Include="Configuration\packages.config" />
-    <None Include="packages.config" />
     <None Include="Database\ShoppingDB.db">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.7.1">
