@@ -96,10 +96,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
-    <None Include="Configuration\packages.config" />
-    <None Include="Database\ShoppingDB.db">
+    <Resource Include="Database\ShoppingDB.db">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
+    </Resource>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>

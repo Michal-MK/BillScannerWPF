@@ -16,14 +16,14 @@ namespace BillScannerCore {
 		/// <summary>
 		/// How many items of this type were bought at that time
 		/// </summary>
-		public long amount { get; }
+		public int amount { get; }
 
 		/// <summary>
 		/// The amount of money the item cost at that time
 		/// </summary>
 		public int price { get; }
 
-		public ItemPurchaseHistory(int purchaseID, long amount, int price) {
+		public ItemPurchaseHistory(int purchaseID, int amount, int price) {
 			this.purchaseID = purchaseID;
 			this.amount = amount;
 			this.price = price;

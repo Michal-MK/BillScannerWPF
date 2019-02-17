@@ -1,15 +1,12 @@
-﻿using BillScannerCore;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 
-namespace BillScannerWPF {
+namespace BillScannerCore {
 	public class StatusBarViewModel : INotifyPropertyChanged {
 		public event PropertyChangedEventHandler PropertyChanged;
 
-		private bool serverOnline = false;
-		private string serverOnlineString;
-		private bool clientConnected = false;
-		private string clientConnectedString;
-
+		/// <summary>
+		/// Default constructor
+		/// </summary>
 		public StatusBarViewModel() {
 			ServerOnlineString = "Offline";
 			ClientConnectedString = "No Connection";
@@ -26,6 +23,7 @@ namespace BillScannerWPF {
 				else { ServerOnlineString = "Offline"; }
 			}
 		}
+		private bool serverOnline = false;
 
 		/// <summary>
 		/// String representing server status
@@ -37,6 +35,7 @@ namespace BillScannerWPF {
 				PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ServerOnlineString)));
 			}
 		}
+		private string serverOnlineString;
 
 
 		/// <summary>
@@ -48,8 +47,10 @@ namespace BillScannerWPF {
 				clientConnected = value;
 				if (value) { ClientConnectedString = "Client Connected"; }
 				else { ClientConnectedString = "No Connection"; }
+				PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ClientConnected)));
 			}
 		}
+		private bool clientConnected = false;
 
 		/// <summary>
 		/// String representing server status
@@ -61,12 +62,19 @@ namespace BillScannerWPF {
 				PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ClientConnectedString)));
 			}
 		}
+		private string clientConnectedString;
 
 
-		private Shop shop;
 		/// <summary>
 		/// Current shop + database that is loaded
 		/// </summary>
-		public Shop CurrentShop { get { return shop; } set { shop = value; PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CurrentShop))); } }
+		public Shop CurrentShop {
+			get { return shop; }
+			set {
+				shop = value;
+				PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CurrentShop)));
+			}
+		}
+		private Shop shop;
 	}
 }

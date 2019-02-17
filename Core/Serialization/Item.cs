@@ -1,42 +1,45 @@
 ﻿using System;
 using System.Collections.Generic;
-using Newtonsoft.Json;
 
 namespace BillScannerCore {
 
 	public class Item {
-		
+
 		/// <summary>
-		/// Create a new instance of an Item with a friendly name and value
+		/// Create a new instance of an <see cref="Item"/> with a user-friendly name and its price
 		/// </summary>
-		/// <param name="userFriendlyName">The name to be displayed to the user</param>
-		/// <param name="currentPrice">The value of the item</param>
 		public Item(string userFriendlyName, int currentPrice) {
 			ocrNames = new List<string>();
 			pricesInThePast = new Dictionary<DateTime, int>();
+
 			this.userFriendlyName = userFriendlyName;
 			this.currentPrice = currentPrice;
-			identifier = -1;
+			ID = -1;
 		}
 
-		internal Item(Core.Database.DbItem current, IEnumerator<Core.Database.DbItemOcrNames> ocrNames, IEnumerator<Core.Database.DbItemValueHistory> pastValues) {
-			this.identifier = current.ID;
-			this.userFriendlyName = current.Name;
+		/// <summary>
+		/// Create a new <see cref="Item"/> by querying the database and connecting all the needed entries
+		/// </summary>
+		public Item(Core.Database.DbItem current, IEnumerator<string> ocrNames, IEnumerator<Core.Database.DbItemValueHistory> pastValues) {
 			this.ocrNames = new List<string>();
-			this.pricesInThePast = new Dictionary<DateTime, int>();
+			pricesInThePast = new Dictionary<DateTime, int>();
+
+			ID = current.ID;
+			userFriendlyName = current.Name;
+			currentPrice = current.Value;
+
 			while (ocrNames.MoveNext()) {
-				this.ocrNames.Add(ocrNames.Current.OcrName);
+				this.ocrNames.Add(ocrNames.Current);
 			}
-			this.currentPrice = current.Value;
 			while (pastValues.MoveNext()) {
-				this.pricesInThePast.Add(DateTime.Parse(pastValues.Current.Date),pastValues.Current.Value);
+				pricesInThePast.Add(DateTime.Parse(pastValues.Current.Date), pastValues.Current.Value);
 			}
 		}
 
 		/// <summary>
 		/// The ID int that is unique to this item (Primary key)
 		/// </summary>
-		public int identifier { get; private set; }
+		public int ID { get; private set; }
 
 		/// <summary>
 		/// The name to be displayed to the user
@@ -61,41 +64,69 @@ namespace BillScannerCore {
 		/// <summary>
 		/// List of prices this item was valued in the past
 		/// </summary>
-		public Dictionary<DateTime,int> pricesInThePast { get; }
+		public Dictionary<DateTime, int> pricesInThePast { get; }
 
 		/// <summary>
 		/// Number of purchases of this item
 		/// </summary>
-		public long totalPurchased { get; private set; }
+		public int totalPurchased { get; private set; }
 
 		/// <summary>
 		/// History of purchases of this item
 		/// </summary>
-		public List<ItemPurchaseHistory> purchaseHistory => DatabaseAccess.access.GetItemPuchaseHistory(identifier);
+		public List<ItemPurchaseHistory> purchaseHistory => DatabaseAccess.access.GetItemPuchaseHistory(ID);
 
+		/// <summary>
+		/// Is this item already present in the database
+		/// </summary>
+		public bool isRegistered => DatabaseAccess.access.GetItem(ID) == null;
 
-		internal bool isRegistered => DatabaseAccess.access.GetItem(identifier) == null;
-
-		#region Internal fields and properties
-
-		public void AddOCRName(string newOcrName) {
-			ocrNames.Add(newOcrName);
-			DatabaseAccess.access.AddOcrName(identifier, newOcrName);
+		/// <summary>
+		/// Modify this item internally before it is added for the first time to the database
+		/// </summary>
+		internal void Modify(string newName = null, int? newValue = null) {
+			if (isRegistered) {
+				return;
+			}
+			userFriendlyName = newName ?? userFriendlyName;
+			currentPrice = newValue ?? newValue.Value;
 		}
 
-		public void AddAmount(long amount) {
+		/// <summary>
+		/// Add new OCR name to the OCR names list
+		/// </summary>
+		public void AddOCRName(string newOcrName) {
+			ocrNames.Add(newOcrName);
+			DatabaseAccess.access.AddOcrName(ID, newOcrName);
+		}
+
+		/// <summary>
+		/// Adds the amount into the counter of how may items of this type were bought
+		/// </summary>
+		public void AddTotalAmountPurchased(int amount) {
 			totalPurchased += amount;
 		}
 
-		public void SetNewCurrentPrice(int price, DateTime purchaseTime) {
+		/// <summary>
+		/// Sets new active price for the item, can update the database
+		/// </summary>
+		public void SetNewCurrentPrice(int price, DateTime purchaseTime, bool updateDatabase = false) {
 			currentPrice = price;
-			DatabaseAccess.access.UpdateNewCurrentPrice(identifier, price, purchaseTime);
-		}
-		public void SetUnitOfMeassure(MeassurementUnit unit) {
-			unitOfMeassure = unit;
-			DatabaseAccess.access.UpdateUnitOfMeassure(identifier, unit);
+			pricesInThePast.Add(purchaseTime, price);
+
+			if (updateDatabase) {
+				DatabaseAccess.access.UpdateNewCurrentPrice(ID, price, purchaseTime);
+			}
 		}
 
-		#endregion
+		/// <summary>
+		/// Sets the unit of measure for the item, can update the database
+		/// </summary>
+		public void SetUnitOfMeassure(MeassurementUnit unit, bool updateDatabase = false) {
+			unitOfMeassure = unit;
+			if (updateDatabase) {
+				DatabaseAccess.access.UpdateUnitOfMeassure(ID, unit);
+			}
+		}
 	}
 }
