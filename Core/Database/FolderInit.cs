@@ -1,5 +1,5 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
+using System.Reflection;
 
 namespace BillScannerCore {
 
@@ -33,6 +33,19 @@ namespace BillScannerCore {
 		}
 
 		/// <summary>
+		/// Copies the database file from this assembly into its proper location
+		/// </summary>
+		internal static void CopyDatabase() {
+			if (!File.Exists(WPFHelper.dataPath + WPFHelper.databaseFileName)) {
+				using (Stream s = Assembly.GetEntryAssembly().GetManifestResourceStream("Core/Database/ShoppingDB.db")) {
+					using (FileStream fs = new FileStream(WPFHelper.dataPath + "ShoppingDB.db", FileMode.CreateNew)) {
+						s.CopyTo(fs);
+					}
+				}
+			}
+		}
+
+		/// <summary>
 		/// Creates a new JSON file for selected <see cref="Shop"/>'s purchases and returns the <see cref="FileInfo"/>
 		/// </summary>
 		/// <exception cref="IOException"></exception>
@@ -42,7 +55,7 @@ namespace BillScannerCore {
 				using (StreamWriter sw = File.CreateText(shopPath.FullName)) {
 					sw.WriteLine("{");
 					sw.WriteLine("\"shopName\": \"{0}\",", shopName);
-					sw.WriteLine("\""+ nameof(Purchase.purchasedItems) + "\": []");
+					sw.WriteLine("\"" + nameof(Purchase.purchasedItems) + "\": []");
 					sw.WriteLine("}");
 				}
 			}

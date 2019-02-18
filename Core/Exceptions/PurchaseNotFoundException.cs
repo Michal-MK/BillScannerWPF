@@ -4,7 +4,7 @@ using System.Runtime.Serialization;
 namespace BillScannerCore {
 
 	/// <summary>
-	/// Exception thrown when atempting to find a purchase with GUID that does not exist.
+	/// Exception thrown when attempting to find a purchase with GUID that does not exist.
 	/// </summary>
 	[Serializable]
 	internal class PurchaseNotFoundException : Exception {

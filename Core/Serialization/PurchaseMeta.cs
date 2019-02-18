@@ -9,12 +9,12 @@ namespace BillScannerCore {
 		/// <summary>
 		/// The date this item was purchased at
 		/// </summary>
-		public DateTime purchasedAt;
+		public DateTime purchasedAt { get; }
 
 		/// <summary>
 		/// The date this item was scanned at
 		/// </summary>
-		public DateTime scannedAt;
+		public DateTime scannedAt { get; }
 
 		public PurchaseMeta(DateTime purchaseDate) {
 			purchasedAt = purchaseDate;
