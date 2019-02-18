@@ -10,12 +10,13 @@ namespace BillScannerWPF {
 		/// <summary>
 		/// Create new <see cref="UIItemCreationInfo"/>
 		/// </summary>
-		internal UIItemCreationInfo(Item i, bool isRegistered, long quantity, decimal currentPrice, MatchRating quality) {
-			item = i;
+		internal UIItemCreationInfo(Item item, bool isRegistered, int quantity, decimal currentPrice, MatchRating quality, string triggerForMatch) {
+			this.item = item;
 			this.quality = quality;
 			this.isRegistered = isRegistered;
 			this.quantity = quantity;
 			this.currentPrice = currentPrice;
+			this.tirggerForMatch = triggerForMatch;
 		}
 
 		/// <summary>
@@ -26,7 +27,7 @@ namespace BillScannerWPF {
 		/// <summary>
 		/// Amount of items to be purchased
 		/// </summary>
-		internal long quantity { get; }
+		internal int quantity { get; }
 
 		/// <summary>
 		/// Match accuracy
@@ -42,5 +43,11 @@ namespace BillScannerWPF {
 		/// Current price of the <see cref="Item"/>
 		/// </summary>
 		internal decimal currentPrice { get; }
+
+		/// <summary>
+		/// The text that triggered the match
+		/// </summary>
+		internal string tirggerForMatch { get; }
+
 	}
 }

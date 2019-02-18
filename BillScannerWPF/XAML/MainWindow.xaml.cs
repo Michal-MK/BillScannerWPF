@@ -91,7 +91,6 @@ namespace BillScannerWPF {
 			imgProcessing = new ImageProcessor(selectedShopRuleset, this);
 
 			MAIN_Analyze_Button.Click += imgProcessing.Analyze;
-			MAIN_OpenDatabaseFile_Button.Click += MAIN_OpenDatabaseFile_Click;
 			MAIN_Finalize_Button.Click += MAIN_FinalizePurchase_Click;
 			MAIN_Clear_Button.Click += MAIN_Clear_Click;
 
@@ -112,11 +111,10 @@ namespace BillScannerWPF {
 		}
 
 		private void OnMainWindowClose(object sender, EventArgs e) {
-			server.OnConnectionEstablished -= Server_OnConnectionEstablished;
+			server.OnClientConnected -= Server_OnConnectionEstablished;
 			server.OnClientDisconnected -= Server_OnClientDisconnected;
 
 			MAIN_Analyze_Button.Click -= imgProcessing.Analyze;
-			MAIN_OpenDatabaseFile_Button.Click -= MAIN_OpenDatabaseFile_Click;
 			MAIN_Finalize_Button.Click -= MAIN_FinalizePurchase_Click;
 
 			statusBar.BAR_CurrentLoadedShop_Text.MouseLeftButtonDown -= OnShopClicked;
@@ -129,7 +127,7 @@ namespace BillScannerWPF {
 		private async Task StartServer() {
 			if (ServerStateManager.isHoldingInstance) {
 				server = ServerStateManager.RestoreServerInstance();
-				server.OnConnectionEstablished += Server_OnConnectionEstablished;
+				server.OnClientConnected += Server_OnConnectionEstablished;
 				server.OnClientDisconnected += Server_OnClientDisconnected;
 			}
 			else {
@@ -138,8 +136,8 @@ namespace BillScannerWPF {
 					await server.Start(
 						   SimpleTCPHelper.GetActiveIPv4Address()
 						   //"192.168.137.1"
-						   ,START_PORT);
-					server.OnConnectionEstablished += Server_OnConnectionEstablished;
+						   , START_PORT);
+					server.OnClientConnected += Server_OnConnectionEstablished;
 					server.OnClientDisconnected += Server_OnClientDisconnected;
 				}
 				catch {
@@ -149,9 +147,10 @@ namespace BillScannerWPF {
 		}
 
 		private void Server_OnConnectionEstablished(object sender, ClientConnectedEventArgs e) {
-			server.GetConnection(e.clientInfo.clientID).dataIDs.DefineCustomDataTypeForID<byte[]>(55, imgProcessing.OnImageDataReceived);
+			server.DefineCustomPacket<byte[]>(e.clientInfo.clientID, 55, imgProcessing.OnImageDataReceived);
 			Dispatcher.Invoke(() => {
 				statusBar.model.ClientConnected = true;
+
 			});
 		}
 
@@ -207,13 +206,6 @@ namespace BillScannerWPF {
 
 
 		#region Control button functionality
-
-		private void MAIN_OpenDatabaseFile_Click(object sender, RoutedEventArgs e) {
-			Process p = new Process();
-			ProcessStartInfo info = new ProcessStartInfo(DatabaseAccess.access.itemDatabaseFile.FullName);
-			p.StartInfo = info;
-			p.Start();
-		}
 
 		private void MAIN_FinalizePurchase_Click(object sender, RoutedEventArgs e) {
 			Purchase s = new Purchase(imgProcessing.currentParsingResult.meta.purchasedAt, imgProcessing.uiItemsMatched.Transform());

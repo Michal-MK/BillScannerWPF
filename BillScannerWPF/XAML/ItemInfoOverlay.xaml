@@ -20,35 +20,35 @@
 						<RowDefinition Height="auto"></RowDefinition>
 						<RowDefinition Height="auto"></RowDefinition>
 						<RowDefinition Height="auto"></RowDefinition>
-						<RowDefinition Height="*"></RowDefinition>
-						<RowDefinition Height="80"></RowDefinition>
+						<RowDefinition Height="*">	 </RowDefinition>
+						<RowDefinition Height="80">	 </RowDefinition>
 					</Grid.RowDefinitions>
 					<Grid.ColumnDefinitions>
 						<ColumnDefinition Width="auto"></ColumnDefinition>
 						<ColumnDefinition Width="auto"></ColumnDefinition>
-						<ColumnDefinition Width="40"></ColumnDefinition>
+						<ColumnDefinition Width="40">  </ColumnDefinition>
 						<ColumnDefinition Width="auto"></ColumnDefinition>
 						<ColumnDefinition Width="auto"></ColumnDefinition>
 						<ColumnDefinition Width="auto"></ColumnDefinition>
-						<ColumnDefinition Width="*"></ColumnDefinition>
+						<ColumnDefinition Width="*">   </ColumnDefinition>
 					</Grid.ColumnDefinitions>
-					<TextBlock Grid.Row="1" Grid.Column="0" Text="Item Info (Database)"   Margin="0,0,0,10" FontWeight="ExtraBold" Grid.ColumnSpan="2"></TextBlock>
-					<TextBlock Grid.Row="2" Grid.Column="0" Text="User friendly name:"	Margin="0,0,10,0"	></TextBlock>
-					<TextBlock Grid.Row="3" Grid.Column="0" Text="OCR Names:"			></TextBlock>
-					<TextBlock Grid.Row="4" Grid.Column="0" Text="Current item value:"	></TextBlock>
-					<TextBlock Grid.Row="5" Grid.Column="0" Text="Prices previously:"	></TextBlock>
-					<TextBlock Grid.Row="6" Grid.Column="0" Text="Bought total:"		></TextBlock>
-					<TextBox	x:Name="INFO_MainName_Text"		Grid.Row="2" Grid.Column="1"  MinWidth="100"></TextBox>
-					<TextBlock	x:Name="INFO_ORC_Text"			Grid.Row="3" Grid.Column="1"				></TextBlock>
-					<TextBox	x:Name="INFO_CurrentValue_Text"	Grid.Row="4" Grid.Column="1"				></TextBox>
-					<TextBlock Grid.Row="4" Grid.Column="2" Text="Kč"				></TextBlock>
-					<TextBlock	x:Name="INFO_PricesBefore_Text"	Grid.Row="5" Grid.Column="1"				></TextBlock>
-					<TextBlock Grid.Row="5" Grid.Column="2" Text="Kč"				></TextBlock>
-					<TextBlock	x:Name="INFO_AmountBought_Text"	Grid.Row="6" Grid.Column="1"				></TextBlock>
-					
-					<TextBlock Grid.Row="1" Grid.Column="3" Text="Purchase Info" Margin="0,0,0,10" FontWeight="ExtraBold"	></TextBlock>
-					<TextBlock Grid.Row="2" Grid.Column="3" Text="Item Quantity:"											></TextBlock>
-					<TextBox	x:Name="INFO_PURCHASE_ItemQuantity"	Grid.Row="2" Grid.Column="4" MinWidth="100"				></TextBox>
+					<TextBlock Grid.Row="1" Grid.Column="0" Text="Item Info (Database)"										Margin="0,0,0,10" FontWeight="ExtraBold" Grid.ColumnSpan="2" ></TextBlock>
+					<TextBlock Grid.Row="2" Grid.Column="0" Text="User friendly name:"										Margin="0,0,10,0"											 ></TextBlock>
+					<TextBlock Grid.Row="3" Grid.Column="0" Text="OCR Names:"																											 ></TextBlock>
+					<TextBlock Grid.Row="4" Grid.Column="0" Text="Current item value:"																									 ></TextBlock>
+					<TextBlock Grid.Row="5" Grid.Column="0" Text="Prices previously:"																									 ></TextBlock>
+					<TextBlock Grid.Row="6" Grid.Column="0" Text="Bought total:"																										 ></TextBlock>
+					<TextBox   Grid.Row="2" Grid.Column="1"								x:Name="INFO_MainName_Text"		   MinWidth="100"												 ></TextBox>
+					<TextBlock Grid.Row="3" Grid.Column="1"								x:Name="INFO_ORC_Text"																			 ></TextBlock>
+					<TextBox   Grid.Row="4" Grid.Column="1"								x:Name="INFO_CurrentValue_Text"																	 ></TextBox>
+					<TextBlock Grid.Row="4" Grid.Column="2" Text="Kč"																													 ></TextBlock>
+					<TextBlock Grid.Row="5" Grid.Column="1"								x:Name="INFO_PricesBefore_Text"																	 ></TextBlock>
+					<TextBlock Grid.Row="5" Grid.Column="2" Text="Kč"																													 ></TextBlock>
+					<TextBlock Grid.Row="6" Grid.Column="1"								x:Name="INFO_AmountBought_Text"																	 ></TextBlock>
+						
+					<TextBlock Grid.Row="1" Grid.Column="3" Text="Purchase Info"											Margin="0,0,0,10" FontWeight="ExtraBold"					 ></TextBlock>
+					<TextBlock Grid.Row="2" Grid.Column="3" Text="Item Quantity:"																										 ></TextBlock>
+					<TextBox   Grid.Row="2" Grid.Column="4"								x:Name="INFO_PURCHASE_ItemQuantity" MinWidth="100"												 ></TextBox>
 
 				</Grid>
 				<Grid VerticalAlignment="Bottom" HorizontalAlignment="Right">
@@ -58,8 +58,9 @@
 						<ColumnDefinition Width="auto"></ColumnDefinition>
 						<ColumnDefinition Width="auto"></ColumnDefinition>
 					</Grid.ColumnDefinitions>
-					<Button Grid.Column="3" Content="Back" Click="INFO_Back_Click" Margin="0,10,10,10" Padding="20,5"></Button>
-					<Button x:Name="INFO_RegisterItem_Button" Grid.Column="2" Content="Register Item" Click="INFO_RegisterItem_Click" Margin="10" IsEnabled="False"></Button>
+					
+					<Button Grid.Column="3" Content="Back"												Click="INFO_Back_Click"			Margin="0,10,10,10" Padding="20,5"></Button>
+					<Button Grid.Column="2" Content="Register Item" x:Name="INFO_RegisterItem_Button"	Click="INFO_RegisterItem_Click" Margin="10"			IsEnabled="False"></Button>
 				</Grid>
 			</Grid>
 		</Viewbox>

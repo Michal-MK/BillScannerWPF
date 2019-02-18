@@ -1,4 +1,5 @@
-﻿using System.Globalization;
+﻿using BillScannerCore;
+using System.Globalization;
 using System.Text.RegularExpressions;
 
 namespace BillScannerWPF.Rules {
@@ -20,14 +21,16 @@ namespace BillScannerWPF.Rules {
 
 		public Regex dateTimeFormat { get { return genericDateTimeFormat; } }
 
-		public long GetQuantity(string[] ocrText, int index) {
+		public Shop shop => Shop.Albert;
+
+		public int GetQuantity(string[] ocrText, int index) {
 			if (IsSingleItem(ocrText, index)) {
 				return 1;
 			}
 			else {
 				string[] split = ocrText[index + 1].Split(costPlusQuantitySeparator);
 				if (split.Length == 2) {
-					if (long.TryParse(split[0], out long result)) {
+					if (int.TryParse(split[0], out int result)) {
 						return result;
 					}
 				}
@@ -49,12 +52,12 @@ namespace BillScannerWPF.Rules {
 			throw new NameParsingException("Unable to get name from string: " + line, line);
 		}
 
-		public decimal GetPriceOfOne(string[] ocrText, ref int index) {
+		public int GetPriceOfOne(string[] ocrText, ref int index) {
 			if (IsSingleItem(ocrText, index)) {
 				Match single = correctItemLine.Match(ocrText[index]);
 				string final = single.Groups[4].Value.Replace(',', '.');
 				if (decimal.TryParse(final, NumberStyles.Currency, CultureInfo.InvariantCulture, out decimal result)) {
-					return result;
+					return (int)result * 100;
 				}
 				else {
 					throw new PriceParsingException(ocrText[index], index, true);
@@ -65,7 +68,7 @@ namespace BillScannerWPF.Rules {
 				string final = multiL.Groups[2].Value.Replace(',', '.').Replace(" ", ".");
 				if (decimal.TryParse(final, NumberStyles.Currency, CultureInfo.InvariantCulture, out decimal result)) {
 					index++;
-					return result;
+					return (int)result * 100;
 				}
 				else {
 					throw new PriceParsingException(ocrText[index + 1], index + 1, false);

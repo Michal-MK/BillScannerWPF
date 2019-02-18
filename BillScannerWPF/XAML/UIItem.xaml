@@ -1,0 +1,24 @@
+﻿<UserControl x:Class="BillScannerWPF.UIItem"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:BillScannerWPF"
+             mc:Ignorable="d" 
+             d:DesignWidth="400">
+	<Grid>
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="10"></ColumnDefinition>
+			<ColumnDefinition Width="*"></ColumnDefinition>
+			<ColumnDefinition Width="auto"></ColumnDefinition>
+			<ColumnDefinition Width="auto"></ColumnDefinition>
+			<ColumnDefinition Width="10"></ColumnDefinition>
+		</Grid.ColumnDefinitions>
+		<Grid.Background>
+			<SolidColorBrush Color="LightSlateGray"></SolidColorBrush>
+		</Grid.Background>
+		<TextBlock x:Name="UITEM_OriginalName_Text" Grid.Column="1" Text="Original Name" VerticalAlignment="Center" HorizontalAlignment="Left" ></TextBlock>
+		<Button x:Name="UITEM_ShowDetails_Button" Grid.Column="2" Content="Details" Click="UITEM_ShowDetails_Click" Padding="10 0"></Button>
+		<Image x:Name="UITEM_MatchQuality_Iamge" Grid.Column="3" Height="32px" HorizontalAlignment="Right" Margin="10 0"/>
+	</Grid>
+</UserControl>

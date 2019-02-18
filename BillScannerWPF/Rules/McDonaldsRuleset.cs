@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BillScannerCore;
+using System;
 using System.Globalization;
 using System.Text.RegularExpressions;
 
@@ -14,9 +15,11 @@ namespace BillScannerWPF.Rules {
 
 		public Regex dateTimeFormat { get { return genericDateTimeFormat; } }
 
-		public long GetQuantity(string[] ocrText, int index) {
+		public Shop shop => Shop.McDonalds;
+
+		public int GetQuantity(string[] ocrText, int index) {
 			string[] split = ocrText[index].Split(null);
-			if (long.TryParse(split[0], out long result)) {
+			if (int.TryParse(split[0], out int result)) {
 				return result;
 			}
 			string modified = ReplaceAmbiguousToNumber(split[0]);
@@ -24,18 +27,18 @@ namespace BillScannerWPF.Rules {
 				throw new QuantityParsingException("Unable to get quantity from string " + ocrText[index], ocrText[index], index);
 			}
 			else {
-				if (long.TryParse(modified, out long resultModified)) {
-					return result;
+				if (int.TryParse(modified, out int resultModified)) {
+					return resultModified;
 				}
 			}
 			throw new QuantityParsingException("Unable to get quantity from string " + ocrText[index] + ", subsequently modified " + modified, ocrText[index], index);
 		}
 
-		public decimal GetPriceOfOne(string[] ocrText, ref int index) {
+		public int GetPriceOfOne(string[] ocrText, ref int index) {
 			string line = ocrText[index].Replace(',', '.');
 			Match m = correctItemLine.Match(line);
 			if (decimal.TryParse(m.Groups[3].Value, NumberStyles.Currency, CultureInfo.InvariantCulture, out decimal result)) {
-				return result;
+				return (int)result * 100;
 			}
 			string modified = ReplaceAmbiguousToNumber(line);
 			if (modified == line) {
@@ -44,7 +47,7 @@ namespace BillScannerWPF.Rules {
 			else {
 				Match mm = correctItemLine.Match(modified);
 				if (decimal.TryParse(mm.Groups[3].Value, NumberStyles.Currency, CultureInfo.InvariantCulture, out decimal resultModified)) {
-					return result;
+					return (int)resultModified * 100;
 				}
 			}
 			throw new PriceParsingException(ocrText[index], index, false);

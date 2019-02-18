@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BillScannerCore;
+using System;
 using System.Text.RegularExpressions;
 
 namespace BillScannerWPF.Rules {
@@ -13,7 +14,9 @@ namespace BillScannerWPF.Rules {
 
 		public Regex dateTimeFormat { get { return genericDateTimeFormat; } }
 
-		public long GetQuantity(string[] ocrText, int index) {
+		public Shop shop => Shop.Lidl;
+
+		public int GetQuantity(string[] ocrText, int index) {
 			if (index > ocrText.Length) { throw new IndexOutOfRangeException(nameof(index)); }
 			string quantity = ocrText[index + 1];
 			string[] split = RemoveLetterCharacters(quantity, costPlusQuantitySeparator).Split(costPlusQuantitySeparator);
@@ -21,12 +24,12 @@ namespace BillScannerWPF.Rules {
 				throw new QuantityParsingException("Unable to get quantity from string " + ocrText[index + 1], ocrText[index + 2], index + 1);
 			}
 
-			if (long.TryParse(split[0], out long result)) {
+			if (int.TryParse(split[0], out int result)) {
 				return result;
 			}
 			else {
 				quantity = ReplaceAmbiguousToNumber(quantity);
-				if (long.TryParse(quantity.Split(costPlusQuantitySeparator)[0], out long resultReplaced)) {
+				if (int.TryParse(quantity.Split(costPlusQuantitySeparator)[0], out int resultReplaced)) {
 					return resultReplaced;
 				}
 			}
@@ -52,7 +55,7 @@ namespace BillScannerWPF.Rules {
 			}
 		}
 
-		public decimal GetPriceOfOne(string[] ocrText, ref int index) {
+		public int GetPriceOfOne(string[] ocrText, ref int index) {
 			string quantity = ocrText[index + 1];
 			string modified = RemoveLetterCharacters(quantity, costPlusQuantitySeparator).ToLower().Trim();
 			string[] split = modified.Split(costPlusQuantitySeparator);
@@ -62,12 +65,12 @@ namespace BillScannerWPF.Rules {
 			split[1] = split[1].Replace(',', '.');
 
 			if (decimal.TryParse(split[1], System.Globalization.NumberStyles.Currency, System.Globalization.CultureInfo.InvariantCulture, out decimal result)) {
-				return result;
+				return (int)result * 100;
 			}
 			else {
 				modified = RemoveLetterCharacters(ReplaceAmbiguous(modified), costPlusQuantitySeparator);
 				if (decimal.TryParse(split[1], System.Globalization.NumberStyles.Currency, System.Globalization.CultureInfo.InvariantCulture, out decimal resultReplaced)) {
-					return resultReplaced;
+					return (int)resultReplaced * 100;
 				}
 			}
 			throw new PriceParsingException(ocrText[index + 1], index + 1, false);

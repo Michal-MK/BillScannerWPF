@@ -1,4 +1,5 @@
-﻿using System.Text.RegularExpressions;
+﻿using BillScannerCore;
+using System.Text.RegularExpressions;
 
 namespace BillScannerWPF.Rules {
 	/// <summary>
@@ -12,7 +13,7 @@ namespace BillScannerWPF.Rules {
 		/// <exception cref="QuantityParsingException"></exception>
 		/// <param name="ocrText">The OCR'd text array</param>
 		/// <param name="index">The index into the array</param>
-		long GetQuantity(string[] ocrText, int index);
+		int GetQuantity(string[] ocrText, int index);
 
 		/// <summary>
 		/// Returns the name of an Item from a line
@@ -26,7 +27,7 @@ namespace BillScannerWPF.Rules {
 		/// </summary>
 		/// <param name="ocrText">The OCR'd text array</param>
 		/// <param name="index">The index into the array, INDEX CAN BY MODIFIED BY THIS!</param>
-		decimal GetPriceOfOne(string[] ocrText, ref int index);
+		int GetPriceOfOne(string[] ocrText, ref int index);
 
 		/// <summary>
 		/// Base Regular expression that can match a valid item from this shop
@@ -52,5 +53,10 @@ namespace BillScannerWPF.Rules {
 		/// A character that is used to separate items purchased and the price of one item
 		/// </summary>
 		char costPlusQuantitySeparator { get; }
+
+		/// <summary>
+		/// The shop this rule set matches
+		/// </summary>
+		Shop shop { get; }
 	}
 }

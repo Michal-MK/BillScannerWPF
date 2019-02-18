@@ -14,7 +14,6 @@ namespace BillScannerWPF {
 	internal class StringParser {
 
 		private IRuleset rules;
-		private bool foundSomeKindOfMatch = false;
 
 		/// <summary>
 		/// Attempts to match items from the <see cref="string"/>[] from the very beginning, causing some unnecessary data to be processed,
@@ -25,88 +24,33 @@ namespace BillScannerWPF {
 		/// <summary>
 		/// Create new <see cref="StringParser"/> with selected <see cref="Shop"/>'s rule-set
 		/// </summary>
-		/// <param name="rules"></param>
 		internal StringParser(IRuleset rules) {
 			this.rules = rules;
 		}
 
 		/// <summary>
-		/// Main parsing function, goes though the entire array and interprets the lines by comparing matches with the <see cref="Database"/> entries
+		/// Main parsing function, goes though the entire array and interprets the lines by comparing matches with the database entries
 		/// </summary>
-		/// <param name="split">OCR generated string data</param>
 		public async Task<ParsingResult> ParseAsync(string[] split) {
 			ObservableCollection<UIItemCreationInfo> matchedItems = new ObservableCollection<UIItemCreationInfo>();
 			ObservableCollection<UIItemCreationInfo> unmatchedItems = new ObservableCollection<UIItemCreationInfo>();
 
-			Item[] items = DatabaseAccess.access.GetItems();
-			bool finalized = false;
-			bool purchaseTimeFound = false;
-
+			Item[] items = DatabaseAccess.access.GetItems(rules.shop);
 			DateTime purchaseTime = DateTime.MinValue;
-			int inc = 1;
-			for (int i = 0; i < split.Length; i += inc) {
-				bool matched = false;
+			(split, purchaseTime) = await CropSplit(split);
 
-				if (!tryMatchFromBeginning) {
-					tryMatchFromBeginning = IsInitiatingString(split[i].ToLower().Trim(), ref i);
-					if (tryMatchFromBeginning) {
-						inc = 2;
-						continue;
-					}
-				}
-				else {
-					finalized = IsFinalizingString(split[i].ToLower().Trim());
-				}
 
-				if (!purchaseTimeFound) {
-					if (rules.dateTimeFormat.IsMatch(split[i])) {
-						if (DateTime.TryParseExact(split[i], "hh:mm:ss", CultureInfo.InvariantCulture, DateTimeStyles.NoCurrentDateDefault, out purchaseTime)) {
-							purchaseTimeFound = true;
-						}
-					}
-					else {
-						if (DateTime.TryParseExact(new BaseRuleset().ReplaceAmbiguousToNumber(split[i]), "hh:mm:ss", CultureInfo.InvariantCulture, DateTimeStyles.NoCurrentDateDefault, out purchaseTime)) {
-							purchaseTimeFound = true;
-						}
-					}
-				}
-				if (!tryMatchFromBeginning || finalized) {
-					continue;
-				}
+			for (int i = 0; i < split.Length; i += 1) {
 
-				int ocrLowestDist = int.MaxValue;
-				int ocrLowestIndex = -1;
-				for (int j = 0; j < items.Length; j++) {
-					foreach (string ss in items[j].ocrNames) {
-						int currentOCRNameDist = WordSimilarity.Compute(split[i], ss);
-						if (currentOCRNameDist < ocrLowestDist) {
-							ocrLowestDist = currentOCRNameDist;
-							ocrLowestIndex = j;
-						}
-						if (ocrLowestDist == 0) {
-							decimal currentPrice = await GetCurrentPriceAsync(split, i, ocrLowestIndex);
-							long quantity = await GetQuantityAsync(split, i, items[ocrLowestIndex].userFriendlyName);
+				bool foundSomeKindOfMatch = false;
 
-							UIItemCreationInfo lowest = new UIItemCreationInfo(items[ocrLowestIndex], true, quantity, currentPrice, (MatchRating)ocrLowestDist);
-							lowest.item.tirggerForMatch = split[i];
-							matchedItems.Add(lowest);
-							matched = true;
-							break;
-						}
-					}
-					if (matched) {
-						break;
-					}
-				}
-				if (matched) {
-					continue;
-				}
+				(Item closest, int ocrLowestIndex, int ocrLowestDist) = FindBestResult(split, i, items);
+
 				if (ocrLowestDist <= 3) {
 					decimal currentPrice = await GetCurrentPriceAsync(split, i, ocrLowestIndex);
-					long quantity = await GetQuantityAsync(split, i, items[ocrLowestIndex].userFriendlyName);
+					int quantity = await GetQuantityAsync(split, i, items[ocrLowestIndex].userFriendlyName);
 
-					UIItemCreationInfo something = new UIItemCreationInfo(items[ocrLowestIndex], true, quantity, currentPrice, (MatchRating)ocrLowestDist);
-					something.item.tirggerForMatch = split[i];
+					UIItemCreationInfo something = new UIItemCreationInfo(items[ocrLowestIndex], true, quantity, currentPrice, (MatchRating)ocrLowestDist, split[i]);
 					matchedItems.Add(something);
 					foundSomeKindOfMatch = true;
 				}
@@ -120,12 +64,10 @@ namespace BillScannerWPF {
 
 						if (choice != Choices.NotAnItem) {
 							decimal currentPrice = await GetCurrentPriceAsync(split, i, ocrLowestIndex);
-							long quantity = await GetQuantityAsync(split, i, items[ocrLowestIndex].userFriendlyName);
-							UIItemCreationInfo creationInfo = new UIItemCreationInfo(items[ocrLowestIndex], true, quantity, currentPrice, MatchRating.Fail);
-							creationInfo.item.tirggerForMatch = split[i];
+							int quantity = await GetQuantityAsync(split, i, items[ocrLowestIndex].userFriendlyName);
+							UIItemCreationInfo creationInfo = new UIItemCreationInfo(items[ocrLowestIndex], true, quantity, currentPrice, MatchRating.FivePlus, split[i]);
 							if (choice == Choices.MatchAnyway) {
 								creationInfo.item.ocrNames.Add(split[i]);
-								creationInfo.item.pricesInThePast.Add(creationInfo.item.currentPrice);
 							}
 							matchedItems.Add(creationInfo);
 						}
@@ -136,13 +78,12 @@ namespace BillScannerWPF {
 						Choices c = await choice.SelectChoiceAsync();
 						if (c == Choices.DefineNewItem) {
 							NewItemDefinitionPanel definition = new NewItemDefinitionPanel();
-							(string itemName, decimal itemPrice, MeassurementUnit itemUnitOfMeassure) = await definition.RegisterItemAsync();
-							long quantity = await GetQuantityAsync(split, i, itemName);
+							(string itemName, int itemPrice, MeassurementUnit itemUnitOfMeassure) = await definition.RegisterItemAsync();
+							int quantity = await GetQuantityAsync(split, i, itemName);
 							Item newItem = new Item(itemName, itemPrice);
 							newItem.AddOCRName(split[i]);
-							UIItemCreationInfo nowKnown = new UIItemCreationInfo(newItem, false, quantity, itemPrice, MatchRating.Success);
-							DatabaseAccess.access.RegisterItemFromUI(newItem);
-							nowKnown.item.tirggerForMatch = split[i];
+							UIItemCreationInfo nowKnown = new UIItemCreationInfo(newItem, false, quantity, itemPrice, MatchRating.Success, split[i]);
+							DatabaseAccess.access.WriteItemDefinitionToDatabase(newItem, purchaseTime);
 							nowKnown.item.SetUnitOfMeassure(itemUnitOfMeassure);
 							matchedItems.Add(nowKnown);
 						}
@@ -153,66 +94,91 @@ namespace BillScannerWPF {
 								i--;
 								continue;
 							}
-							long quantity = await GetQuantityAsync(split, i, manuallyMatchedItem.userFriendlyName);
-							UIItemCreationInfo nowKnown = new UIItemCreationInfo(manuallyMatchedItem, false, quantity, manuallyMatchedItem.currentPrice, MatchRating.Success);
-							nowKnown.item.tirggerForMatch = split[i];
+							int quantity = await GetQuantityAsync(split, i, manuallyMatchedItem.userFriendlyName);
+							UIItemCreationInfo nowKnown = new UIItemCreationInfo(manuallyMatchedItem, false, quantity, manuallyMatchedItem.currentPrice, MatchRating.Success, split[i]);
 							nowKnown.item.ocrNames.Add(split[i]);
 							matchedItems.Add(nowKnown);
 						}
 						else if (c == Choices.NotAnItem) {
-							unmatchedItems.Add(new UIItemCreationInfo(new Item(split[i], -1), false, -1, -1, MatchRating.Fail));
+							unmatchedItems.Add(new UIItemCreationInfo(new Item(split[i], -1), false, -1, -1, MatchRating.Fail, ""));
 						}
 					}
 				}
 			}
-			if (!tryMatchFromBeginning) {
-				throw new ParsingEntryNotFoundException(rules.startMarkers, split);
+			return new ParsingResult(split, matchedItems, unmatchedItems, new PurchaseMeta(purchaseTime));
+		}
+
+		private (Item, int ocrLowestIndex, int ocrLowestDist) FindBestResult(string[] split, int index, Item[] items) {
+			int ocrLowestDist = int.MaxValue;
+			int ocrLowestIndex = -1;
+
+			for (int j = 0; j < items.Length; j++) {
+				foreach (string ocrName in items[j].ocrNames) {
+					int currentOCRNameDist = WordSimilarity.Compute(split[index], ocrName);
+					if (currentOCRNameDist < ocrLowestDist) {
+						ocrLowestDist = currentOCRNameDist;
+						ocrLowestIndex = j;
+					}
+					if (ocrLowestDist == 0) {
+						return (items[ocrLowestIndex], ocrLowestIndex, ocrLowestDist);
+					}
+				}
 			}
-			while (!purchaseTimeFound) {
+			return (items[ocrLowestIndex], ocrLowestIndex, ocrLowestDist);
+		}
+
+
+		/// <summary>
+		/// Remove the part of the bill that is not Items
+		/// </summary>
+		private async Task<(string[] splitModified, DateTime purchaseTime)> CropSplit(string[] split) {
+			int startIndex = 0;
+			int endIndex = split.Length;
+			bool timeFound = false;
+
+			DateTime purchaseTime = DateTime.MinValue;
+
+			for (int i = 0; i < split.Length; i++) {
+				for (int j = 0; j < rules.startMarkers.Length; j++) {
+					if (rules.startMarkers[j] == split[i]) {
+						startIndex = i;
+					}
+				}
+				for (int j = 0; j < rules.endMarkers.Length; j++) {
+					if (rules.endMarkers[j] == split[i]) {
+						endIndex = i;
+					}
+				}
+				if (!timeFound) {
+					timeFound = DateTime.TryParseExact(split[i], "hh:mm:ss", CultureInfo.InvariantCulture, DateTimeStyles.NoCurrentDateDefault, out purchaseTime);
+					if (!timeFound) {
+						timeFound = DateTime.TryParseExact(new BaseRuleset().ReplaceAmbiguousToNumber(split[i]), "hh:mm:ss", CultureInfo.InvariantCulture, DateTimeStyles.NoCurrentDateDefault, out purchaseTime);
+					}
+				}
+			}
+			if (startIndex >= endIndex) {
+				purchaseTime = DateTime.MinValue;
+				return (split, purchaseTime);
+			}
+
+			while (!timeFound) {
 				(bool parsed, DateTime result) = await GetPurchaseDateAsync();
 				if (parsed) {
 					purchaseTime = result;
 					break;
 				}
 			}
-			return new ParsingResult(split, matchedItems, unmatchedItems, new PurchaseMeta(purchaseTime));
+
+			string[] ret = new string[endIndex - startIndex];
+
+			Array.Copy(split, startIndex, ret, 0, ret.Length);
+			return (ret, purchaseTime);
 		}
-
-
-		#region Item start and stop markers, indicates when to start using computational power to process only important lines
-
-		private bool IsFinalizingString(string s) {
-			for (int i = 0; i < rules.endMarkers.Length; i++) {
-				if (s.Contains(rules.endMarkers[i])) {
-					return true;
-				}
-			}
-			return false;
-		}
-
-		private bool IsInitiatingString(string s, ref int index) {
-			if (rules.startMarkers.Length == 0) {
-				Debug.WriteLine("This shop does not have any start markers, attempting to match immediately");
-				return true;
-			}
-			for (int i = 0; i < rules.startMarkers.Length; i++) {
-				if (s.Contains(rules.startMarkers[i])) {
-					return true;
-				}
-			}
-			return false;
-		}
-
-		#endregion
-
 
 		/// <summary>
 		/// Helper function to get items price from the string, calls <see cref="IRuleset.GetPriceOfOne(string[], ref int)"/> if it fails, falls back to <see cref="ManualResolveChoice"/>
 		/// </summary>
-		/// <param name="split">OCR data</param>
-		/// <param name="splitIndex">Index at which to look for the price</param>
-		/// <param name="fallbackItemIndex">Index into the <see cref="DatabaseAccess.GetItems"/> array with the best match found</param>
-		private async Task<decimal> GetCurrentPriceAsync(string[] split, int splitIndex, int fallbackItemIndex) {
+		private async Task<int> GetCurrentPriceAsync(string[] split, int splitIndex, int fallbackItemIndex) {
 			try {
 				return rules.GetPriceOfOne(split, ref splitIndex);
 			}
@@ -232,7 +198,7 @@ namespace BillScannerWPF {
 				}
 				else if (choice == Choices.ManuallyEnterPrice) {
 					if (decimal.TryParse(res.MANUAL_RESOLUTION_Solution5_Box.Text.Replace(',', '.'), NumberStyles.Currency, CultureInfo.InvariantCulture, out decimal result)) {
-						return result;
+						return (int)result * 100;
 					}
 					else {
 						return await GetCurrentPriceAsync(split, splitIndex, fallbackItemIndex);
@@ -273,18 +239,15 @@ namespace BillScannerWPF {
 		/// <summary>
 		/// Helper function to get the number of items bought, calls <see cref="IRuleset.GetQuantity(string[], int)"/> if it fails, falls back to <see cref="ManualResolveChoice"/>
 		/// </summary>
-		/// <param name="split">OCR data</param>
-		/// <param name="splitIndex">Index at which to look for the price</param>
-		/// <param name="itemName">Name of the item for <see cref="ManualResolveChoice"/></param>
-		private async Task<long> GetQuantityAsync(string[] split, int splitIndex, string itemName) {
-			long quantity;
+		private async Task<int> GetQuantityAsync(string[] split, int splitIndex, string itemName) {
+			int quantity;
 			try {
 				quantity = rules.GetQuantity(split, splitIndex);
 			}
 			catch (QuantityParsingException) {
 				ManualResolveChoice choice2 = new ManualResolveChoice("Unable to get quantity of goods purchased: Item name '" + itemName + "'", Choices.ManuallyEnterQuantity);
 				Choices c2 = await choice2.SelectChoiceAsync();
-				while (!long.TryParse(choice2.MANUAL_RESOLUTION_Solution5_Box.Text, out quantity)) {
+				while (!int.TryParse(choice2.MANUAL_RESOLUTION_Solution5_Box.Text, out quantity)) {
 					await choice2.SelectChoiceAsync();
 				}
 			}

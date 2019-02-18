@@ -98,8 +98,8 @@
     <Compile Include="Rules\IRuleset.cs" />
     <Compile Include="Rules\LidlRuleset.cs" />
     <Compile Include="Rules\McDonaldsRuleset.cs" />
-    <Compile Include="XAML\MatchedProduct.xaml.cs">
-      <DependentUpon>MatchedProduct.xaml</DependentUpon>
+    <Compile Include="XAML\UIItem.xaml.cs">
+      <DependentUpon>UIItem.xaml</DependentUpon>
     </Compile>
     <Compile Include="XAML\NewItemDefinitionPanel.xaml.cs">
       <DependentUpon>NewItemDefinitionPanel.xaml</DependentUpon>
@@ -145,7 +145,7 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="XAML\MatchedProduct.xaml">
+    <Page Include="XAML\UIItem.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -180,7 +180,9 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <None Include="Configurations\packages.config" />
+    <None Include="Configurations\packages.config">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -195,6 +197,9 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="x86\SQLite.Interop.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Resource Include="Resources\MatchRating\Five.png" />
     <Resource Include="Resources\MatchRating\FivePlus.png" />
     <Resource Include="Resources\MatchRating\Four.png" />
@@ -210,6 +215,9 @@
     <Content Include="x64\libtesseract304.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="x64\SQLite.Interop.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="x86\liblept172.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -222,7 +230,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Core\Core.csproj">
-      <Project>{8ff4b367-ea82-458b-90c6-e152811e6c3b}</Project>
+      <Project>{8FF4B367-EA82-458B-90C6-E152811E6C3B}</Project>
       <Name>Core</Name>
     </ProjectReference>
   </ItemGroup>

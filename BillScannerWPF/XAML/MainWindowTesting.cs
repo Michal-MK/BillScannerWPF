@@ -18,7 +18,7 @@ namespace BillScannerWPF {
 		public async Task DebugListAsync() {
 			ItemList list = new ItemList(DatabaseAccess.access.GetItems());
 			Item i = await list.SelectItemAsync();
-			System.Diagnostics.Debug.Print(i.identifier);
+			System.Diagnostics.Debug.Print(i.ID.ToString());
 		}
 
 		public async Task DebugManualResolveAsync() {

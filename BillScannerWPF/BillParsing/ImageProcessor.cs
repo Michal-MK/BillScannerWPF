@@ -55,14 +55,14 @@ namespace BillScannerWPF {
 		/// <summary>
 		/// Event for receiving image data from a mobile device
 		/// </summary>
-		internal void OnImageDataReceived(byte[] imageData, byte sender) {
+		internal void OnImageDataReceived(byte sender, byte[] imageData) {
 			Application.Current.Dispatcher.Invoke(() => {
 				((MainWindow)App.Current.MainWindow).SetPrevImage(imageData);
 			});
 		}
 
 		/// <summary>
-		/// Main function that starts image analysis, triggered by a UI element
+		/// Main function that starts image analysis
 		/// </summary>
 		internal async void Analyze(object sender, RoutedEventArgs e) {
 			Button bSender = (Button)sender;
@@ -85,8 +85,8 @@ namespace BillScannerWPF {
 				parser.tryMatchFromBeginning = true;
 				result = await parser.ParseAsync(lines);
 			}
-			ConstructUI(result.parsed, uiItemsMatched);
-			ConstructUI(result.unknown, uiItemsUnknown);
+			ConstructUI(result.matchedItems, uiItemsMatched);
+			ConstructUI(result.unknownItems, uiItemsUnknown);
 			currentParsingResult = result;
 
 			bSender.IsEnabled = true;
@@ -102,8 +102,8 @@ namespace BillScannerWPF {
 
 		private void ConstructUI(ObservableCollection<UIItemCreationInfo> from, ObservableCollection<UIItem> destination) {
 			foreach (UIItemCreationInfo info in from) {
-				UIItem item = new UIItem(info.item, info.quantity, info.quality);
-				item.asociatedItem.isRegistered = info.isRegistered;
+				UIItem item = new UIItem(info, info.quantity, info.quality);
+				item.isRegistered = info.isRegistered;
 				destination.Add(item);
 			}
 		}

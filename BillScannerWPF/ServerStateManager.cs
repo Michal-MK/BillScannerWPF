@@ -1,4 +1,5 @@
 ﻿using Igor.TCP;
+using System;
 
 namespace BillScannerWPF {
 
@@ -8,7 +9,6 @@ namespace BillScannerWPF {
 		/// <summary>
 		/// Store running server instance for later use, for example when switching shops
 		/// </summary>
-		/// <param name="server"></param>
 		internal static void StoreServerInstance(TCPServer server) {
 			serverHolder = server;
 		}
@@ -16,9 +16,14 @@ namespace BillScannerWPF {
 		/// <summary>
 		/// On consecutive MainWindow openings reuse the server that was stored in this class
 		/// </summary>
-		/// <returns></returns>
+		/// <exception cref="InvalidOperationException"></exception>
 		internal static TCPServer RestoreServerInstance() {
-			return serverHolder;
+			if (isHoldingInstance) {
+				return serverHolder;
+			}
+			else {
+				throw new InvalidOperationException("No instance stored");
+			}
 		}
 
 		/// <summary>

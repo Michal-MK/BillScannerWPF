@@ -32,7 +32,7 @@ namespace BillScannerWPF {
 		/// <summary>
 		/// Handle new Item registration from a user, returned values are sanity checked
 		/// </summary>
-		internal async Task<(string itemName, decimal itemValue, MeassurementUnit itemMeassurements)> RegisterItemAsync() {
+		internal async Task<(string itemName, int itemValue, MeassurementUnit itemMeassurements)> RegisterItemAsync() {
 			((MainWindow)App.Current.MainWindow).MAIN_Grid.Children.Add(this);
 			await Task.Run(() => {
 				evnt.Wait();
@@ -69,7 +69,7 @@ namespace BillScannerWPF {
 				}
 			}
 			((MainWindow)App.Current.MainWindow).MAIN_Grid.Children.Remove(this);
-			return (ITEMREG_ItemName_Box.Text, itemValue, (MeassurementUnit)Enum.Parse(typeof(MeassurementUnit),ITEMREG_UnitOfMeassure_DropDown.SelectedItem.ToString()));
+			return (ITEMREG_ItemName_Box.Text, (int)itemValue * 100, (MeassurementUnit)Enum.Parse(typeof(MeassurementUnit),ITEMREG_UnitOfMeassure_DropDown.SelectedItem.ToString()));
 		}
 	}
 }

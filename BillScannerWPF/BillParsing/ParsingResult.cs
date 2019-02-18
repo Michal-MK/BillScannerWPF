@@ -11,12 +11,12 @@ namespace BillScannerWPF {
 		/// <summary>
 		/// Collection of successfully matched <see cref="Item"/>s
 		/// </summary>
-		public ObservableCollection<UIItemCreationInfo> parsed { get; }
+		public ObservableCollection<UIItemCreationInfo> matchedItems { get; }
 
 		/// <summary>
 		/// Collection of unknown <see cref="Item"/>s
 		/// </summary>
-		public ObservableCollection<UIItemCreationInfo> unknown { get; }
+		public ObservableCollection<UIItemCreationInfo> unknownItems { get; }
 
 		/// <summary>
 		/// Raw string lines from the OCR engine
@@ -31,11 +31,11 @@ namespace BillScannerWPF {
 		/// <summary>
 		/// Create new <see cref="ParsingResult"/> with necessary containers and data
 		/// </summary>
-		public ParsingResult(string[] lines, ObservableCollection<UIItemCreationInfo> matched,
-				ObservableCollection<UIItemCreationInfo> unmatched, PurchaseMeta meta) {
-			parsed = matched;
-			unknown = unmatched;
-			originalLines = lines;
+		public ParsingResult(string[] originalLines, ObservableCollection<UIItemCreationInfo> matchedItems,
+							 ObservableCollection<UIItemCreationInfo> unknownItems, PurchaseMeta meta) {
+			this.matchedItems = matchedItems;
+			this.unknownItems = unknownItems;
+			this.originalLines = originalLines;
 			this.meta = meta;
 		}
 	}

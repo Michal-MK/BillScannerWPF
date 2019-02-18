@@ -9,11 +9,11 @@
 
 		<Style x:Key="ClientConnection" TargetType="TextBlock">
 			<Style.Triggers>
-				<DataTrigger Binding="{Binding ClientConnected}" Value="True">
+				<DataTrigger Binding="{Binding ClientConnected}" Value="true">
 					<Setter Property="Foreground" Value="LawnGreen" />
 					<Setter Property="Text" Value="1" />
 				</DataTrigger>
-				<DataTrigger Binding="{Binding ClientConnected}" Value="False">
+				<DataTrigger Binding="{Binding ClientConnected}" Value="false">
 					<Setter Property="Foreground" Value="Red" />
 					<Setter Property="Text" Value="None" />
 				</DataTrigger>
@@ -43,11 +43,11 @@
 			<ColumnDefinition Width="auto"></ColumnDefinition>
 		</Grid.ColumnDefinitions>
 		
-		<TextBlock	Grid.Column="1"	Text="Server:"																																		></TextBlock>
-		<TextBlock	Grid.Column="2"	Text="{Binding ServerOnlineString}"	x:Name="BAR_ServerOnline_Text"			Margin="5,0,0,0"	Style="{DynamicResource ServerStatus }"				></TextBlock>
-		<TextBlock	Grid.Column="3"	Text="Client Status:"														Margin="20,0,0,0"														></TextBlock>
+		<TextBlock	Grid.Column="1"	Text="Server:"																																			></TextBlock>
+		<TextBlock	Grid.Column="2"	Text="{Binding ServerOnlineString}"		x:Name="BAR_ServerOnline_Text"			Margin="5,0,0,0"	Style="{DynamicResource ServerStatus }"				></TextBlock>
+		<TextBlock	Grid.Column="3"	Text="Client Status:"															Margin="20,0,0,0"														></TextBlock>
 		<TextBlock	Grid.Column="4"	Text="{Binding ClientConnectedString}"	x:Name="BAR_ConnectedClients_Text"		Margin="5,0,0,0"	Style="{DynamicResource ClientConnection}"			></TextBlock>
-		<TextBlock	Grid.Column="5"	Text="Loaded Shop:"															Margin="20,0,0,0"														></TextBlock>
-		<TextBlock	Grid.Column="6"	Text="{Binding CurrentShop}"		x:Name="BAR_CurrentLoadedShop_Text"		Margin="20,0,0,0"	Foreground="OrangeRed"	FontWeight="DemiBold"		></TextBlock>
+		<TextBlock	Grid.Column="5"	Text="Loaded Shop:"																Margin="20,0,0,0"														></TextBlock>
+		<TextBlock	Grid.Column="6"	Text="{Binding CurrentShop}"			x:Name="BAR_CurrentLoadedShop_Text"		Margin="20,0,0,0"	Foreground="OrangeRed"	FontWeight="DemiBold"		></TextBlock>
 	</Grid>
 </UserControl>

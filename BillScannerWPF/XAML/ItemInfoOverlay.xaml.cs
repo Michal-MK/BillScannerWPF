@@ -42,9 +42,9 @@ namespace BillScannerWPF {
 			INFO_AmountBought_Text.Text = source.asociatedItem.totalPurchased.ToString();
 			INFO_PURCHASE_ItemQuantity.Text = source.quantityPurchased.ToString();
 			MAIN_ItemInfoOverlay_Grid.Visibility = Visibility.Visible;
-			INFO_RegisterItem_Button.IsEnabled = !source.asociatedItem.isRegistered;
-			INFO_MainName_Text.IsEnabled = !source.asociatedItem.isRegistered;
-			INFO_CurrentValue_Text.IsEnabled = !source.asociatedItem.isRegistered;
+			INFO_RegisterItem_Button.IsEnabled = !source.isRegistered;
+			INFO_MainName_Text.IsEnabled = !source.isRegistered;
+			INFO_CurrentValue_Text.IsEnabled = !source.isRegistered;
 			Binding b = new Binding("Text");
 			b.Source = INFO_CurrentValue_Text;
 			INFO_PricesBefore_Text.SetBinding(TextBlock.TextProperty, b);
@@ -57,13 +57,13 @@ namespace BillScannerWPF {
 				return;
 			}
 			try {
-				DatabaseAccess.access.RegisterItemFromUI(currentItemBeingInspected, modifiedName, finalPrice);
+				DatabaseAccess.access.RegisterItemFromUI(currentItemBeingInspected.asociatedItem, modifiedName, (int)finalPrice * 100, ImageProcessor.instance.currentParsingResult.meta.purchasedAt);
 				((Button)sender).IsEnabled = false;
 				ImageProcessor.instance.uiItemsUnknown.Remove(currentItemBeingInspected);
 				ImageProcessor.instance.uiItemsMatched.Add(currentItemBeingInspected);
 				currentItemBeingInspected.ProductMatchedSuccess();
 				Debug.WriteLine("Item Parsed successfully");
-				currentItemBeingInspected.asociatedItem.isRegistered = true;
+				currentItemBeingInspected.isRegistered = true;
 				MAIN_ItemInfoOverlay_Grid.Visibility = Visibility.Hidden;
 			}
 			catch (Exception ex) {
