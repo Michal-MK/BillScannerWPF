@@ -21,7 +21,7 @@ namespace BillScannerWPF.Rules {
 			string quantity = ocrText[index + 1];
 			string[] split = RemoveLetterCharacters(quantity, costPlusQuantitySeparator).Split(costPlusQuantitySeparator);
 			if (split.Length != 2) {
-				throw new QuantityParsingException("Unable to get quantity from string " + ocrText[index + 1], ocrText[index + 2], index + 1);
+				throw new QuantityParsingException($"Unable to get quantity from string {ocrText[index + 1]}", ocrText[index + 2], index + 1);
 			}
 
 			if (int.TryParse(split[0], out int result)) {
@@ -33,7 +33,7 @@ namespace BillScannerWPF.Rules {
 					return resultReplaced;
 				}
 			}
-			throw new QuantityParsingException("Unable to get quantity from string " + ocrText[index + 1] + ", subsequently modified " + quantity, ocrText[index + 1], index + 1);
+			throw new QuantityParsingException($"Unable to get quantity from string {ocrText[index + 1]}, subsequently modified {quantity}", ocrText[index + 1], index + 1);
 		}
 
 		public string GetName(string line) {
@@ -43,7 +43,7 @@ namespace BillScannerWPF.Rules {
 				return name;
 			}
 			else {
-				string lineModified = ReplaceAmbiguous(line);
+				string lineModified = ReplaceAmbiguous(correctItemLine, line);
 				m = correctItemLine.Match(lineModified);
 				if (m.Success) {
 					string name = m.Groups[1].Value + m.Groups[2];
@@ -68,7 +68,7 @@ namespace BillScannerWPF.Rules {
 				return (int)result * 100;
 			}
 			else {
-				modified = RemoveLetterCharacters(ReplaceAmbiguous(modified), costPlusQuantitySeparator);
+				modified = RemoveLetterCharacters(ReplaceAmbiguous(correctItemLine, modified), costPlusQuantitySeparator);
 				if (decimal.TryParse(split[1], System.Globalization.NumberStyles.Currency, System.Globalization.CultureInfo.InvariantCulture, out decimal resultReplaced)) {
 					return (int)resultReplaced * 100;
 				}

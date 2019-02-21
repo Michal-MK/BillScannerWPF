@@ -16,12 +16,6 @@ namespace BillScannerWPF {
 		private IRuleset rules;
 
 		/// <summary>
-		/// Attempts to match items from the <see cref="string"/>[] from the very beginning, causing some unnecessary data to be processed,
-		/// but can match items, event though the <see cref="string"/>[] does not contain a start marker.
-		/// </summary>
-		public bool tryMatchFromBeginning { get; internal set; } = false;
-
-		/// <summary>
 		/// Create new <see cref="StringParser"/> with selected <see cref="Shop"/>'s rule-set
 		/// </summary>
 		internal StringParser(IRuleset rules) {
@@ -42,66 +36,68 @@ namespace BillScannerWPF {
 
 			for (int i = 0; i < split.Length; i += 1) {
 
-				bool foundSomeKindOfMatch = false;
-
 				(Item closest, int ocrLowestIndex, int ocrLowestDist) = FindBestResult(split, i, items);
 
 				if (ocrLowestDist <= 3) {
-					decimal currentPrice = await GetCurrentPriceAsync(split, i, ocrLowestIndex);
+					int currentPrice = await GetCurrentPriceAsync(split, i, ocrLowestIndex);
 					int quantity = await GetQuantityAsync(split, i, items[ocrLowestIndex].userFriendlyName);
 
-					UIItemCreationInfo something = new UIItemCreationInfo(items[ocrLowestIndex], true, quantity, currentPrice, (MatchRating)ocrLowestDist, split[i]);
-					matchedItems.Add(something);
-					foundSomeKindOfMatch = true;
+					UIItemCreationInfo match = new UIItemCreationInfo(items[ocrLowestIndex], true, quantity, currentPrice, (MatchRating)ocrLowestDist, split[i]);
+					matchedItems.Add(match);
+					continue;
 				}
 
-				if (!foundSomeKindOfMatch) {
-					if (ocrLowestDist <= 6) {
-						ManualResolveChoice resolveChoice = new ManualResolveChoice(
-							string.Format("Found Item '{0}' with {1} char differences, closest Item: '{2}'", split[i], ocrLowestIndex, items[ocrLowestIndex].userFriendlyName),
-							Choices.MatchAnyway, Choices.MatchWithoutAddingAmbiguities, Choices.NotAnItem);
-						Choices choice = await resolveChoice.SelectChoiceAsync();
+				if (ocrLowestDist <= 6) {
+					ManualResolveChoice resolveChoice = new ManualResolveChoice(
+						$"Found Item named {split[i]} with {ocrLowestIndex} character difference, closest: {items[ocrLowestIndex].userFriendlyName}",
+						Choices.MatchAnyway, Choices.MatchWithoutAddingAmbiguities, Choices.NotAnItem);
 
-						if (choice != Choices.NotAnItem) {
-							decimal currentPrice = await GetCurrentPriceAsync(split, i, ocrLowestIndex);
-							int quantity = await GetQuantityAsync(split, i, items[ocrLowestIndex].userFriendlyName);
-							UIItemCreationInfo creationInfo = new UIItemCreationInfo(items[ocrLowestIndex], true, quantity, currentPrice, MatchRating.FivePlus, split[i]);
-							if (choice == Choices.MatchAnyway) {
-								creationInfo.item.ocrNames.Add(split[i]);
-							}
-							matchedItems.Add(creationInfo);
+					Choices choice = await resolveChoice.SelectChoiceAsync();
+
+					if (choice != Choices.NotAnItem) {
+						int currentPrice = await GetCurrentPriceAsync(split, i, ocrLowestIndex);
+						int quantity = await GetQuantityAsync(split, i, items[ocrLowestIndex].userFriendlyName);
+						UIItemCreationInfo creationInfo = new UIItemCreationInfo(items[ocrLowestIndex], true, quantity, currentPrice, MatchRating.FivePlus, split[i]);
+						if (choice == Choices.MatchAnyway) {
+							creationInfo.item.ocrNames.Add(split[i]);
 						}
+						matchedItems.Add(creationInfo);
 					}
-					else {
-						ManualResolveChoice choice = new ManualResolveChoice("This string is something else.. what is it??\n'" + split[i] + "'",
-														Choices.FindExistingItemFromList, Choices.DefineNewItem, Choices.NotAnItem);
-						Choices c = await choice.SelectChoiceAsync();
-						if (c == Choices.DefineNewItem) {
-							NewItemDefinitionPanel definition = new NewItemDefinitionPanel();
-							(string itemName, int itemPrice, MeassurementUnit itemUnitOfMeassure) = await definition.RegisterItemAsync();
-							int quantity = await GetQuantityAsync(split, i, itemName);
-							Item newItem = new Item(itemName, itemPrice);
-							newItem.AddOCRName(split[i]);
-							UIItemCreationInfo nowKnown = new UIItemCreationInfo(newItem, false, quantity, itemPrice, MatchRating.Success, split[i]);
-							DatabaseAccess.access.WriteItemDefinitionToDatabase(newItem, purchaseTime);
-							nowKnown.item.SetUnitOfMeassure(itemUnitOfMeassure);
-							matchedItems.Add(nowKnown);
+				}
+				else {
+					ManualResolveChoice choice = new ManualResolveChoice(
+						$"This string is something else.. what is it??\n'{split[i]}'",
+						Choices.FindExistingItemFromList, Choices.DefineNewItem, Choices.NotAnItem);
+
+					Choices c = await choice.SelectChoiceAsync();
+
+					if (c == Choices.DefineNewItem) {
+						NewItemDefinitionPanel definition = new NewItemDefinitionPanel();
+						(string itemName, int itemPrice, MeassurementUnit itemUnitOfMeassure) = await definition.RegisterItemAsync();
+						int quantity = await GetQuantityAsync(split, i, itemName);
+						Item newItem = new Item(itemName, itemPrice);
+						newItem.AddOCRName(split[i]);
+
+						UIItemCreationInfo newlyMatched = new UIItemCreationInfo(newItem, false, quantity, itemPrice, MatchRating.Success, split[i]);
+						DatabaseAccess.access.WriteItemDefinitionToDatabase(newItem, purchaseTime);
+						newlyMatched.item.SetUnitOfMeassure(itemUnitOfMeassure);
+						matchedItems.Add(newlyMatched);
+					}
+					else if (c == Choices.FindExistingItemFromList) {
+						ItemList list = new ItemList(DatabaseAccess.access.GetItems(rules.shop));
+						Item manuallyMatchedItem = await list.SelectItemAsync();
+						if (manuallyMatchedItem == null) {
+							i--;
+							// Basically reprocess this item as if this newer happend
+							continue;
 						}
-						else if (c == Choices.FindExistingItemFromList) {
-							ItemList list = new ItemList(DatabaseAccess.access.GetItems());
-							Item manuallyMatchedItem = await list.SelectItemAsync();
-							if (manuallyMatchedItem == null) {
-								i--;
-								continue;
-							}
-							int quantity = await GetQuantityAsync(split, i, manuallyMatchedItem.userFriendlyName);
-							UIItemCreationInfo nowKnown = new UIItemCreationInfo(manuallyMatchedItem, false, quantity, manuallyMatchedItem.currentPrice, MatchRating.Success, split[i]);
-							nowKnown.item.ocrNames.Add(split[i]);
-							matchedItems.Add(nowKnown);
-						}
-						else if (c == Choices.NotAnItem) {
-							unmatchedItems.Add(new UIItemCreationInfo(new Item(split[i], -1), false, -1, -1, MatchRating.Fail, ""));
-						}
+						int quantity = await GetQuantityAsync(split, i, manuallyMatchedItem.userFriendlyName);
+						UIItemCreationInfo fromExistingMatched = new UIItemCreationInfo(manuallyMatchedItem, false, quantity, manuallyMatchedItem.currentPrice, MatchRating.Success, split[i]);
+						fromExistingMatched.item.ocrNames.Add(split[i]);
+						matchedItems.Add(fromExistingMatched);
+					}
+					else if (c == Choices.NotAnItem) {
+						unmatchedItems.Add(new UIItemCreationInfo(new Item(split[i], -1), false, -1, -1, MatchRating.Fail, ""));
 					}
 				}
 			}
@@ -152,7 +148,7 @@ namespace BillScannerWPF {
 				if (!timeFound) {
 					timeFound = DateTime.TryParseExact(split[i], "hh:mm:ss", CultureInfo.InvariantCulture, DateTimeStyles.NoCurrentDateDefault, out purchaseTime);
 					if (!timeFound) {
-						timeFound = DateTime.TryParseExact(new BaseRuleset().ReplaceAmbiguousToNumber(split[i]), "hh:mm:ss", CultureInfo.InvariantCulture, DateTimeStyles.NoCurrentDateDefault, out purchaseTime);
+						timeFound = DateTime.TryParseExact((rules as BaseRuleset).ReplaceAmbiguousToNumber(split[i]), "hh:mm:ss", CultureInfo.InvariantCulture, DateTimeStyles.NoCurrentDateDefault, out purchaseTime);
 					}
 				}
 			}
@@ -175,9 +171,6 @@ namespace BillScannerWPF {
 			return (ret, purchaseTime);
 		}
 
-		/// <summary>
-		/// Helper function to get items price from the string, calls <see cref="IRuleset.GetPriceOfOne(string[], ref int)"/> if it fails, falls back to <see cref="ManualResolveChoice"/>
-		/// </summary>
 		private async Task<int> GetCurrentPriceAsync(string[] split, int splitIndex, int fallbackItemIndex) {
 			try {
 				return rules.GetPriceOfOne(split, ref splitIndex);
@@ -185,11 +178,11 @@ namespace BillScannerWPF {
 			catch (PriceParsingException) {
 				ManualResolveChoice res;
 				if (fallbackItemIndex == -1) {
-					res = new ManualResolveChoice("Unable to get current item's price [" + split[splitIndex] + "]",
+					res = new ManualResolveChoice($"Unable to get current item's price [{split[splitIndex]}]",
 						new Choices[] { Choices.NOOP, Choices.NOOP, Choices.NOOP, Choices.ManuallyEnterPrice });
 				}
 				else {
-					res = new ManualResolveChoice("Unable to get current item's price [" + split[splitIndex] + "]",
+					res = new ManualResolveChoice($"Unable to get current item's price [{split[splitIndex]}]",
 						new Choices[] { Choices.NOOP, Choices.NOOP, Choices.UseLatestValue, Choices.ManuallyEnterPrice });
 				}
 				Choices choice = await res.SelectChoiceAsync();
@@ -197,7 +190,7 @@ namespace BillScannerWPF {
 					return DatabaseAccess.access.GetItems()[fallbackItemIndex].currentPrice;
 				}
 				else if (choice == Choices.ManuallyEnterPrice) {
-					if (decimal.TryParse(res.MANUAL_RESOLUTION_Solution5_Box.Text.Replace(',', '.'), NumberStyles.Currency, CultureInfo.InvariantCulture, out decimal result)) {
+					if (decimal.TryParse(res.MANUAL_RESOLUTION_Solution5_Box.Text, NumberStyles.Currency | NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture, out decimal result)) {
 						return (int)result * 100;
 					}
 					else {
@@ -210,9 +203,6 @@ namespace BillScannerWPF {
 			}
 		}
 
-		/// <summary>
-		/// If the parser can not find a date/time of purchase, <see cref="GetPurchaseDateAsync"/> is used to get the date via <see cref="ManualResolveChoice"/>
-		/// </summary>
 		private async Task<(bool, DateTime)> GetPurchaseDateAsync() {
 			ManualResolveChoice resolveChoice = new ManualResolveChoice("Parser could not find purchase date/time in the bill.",
 								new Choices[] { Choices.NOOP, Choices.NOOP, Choices.UseCurrentTime, Choices.ManuallyEnterDate });
@@ -236,9 +226,6 @@ namespace BillScannerWPF {
 			}
 		}
 
-		/// <summary>
-		/// Helper function to get the number of items bought, calls <see cref="IRuleset.GetQuantity(string[], int)"/> if it fails, falls back to <see cref="ManualResolveChoice"/>
-		/// </summary>
 		private async Task<int> GetQuantityAsync(string[] split, int splitIndex, string itemName) {
 			int quantity;
 			try {

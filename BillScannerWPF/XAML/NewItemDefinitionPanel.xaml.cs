@@ -39,14 +39,14 @@ namespace BillScannerWPF {
 			});
 
 			decimal itemValue;
-			string valueString = ITEMREG_ItemValue_Box.Text.Replace(',', '.');
-			while (!decimal.TryParse(valueString, NumberStyles.Currency, CultureInfo.InvariantCulture, out itemValue)) {
+			string valueString = ITEMREG_ItemValue_Box.Text;
+			while (!decimal.TryParse(valueString, NumberStyles.Currency | NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture, out itemValue)) {
 				ITEMREG_ErrorInfo_Text.Text = "Unable to parse item value: " + valueString + " Enter correct one and register.";
 				await Task.Run(() => {
 					evnt.Reset();
 					evnt.Wait();
 				});
-				valueString = ITEMREG_ItemValue_Box.Text.Replace(',', '.');
+				valueString = ITEMREG_ItemValue_Box.Text;
 			}
 			while (ITEMREG_UnitOfMeassure_DropDown.SelectedItem == null) {
 				ITEMREG_ErrorInfo_Text.Text = "No Measurement Unit selected!";
@@ -63,7 +63,7 @@ namespace BillScannerWPF {
 				});
 			}
 
-			if (decimal.TryParse(valueString, NumberStyles.Currency, CultureInfo.InvariantCulture, out decimal update)){
+			if (decimal.TryParse(valueString, NumberStyles.Currency | NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture, out decimal update)){
 				if(update != itemValue) {
 					itemValue = update;
 				}

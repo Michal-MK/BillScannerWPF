@@ -1,5 +1,6 @@
 ﻿using BillScannerCore;
 using System;
+using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
 namespace BillScannerWPF.Rules {
@@ -12,17 +13,12 @@ namespace BillScannerWPF.Rules {
 		/// <summary>
 		/// Regex to find one number sequences surrounded by letters, most likely an OCR inaccuracy
 		/// </summary>
-		protected Regex strayNumber = new Regex(@"[a-zA-Z]+(\d)[a-zA-Z]+");
+		protected readonly Regex strayNumber = new Regex(@"[a-zA-Z]+(\d)[a-zA-Z]+");
 
 		/// <summary>
 		/// Regex to find one letter sequences surrounded by numbers, most likely an OCR inaccuracy
 		/// </summary>
-		protected Regex strayLetter = new Regex(@"\d+[.,]?([a-zA-Z])[.,]?\d+");
-
-		/// <summary>
-		/// Base item format as observed on multiple bills, shops should not use it and create a new better one
-		/// </summary>
-		protected Regex genericItemFormat = new Regex(@"(.+) (\d+[.,]\d+) [A-Z]");
+		protected readonly Regex strayLetter = new Regex(@"\d+[.,]?([a-zA-Z])[.,]?\d+");
 
 		/// <summary>
 		/// Base date time format as observed on multiple bills, shops should not use it and create a new better one
@@ -43,34 +39,54 @@ namespace BillScannerWPF.Rules {
 		};
 
 		/// <summary>
-		/// Attempts a match on with the generic item Regex:
+		/// Attempts a match on the original string with the generic item Regex:
 		/// <para>On success replaces stray numbers and letters</para>
 		/// <para>On failure returns the original</para>
 		/// </summary>
-		/// <param name="original">The original string to modify</param>
-		internal string ReplaceAmbiguous(string original) {
-			Match baseMatch = genericItemFormat.Match(original);
-			if (baseMatch.Success) {
-				Match number = strayNumber.Match(original);
-				Match letter = strayLetter.Match(original);
-				if (number.Success) {
-					for (int i = 0; i < ambiguousLettersArray.Length; i++) {
-						if (ambiguousLettersArray[i].conflicting.ToString() == number.Groups[1].Value) {
-							original = baseMatch.Groups[1].Value.Replace(ambiguousLettersArray[i].conflicting, ambiguousLettersArray[i].resolving)
-									+ baseMatch.Groups[2].Value;
-						}
+		[Obsolete("This method is deprecated, use the one that returns an array since it contains all possible ambiguities")]
+		internal string ReplaceAmbiguous(Regex correctItemRegex, string original) {
+			Match number = strayNumber.Match(original);
+			Match letter = strayLetter.Match(original);
+			if (number.Success) {
+				for (int i = 0; i < ambiguousLettersArray.Length; i++) {
+					if (ambiguousLettersArray[i].conflicting.ToString() == number.Groups[1].Value) {
+						original = original.ReplaceAt(1, ambiguousLettersArray[i].resolving);
 					}
 				}
-				if (letter.Success) {
-					for (int i = 0; i < ambiguousLettersArray.Length; i++) {
-						if (ambiguousLettersArray[i].conflicting.ToString() == letter.Groups[1].Value) {
-							original = baseMatch.Groups[1]
-								+ baseMatch.Groups[2].Value.Replace(ambiguousLettersArray[i].resolving, ambiguousLettersArray[i].conflicting);
-						}
+			}
+			if (letter.Success) {
+				for (int i = 0; i < ambiguousLettersArray.Length; i++) {
+					if (ambiguousLettersArray[i].conflicting.ToString() == letter.Groups[1].Value) {
+						original = original.ReplaceAt(letter.Groups[1].Index, ambiguousLettersArray[i].conflicting);
 					}
 				}
 			}
 			return original;
+		}
+
+		/// <summary>
+		/// Returns almost all possible single character mismatch corrections from the original 
+		/// </summary>
+		internal string[] ReplaceAllAmbiguous(Regex correctItemRegex, string original) {
+			List<string> strings = new List<string>();
+			Match number = strayNumber.Match(original);
+			Match letter = strayLetter.Match(original);
+
+			if (number.Success) {
+				for (int i = 0; i < ambiguousLettersArray.Length; i++) {
+					if (ambiguousLettersArray[i].conflicting.ToString() == number.Groups[1].Value) {
+						strings.Add(original.ReplaceAt(1, ambiguousLettersArray[i].resolving));
+					}
+				}
+			}
+			if (letter.Success) {
+				for (int i = 0; i < ambiguousLettersArray.Length; i++) {
+					if (ambiguousLettersArray[i].conflicting.ToString() == letter.Groups[1].Value) {
+						strings.Add(original.ReplaceAt(letter.Groups[1].Index, ambiguousLettersArray[i].conflicting));
+					}
+				}
+			}
+			return strings.ToArray();
 		}
 
 		/// <summary>
@@ -110,6 +126,7 @@ namespace BillScannerWPF.Rules {
 		/// Attempts to remove any leading or trailing non numeric characters from a string
 		/// <para>On failure returns the original!</para>
 		/// </summary>
+		[Obsolete("This function is very slow since it internally constructs a Reg.Exp. Also what is seems to be doing is a glorified string.Replace(\" \", \"\")")]
 		internal string RemoveLetterCharacters(string original, char splitter) {
 			Regex r = new Regex(@"(\d+([,.] ?\d+)?) " + splitter + @" (\d+([,.] ?\d+)?)");
 
@@ -118,6 +135,6 @@ namespace BillScannerWPF.Rules {
 				return m.Value.Replace(" ", "");
 			}
 			return original;
-		}	
+		}
 	}
 }

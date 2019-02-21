@@ -44,7 +44,7 @@ namespace BillScannerWPF.Rules {
 				return m.Groups[1].Value;
 			}
 			else {
-				m = correctItemLine.Match(ReplaceAmbiguous(line));
+				m = correctItemLine.Match(ReplaceAmbiguous(correctItemLine, line));
 				if (m.Success) {
 					return m.Groups[1].Value;
 				}
@@ -55,8 +55,8 @@ namespace BillScannerWPF.Rules {
 		public int GetPriceOfOne(string[] ocrText, ref int index) {
 			if (IsSingleItem(ocrText, index)) {
 				Match single = correctItemLine.Match(ocrText[index]);
-				string final = single.Groups[4].Value.Replace(',', '.');
-				if (decimal.TryParse(final, NumberStyles.Currency, CultureInfo.InvariantCulture, out decimal result)) {
+				string final = single.Groups[4].Value;
+				if (decimal.TryParse(final, NumberStyles.Currency | NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture, out decimal result)) {
 					return (int)result * 100;
 				}
 				else {
@@ -65,8 +65,8 @@ namespace BillScannerWPF.Rules {
 			}
 			else {
 				Match multiL = multiLineItems.Match(ocrText[index + 1]);
-				string final = multiL.Groups[2].Value.Replace(',', '.').Replace(" ", ".");
-				if (decimal.TryParse(final, NumberStyles.Currency, CultureInfo.InvariantCulture, out decimal result)) {
+				string final = multiL.Groups[2].Value.Replace(" ", ".");
+				if (decimal.TryParse(final, NumberStyles.Currency | NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture, out decimal result)) {
 					index++;
 					return (int)result * 100;
 				}
@@ -80,15 +80,15 @@ namespace BillScannerWPF.Rules {
 			if (correctItemLine.Match(ocrText[index]).Success) {
 				return true;
 			}
-			else if (correctItemLine.Match(ReplaceAmbiguous(ocrText[index])).Success) {
-				ocrText[index] = ReplaceAmbiguous(ocrText[index]);
+			else if (correctItemLine.Match(ReplaceAmbiguous(correctItemLine, ocrText[index])).Success) {
+				ocrText[index] = ReplaceAmbiguous(correctItemLine, ocrText[index]);
 				return true;
 			}
 			else if (index + 1 < ocrText.Length && multiLineItems.Match(ocrText[index + 1]).Success) {
 				return false;
 			}
-			else if (index + 1 < ocrText.Length && multiLineItems.Match(ReplaceAmbiguous(ocrText[index + 1])).Success) {
-				ocrText[index + 1] = ReplaceAmbiguous(ocrText[index + 1]);
+			else if (index + 1 < ocrText.Length && multiLineItems.Match(ReplaceAmbiguous(correctItemLine, ocrText[index + 1])).Success) {
+				ocrText[index + 1] = ReplaceAmbiguous(correctItemLine, ocrText[index + 1]);
 				return false;
 			}
 			return true;

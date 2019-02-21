@@ -53,7 +53,7 @@ namespace BillScannerWPF {
 
 		private void INFO_RegisterItem_Click(object sender, RoutedEventArgs e) {
 			string modifiedName = INFO_MainName_Text.Text;
-			if (!decimal.TryParse(INFO_CurrentValue_Text.Text.Trim().Replace(',','.'), NumberStyles.Currency, CultureInfo.InvariantCulture, out decimal finalPrice)) {
+			if (!decimal.TryParse(INFO_CurrentValue_Text.Text.Trim(), NumberStyles.Currency | NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture, out decimal finalPrice)) {
 				return;
 			}
 			try {
