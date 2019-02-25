@@ -15,6 +15,8 @@ namespace BillScannerWPF.Rules {
 
 		public Regex dateTimeFormat { get { return genericDateTimeFormat; } }
 
+		public Regex correctCostAndQuantityLine => genericItemPriceFormat;
+
 		public Shop shop => Shop.McDonalds;
 
 		public int GetQuantity(string[] ocrText, int index) {
@@ -38,7 +40,7 @@ namespace BillScannerWPF.Rules {
 			string line = ocrText[index].Replace(',', '.');
 			Match m = correctItemLine.Match(line);
 			if (decimal.TryParse(m.Groups[3].Value, NumberStyles.Currency, CultureInfo.InvariantCulture, out decimal result)) {
-				return (int)result * 100;
+				return (int)(result * 100);
 			}
 			string modified = ReplaceAmbiguousToNumber(line);
 			if (modified == line) {
@@ -47,7 +49,7 @@ namespace BillScannerWPF.Rules {
 			else {
 				Match mm = correctItemLine.Match(modified);
 				if (decimal.TryParse(mm.Groups[3].Value, NumberStyles.Currency, CultureInfo.InvariantCulture, out decimal resultModified)) {
-					return (int)resultModified * 100;
+					return (int)(resultModified * 100);
 				}
 			}
 			throw new PriceParsingException(ocrText[index], index, false);

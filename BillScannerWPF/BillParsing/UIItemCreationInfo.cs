@@ -10,44 +10,39 @@ namespace BillScannerWPF {
 		/// <summary>
 		/// Create new <see cref="UIItemCreationInfo"/>
 		/// </summary>
-		internal UIItemCreationInfo(Item item, bool isRegistered, int quantity, int currentPrice, MatchRating quality, string triggerForMatch) {
-			this.item = item;
-			this.quality = quality;
-			this.isRegistered = isRegistered;
-			this.quantity = quantity;
+		internal UIItemCreationInfo(Item item, int quantity, int currentPrice, MatchRating quality, string triggerForMatch) {
+			Item = item;
+			MatchQuality = quality;
+			Amount = quantity;
 			_currentPrice = currentPrice;
-			tirggerForMatch = triggerForMatch;
+			MatchTriggerLine = triggerForMatch;
 		}
 
 		/// <summary>
-		/// Reference to the <see cref="Item"/>
+		/// Reference to the <see cref="BillScannerCore.Item"/>
 		/// </summary>
-		internal Item item { get; }
+		internal Item Item { get; }
 
 		/// <summary>
 		/// Amount of items to be purchased
 		/// </summary>
-		internal int quantity { get; }
+		internal int Amount{ get; }
 
 		/// <summary>
 		/// Match accuracy
 		/// </summary>
-		internal MatchRating quality { get; }
+		internal MatchRating MatchQuality { get; }
 
 		/// <summary>
-		/// Is the <see cref="Item"/> already defined
+		/// Current price of the <see cref="BillScannerCore.Item"/>
 		/// </summary>
-		internal bool isRegistered { get; private set; }
-
-		/// <summary>
-		/// Current price of the <see cref="Item"/>
-		/// </summary>
-		internal decimal currentPrice { get { return _currentPrice / 100; } }
+		internal decimal CurrentPrice { get { return _currentPrice / 100m; } }
 		private int _currentPrice;
+
+
 		/// <summary>
 		/// The text that triggered the match
 		/// </summary>
-		internal string tirggerForMatch { get; }
-
+		internal string MatchTriggerLine { get; }
 	}
 }

@@ -5,7 +5,7 @@ using System.Text.RegularExpressions;
 namespace BillScannerWPF.Rules {
 	class AlbertRuleset : BaseRuleset, IRuleset {
 
-		private Regex multiLineItems = new Regex(@"(\d+) x (\d+[., ]?\d+) .+ A");
+		private Regex multiLineItems = new Regex(@"(\d+) ?. ?(\d+[., ]?\d+) .+ A");
 
 		public Regex correctItemLine { get; } = new Regex(@"(.+)( (\d+)[g0Ll1])? (\d+[,.]\d+) A");
 
@@ -20,6 +20,8 @@ namespace BillScannerWPF.Rules {
 		public char costPlusQuantitySeparator { get { return 'x'; } }
 
 		public Regex dateTimeFormat { get { return genericDateTimeFormat; } }
+
+		public Regex correctCostAndQuantityLine => genericItemPriceFormat;
 
 		public Shop shop => Shop.Albert;
 
@@ -44,9 +46,12 @@ namespace BillScannerWPF.Rules {
 				return m.Groups[1].Value;
 			}
 			else {
-				m = correctItemLine.Match(ReplaceAmbiguous(correctItemLine, line));
-				if (m.Success) {
-					return m.Groups[1].Value;
+				string[] lines = ReplaceAllAmbiguous(correctItemLine, line);
+				foreach (string lineModified in lines) {
+					m = correctItemLine.Match(lineModified);
+					if (m.Success) {
+						return m.Groups[1].Value;
+					}
 				}
 			}
 			throw new NameParsingException("Unable to get name from string: " + line, line);
@@ -57,7 +62,7 @@ namespace BillScannerWPF.Rules {
 				Match single = correctItemLine.Match(ocrText[index]);
 				string final = single.Groups[4].Value;
 				if (decimal.TryParse(final, NumberStyles.Currency | NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture, out decimal result)) {
-					return (int)result * 100;
+					return (int)(result * 100);
 				}
 				else {
 					throw new PriceParsingException(ocrText[index], index, true);
@@ -68,7 +73,7 @@ namespace BillScannerWPF.Rules {
 				string final = multiL.Groups[2].Value.Replace(" ", ".");
 				if (decimal.TryParse(final, NumberStyles.Currency | NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture, out decimal result)) {
 					index++;
-					return (int)result * 100;
+					return (int)(result * 100);
 				}
 				else {
 					throw new PriceParsingException(ocrText[index + 1], index + 1, false);
@@ -77,21 +82,29 @@ namespace BillScannerWPF.Rules {
 		}
 
 		private bool IsSingleItem(string[] ocrText, int index) {
+
 			if (correctItemLine.Match(ocrText[index]).Success) {
-				return true;
-			}
-			else if (correctItemLine.Match(ReplaceAmbiguous(correctItemLine, ocrText[index])).Success) {
-				ocrText[index] = ReplaceAmbiguous(correctItemLine, ocrText[index]);
 				return true;
 			}
 			else if (index + 1 < ocrText.Length && multiLineItems.Match(ocrText[index + 1]).Success) {
 				return false;
 			}
-			else if (index + 1 < ocrText.Length && multiLineItems.Match(ReplaceAmbiguous(correctItemLine, ocrText[index + 1])).Success) {
-				ocrText[index + 1] = ReplaceAmbiguous(correctItemLine, ocrText[index + 1]);
-				return false;
+			else {
+				string[] linesModifiedSingle = ReplaceAllAmbiguous(correctItemLine, ocrText[index]);
+				foreach (string lineModified in linesModifiedSingle) {
+					if (correctItemLine.IsMatch(lineModified)) {
+						ocrText[index] = lineModified;
+						return true;
+					}
+				}
+				string[] linesModifiedDouble = ReplaceAllAmbiguous(correctItemLine, ocrText[index + 1]);
+				foreach (string lineModified in linesModifiedDouble) {
+					if (multiLineItems.IsMatch(lineModified)) {
+						ocrText[index] = lineModified;
+						return false;
+					}
+				}
 			}
-			return true;
 			throw new GenericParsingException(ocrText, index);
 		}
 	}

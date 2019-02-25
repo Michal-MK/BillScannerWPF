@@ -35,6 +35,11 @@ namespace BillScannerWPF {
 		internal ImageProcessor imgProcessing;
 
 		/// <summary>
+		/// Manual bill creation without using OCR technology
+		/// </summary>
+		internal ManualPurchaseHandler manualPurchase;
+
+		/// <summary>
 		/// Absolute path to the image currently being displayed in the image preview control
 		/// </summary>
 		public string currentImageSource { get; set; }
@@ -57,7 +62,7 @@ namespace BillScannerWPF {
 		/// <summary>
 		/// Create a default Albert window (Debug)
 		/// </summary>
-		public MainWindow() : this(Shop.Albert) { }
+		public MainWindow() : this(Shop.Lidl) { }
 
 		/// <summary>
 		/// Create a new Main window and prepare it for the selected shop type
@@ -89,8 +94,12 @@ namespace BillScannerWPF {
 			});
 
 			imgProcessing = new ImageProcessor(selectedShopRuleset, this);
+			manualPurchase = new ManualPurchaseHandler(selectedShop, this);
 
 			MAIN_Analyze_Button.Click += imgProcessing.Analyze;
+			MAIN_Analyze_Button.Visibility = Visibility.Collapsed;
+
+			MAIN_ManualPurchase_Button.Click += manualPurchase.Begin;
 			MAIN_Finalize_Button.Click += MAIN_FinalizePurchase_Click;
 			MAIN_Clear_Button.Click += MAIN_Clear_Click;
 
@@ -150,7 +159,6 @@ namespace BillScannerWPF {
 			server.DefineCustomPacket<byte[]>(e.clientInfo.clientID, 55, imgProcessing.OnImageDataReceived);
 			Dispatcher.Invoke(() => {
 				statusBar.model.ClientConnected = true;
-
 			});
 		}
 
@@ -166,9 +174,10 @@ namespace BillScannerWPF {
 		#region Image preview container functions: Changing, Opening full view.
 
 		internal void PreviewImgMouse(object sender, MouseButtonEventArgs e) {
-			OpenFileDialog dialog = new OpenFileDialog();
-			dialog.DefaultExt = "png";
-			dialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);
+			OpenFileDialog dialog = new OpenFileDialog {
+				DefaultExt = "png",
+				InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory)
+			};
 			if (dialog.ShowDialog() == true) {
 				SetPrevImage(new Uri(dialog.FileName));
 			}
@@ -190,6 +199,8 @@ namespace BillScannerWPF {
 			File.WriteAllBytes(WPFHelper.dataPath + "current" + ++attempt + ".jpg", imgData);
 			currentImageSource = WPFHelper.dataPath + "current" + attempt + ".jpg";
 			SetPrevImage(new Uri(currentImageSource));
+			MAIN_ManualPurchase_Button.Visibility = Visibility.Collapsed;
+			MAIN_Analyze_Button.Visibility = Visibility.Visible;
 		}
 
 		//Open Selected image in default image viewer
@@ -197,9 +208,9 @@ namespace BillScannerWPF {
 			if (string.IsNullOrEmpty(currentImageSource)) {
 				return;
 			}
-			Process p = new Process();
-			p.StartInfo = new ProcessStartInfo(currentImageSource);
-			p.Start();
+			new Process {
+				StartInfo = new ProcessStartInfo(currentImageSource)
+			}.Start();
 		}
 
 		#endregion
@@ -208,7 +219,7 @@ namespace BillScannerWPF {
 		#region Control button functionality
 
 		private void MAIN_FinalizePurchase_Click(object sender, RoutedEventArgs e) {
-			Purchase s = new Purchase(imgProcessing.currentParsingResult.meta.purchasedAt, imgProcessing.uiItemsMatched.Transform());
+			Purchase s = new Purchase(selectedShopRuleset.shop, imgProcessing.currentParsingResult.meta.PurchasedAt, imgProcessing.uiItemsMatched.Transform());
 			s.FinalizePurchase();
 			MAIN_Clear_Button.Visibility = Visibility.Visible;
 			((Button)sender).Visibility = Visibility.Collapsed;

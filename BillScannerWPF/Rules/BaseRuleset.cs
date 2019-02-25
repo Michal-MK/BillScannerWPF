@@ -25,6 +25,9 @@ namespace BillScannerWPF.Rules {
 		/// </summary>
 		protected Regex genericDateTimeFormat = new Regex(@"\d+:\d+:\d+");
 
+
+		protected Regex genericItemPriceFormat = new Regex(@"(\d+)([,.])(\d+)");
+
 		/// <summary>
 		/// A collection of commonly mismatched characters in a word
 		/// </summary>
@@ -86,6 +89,9 @@ namespace BillScannerWPF.Rules {
 					}
 				}
 			}
+			if(!number.Success && !letter.Success) {
+				strings.Add(original);
+			}
 			return strings.ToArray();
 		}
 
@@ -119,22 +125,6 @@ namespace BillScannerWPF.Rules {
 					throw new NotImplementedException(selectedShop.ToString() + " was not yet implemented!");
 				}
 			}
-		}
-
-
-		/// <summary>
-		/// Attempts to remove any leading or trailing non numeric characters from a string
-		/// <para>On failure returns the original!</para>
-		/// </summary>
-		[Obsolete("This function is very slow since it internally constructs a Reg.Exp. Also what is seems to be doing is a glorified string.Replace(\" \", \"\")")]
-		internal string RemoveLetterCharacters(string original, char splitter) {
-			Regex r = new Regex(@"(\d+([,.] ?\d+)?) " + splitter + @" (\d+([,.] ?\d+)?)");
-
-			Match m = r.Match(original.ToLower());
-			if (m.Success) {
-				return m.Value.Replace(" ", "");
-			}
-			return original;
 		}
 	}
 }

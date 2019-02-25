@@ -73,6 +73,7 @@
     <Compile Include="Exceptions\NameParsingException.cs" />
     <Compile Include="Exceptions\QuantityParsingException.cs" />
     <Compile Include="BillParsing\UIItemCreationInfo.cs" />
+    <Compile Include="ManualPurchase\ManualPurchaseHandler.cs" />
     <Compile Include="ScannerHelper.cs" />
     <Compile Include="ServerStateManager.cs" />
     <Compile Include="XAML\DateBox.xaml.cs">

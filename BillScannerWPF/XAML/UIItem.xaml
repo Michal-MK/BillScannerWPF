@@ -19,6 +19,6 @@
 		</Grid.Background>
 		<TextBlock x:Name="UITEM_OriginalName_Text" Grid.Column="1" Text="Original Name" VerticalAlignment="Center" HorizontalAlignment="Left" ></TextBlock>
 		<Button x:Name="UITEM_ShowDetails_Button" Grid.Column="2" Content="Details" Click="UITEM_ShowDetails_Click" Padding="10 0"></Button>
-		<Image x:Name="UITEM_MatchQuality_Iamge" Grid.Column="3" Height="32px" HorizontalAlignment="Right" Margin="10 0"/>
+		<Image x:Name="UITEM_MatchQuality_Image" Grid.Column="3" Height="32px" HorizontalAlignment="Right" Margin="10 0"/>
 	</Grid>
 </UserControl>

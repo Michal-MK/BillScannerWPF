@@ -40,6 +40,11 @@ namespace BillScannerWPF.Rules {
 		Regex dateTimeFormat { get; }
 
 		/// <summary>
+		/// Regular expression to recognize item price and quantity line
+		/// </summary>
+		Regex correctCostAndQuantityLine { get; }
+
+		/// <summary>
 		/// The strings that mark the start of a items listing
 		/// </summary>
 		string[] startMarkers { get; }

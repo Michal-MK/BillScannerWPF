@@ -16,10 +16,12 @@ namespace BillScannerWPF.Rules {
 
 		public Shop shop => Shop.Lidl;
 
+		public Regex correctCostAndQuantityLine => genericItemPriceFormat;
+
 		public int GetQuantity(string[] ocrText, int index) {
 			if (index > ocrText.Length) { throw new IndexOutOfRangeException(nameof(index)); }
 			string quantity = ocrText[index + 1];
-			string[] split = RemoveLetterCharacters(quantity, costPlusQuantitySeparator).Split(costPlusQuantitySeparator);
+			string[] split = quantity.Replace(" ", "").ToLower().Split(costPlusQuantitySeparator);
 			if (split.Length != 2) {
 				throw new QuantityParsingException($"Unable to get quantity from string {ocrText[index + 1]}", ocrText[index + 2], index + 1);
 			}
@@ -43,34 +45,37 @@ namespace BillScannerWPF.Rules {
 				return name;
 			}
 			else {
-				string lineModified = ReplaceAmbiguous(correctItemLine, line);
-				m = correctItemLine.Match(lineModified);
-				if (m.Success) {
-					string name = m.Groups[1].Value + m.Groups[2];
-					return name;
+				string[] linesModified = ReplaceAllAmbiguous(correctItemLine, line);
+				foreach (string lineModified in linesModified) {
+					m = correctItemLine.Match(lineModified);
+					if (m.Success) {
+						string name = m.Groups[1].Value + m.Groups[2];
+						return name;
+					}
 				}
-				else {
-					throw new NameParsingException("Unable to get name from line " + line, line);
-				}
+				throw new NameParsingException("Unable to get name from line " + line, line);
 			}
 		}
 
 		public int GetPriceOfOne(string[] ocrText, ref int index) {
 			string quantity = ocrText[index + 1];
-			string modified = RemoveLetterCharacters(quantity, costPlusQuantitySeparator).ToLower().Trim();
+			string modified = quantity.Replace(" ", "").ToLower().Trim();
 			string[] split = modified.Split(costPlusQuantitySeparator);
 			if (split.Length != 2) {
 				throw new PriceParsingException(ocrText[index + 1], index + 1, false);
 			}
-			split[1] = split[1].Replace(',', '.');
-
-			if (decimal.TryParse(split[1], System.Globalization.NumberStyles.Currency, System.Globalization.CultureInfo.InvariantCulture, out decimal result)) {
-				return (int)result * 100;
+			if (decimal.TryParse(split[1], System.Globalization.NumberStyles.Currency | System.Globalization.NumberStyles.AllowDecimalPoint, System.Globalization.CultureInfo.InvariantCulture, out decimal result)) {
+				return (int)(result * 100);
 			}
 			else {
-				modified = RemoveLetterCharacters(ReplaceAmbiguous(correctItemLine, modified), costPlusQuantitySeparator);
-				if (decimal.TryParse(split[1], System.Globalization.NumberStyles.Currency, System.Globalization.CultureInfo.InvariantCulture, out decimal resultReplaced)) {
-					return (int)resultReplaced * 100;
+				string[] linesModified = ReplaceAllAmbiguous(correctItemLine, split[1]);
+				foreach (string lineModified in linesModified) {
+					Match m = genericItemPriceFormat.Match(lineModified);
+					if (m.Success) {
+						if (decimal.TryParse(m.Groups[1].Value + "." + m.Groups[3].Value, System.Globalization.NumberStyles.Currency | System.Globalization.NumberStyles.AllowDecimalPoint, System.Globalization.CultureInfo.InvariantCulture, out decimal resultReplaced)) {
+							return (int)(resultReplaced * 100);
+						}
+					}
 				}
 			}
 			throw new PriceParsingException(ocrText[index + 1], index + 1, false);

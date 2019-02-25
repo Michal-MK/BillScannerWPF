@@ -78,13 +78,8 @@ namespace BillScannerWPF {
 			ParsingResult result = null;
 			StringParser parser = new StringParser(ruleset);
 
-			try {
-				result = await parser.ParseAsync(lines);
-			}
-			catch (ParsingEntryNotFoundException) {
-				parser.tryMatchFromBeginning = true;
-				result = await parser.ParseAsync(lines);
-			}
+			result = await parser.ParseAsync(lines);
+
 			ConstructUI(result.matchedItems, uiItemsMatched);
 			ConstructUI(result.unknownItems, uiItemsUnknown);
 			currentParsingResult = result;
@@ -102,8 +97,7 @@ namespace BillScannerWPF {
 
 		private void ConstructUI(ObservableCollection<UIItemCreationInfo> from, ObservableCollection<UIItem> destination) {
 			foreach (UIItemCreationInfo info in from) {
-				UIItem item = new UIItem(info, info.quantity, info.quality);
-				item.isRegistered = info.isRegistered;
+				UIItem item = new UIItem(info, info.Amount, info.MatchQuality);
 				destination.Add(item);
 			}
 		}

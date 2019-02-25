@@ -14,22 +14,17 @@ namespace BillScannerWPF {
 		/// <summary>
 		/// An item connected to this UI representation
 		/// </summary>
-		internal Item asociatedItem { get; }
+		internal Item Item { get; }
 
 		/// <summary>
 		/// The amount of items purchased
 		/// </summary>
-		internal int quantityPurchased { get; }
+		internal int AmountPurchased { get; }
 
 		/// <summary>
 		/// Internal rating of how successful this match was
 		/// </summary>
-		internal MatchRating quality { get; private set; }
-
-		/// <summary>
-		/// Is the item already registered in the database, or did we just create it
-		/// </summary>
-		internal bool isRegistered;
+		internal MatchRating MatchQuality { get; private set; }
 
 		/// <summary>
 		/// Create new <see cref="UIItem"/>
@@ -40,14 +35,14 @@ namespace BillScannerWPF {
 		internal UIItem(UIItemCreationInfo itemCreation, int quantityPurchased, MatchRating quality) {
 			InitializeComponent();
 			if (quality == MatchRating.Success) {
-				UITEM_OriginalName_Text.Text = itemCreation.item.userFriendlyName + " | Price: " + string.Format("{0:f2}", itemCreation.currentPrice) + "Kč";
+				UITEM_OriginalName_Text.Text = itemCreation.Item.ItemName + " | Price: " + string.Format("{0:f2}", itemCreation.CurrentPrice) + "Kč";
 			}
 			else {
-				UITEM_OriginalName_Text.Text = itemCreation.tirggerForMatch ?? itemCreation.item.userFriendlyName + " | Price: " + string.Format("{0:f2}", itemCreation.currentPrice) + "Kč";
+				UITEM_OriginalName_Text.Text = string.IsNullOrEmpty(itemCreation.MatchTriggerLine) ? itemCreation.Item.ItemName : itemCreation.MatchTriggerLine + " | Price: " + string.Format("{0:f2}", itemCreation.CurrentPrice) + "Kč";
 			}
-			asociatedItem = itemCreation.item;
-			this.quality = quality;
-			this.quantityPurchased = quantityPurchased;
+			Item = itemCreation.Item;
+			MatchQuality = quality;
+			AmountPurchased = quantityPurchased;
 			SetMatchRatingImage();
 		}
 
@@ -55,16 +50,16 @@ namespace BillScannerWPF {
 		/// Update the match rating image
 		/// </summary>
 		internal void SetMatchRatingImage() {
-			this.UITEM_MatchQuality_Iamge.Source = new BitmapImage(new Uri(WPFHelper.imageRatingResourcesPath + quality.ToString() + ".png", UriKind.Absolute));
+			UITEM_MatchQuality_Image.Source = new BitmapImage(new Uri(WPFHelper.imageRatingResourcesPath + MatchQuality.ToString() + ".png", UriKind.Absolute));
 		}
 
 		/// <summary>
 		/// Set visuals for a successful match
 		/// </summary>
 		internal void ProductMatchedSuccess() {
-			quality = MatchRating.Success;
-			this.UITEM_MatchQuality_Iamge.Source = new BitmapImage(new Uri(WPFHelper.imageRatingResourcesPath + MatchRating.Success.ToString() + ".png", UriKind.Absolute));
-			this.UITEM_OriginalName_Text.Text = asociatedItem.userFriendlyName + " | Price: " + asociatedItem.currentPrice.ToString();
+			MatchQuality = MatchRating.Success;
+			UITEM_MatchQuality_Image.Source = new BitmapImage(new Uri(WPFHelper.imageRatingResourcesPath + MatchRating.Success.ToString() + ".png", UriKind.Absolute));
+			UITEM_OriginalName_Text.Text = Item.ItemName + " | Price: " + Item.CurrentPriceDecimal.ToString("{0:f2}");
 		}
 
 		private void UITEM_ShowDetails_Click(object sender, RoutedEventArgs e) {
@@ -72,7 +67,7 @@ namespace BillScannerWPF {
 		}
 
 		public static implicit operator ItemPurchaseData(UIItem item) {
-			return new ItemPurchaseData(item.asociatedItem, item.quantityPurchased);
+			return new ItemPurchaseData(item.Item, item.AmountPurchased);
 		}
 	}
 }

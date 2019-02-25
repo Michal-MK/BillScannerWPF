@@ -24,9 +24,9 @@ namespace BillScannerWPF {
 		public ItemList_Item(ItemList parent, Item asociatedItem) {
 			InitializeComponent();
 
-			ITEMLISTCONTENT_ItemName_Text.Text = asociatedItem.userFriendlyName;
-			ITEMLISTCONTENT_ItemValue_Text.Text = string.Format("{0:f2}Kč", asociatedItem.currentPrice);
-			ITEMLISTCONTENT_ItemMeassurement_Text.Text = asociatedItem.unitOfMeassure.ToString();
+			ITEMLISTCONTENT_ItemName_Text.Text = asociatedItem.ItemName;
+			ITEMLISTCONTENT_ItemValue_Text.Text = string.Format("{0:f2}Kč", asociatedItem.CurrentPriceDecimal);
+			ITEMLISTCONTENT_ItemMeassurement_Text.Text = asociatedItem.UnitOfMeassure.ToString();
 			this.parent = parent;
 			this.asociatedItem = asociatedItem;
 		}

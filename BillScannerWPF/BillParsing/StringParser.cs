@@ -40,31 +40,35 @@ namespace BillScannerWPF {
 
 				if (ocrLowestDist <= 3) {
 					int currentPrice = await GetCurrentPriceAsync(split, i, ocrLowestIndex);
-					int quantity = await GetQuantityAsync(split, i, items[ocrLowestIndex].userFriendlyName);
+					int quantity = await GetQuantityAsync(split, i, items[ocrLowestIndex].ItemName);
 
-					UIItemCreationInfo match = new UIItemCreationInfo(items[ocrLowestIndex], true, quantity, currentPrice, (MatchRating)ocrLowestDist, split[i]);
+					UIItemCreationInfo match = new UIItemCreationInfo(items[ocrLowestIndex], quantity, currentPrice, (MatchRating)ocrLowestDist, split[i]);
 					matchedItems.Add(match);
 					continue;
 				}
 
 				if (ocrLowestDist <= 6) {
 					ManualResolveChoice resolveChoice = new ManualResolveChoice(
-						$"Found Item named {split[i]} with {ocrLowestIndex} character difference, closest: {items[ocrLowestIndex].userFriendlyName}",
+						$"Found Item named {split[i]} with {ocrLowestIndex} character difference, closest: {items[ocrLowestIndex].ItemName}",
 						Choices.MatchAnyway, Choices.MatchWithoutAddingAmbiguities, Choices.NotAnItem);
 
 					Choices choice = await resolveChoice.SelectChoiceAsync();
 
 					if (choice != Choices.NotAnItem) {
 						int currentPrice = await GetCurrentPriceAsync(split, i, ocrLowestIndex);
-						int quantity = await GetQuantityAsync(split, i, items[ocrLowestIndex].userFriendlyName);
-						UIItemCreationInfo creationInfo = new UIItemCreationInfo(items[ocrLowestIndex], true, quantity, currentPrice, MatchRating.FivePlus, split[i]);
+						int quantity = await GetQuantityAsync(split, i, items[ocrLowestIndex].ItemName);
+						UIItemCreationInfo creationInfo = new UIItemCreationInfo(items[ocrLowestIndex], quantity, currentPrice, MatchRating.FivePlus, split[i]);
 						if (choice == Choices.MatchAnyway) {
-							creationInfo.item.ocrNames.Add(split[i]);
+							creationInfo.Item.OcrNames.Add(split[i]);
 						}
 						matchedItems.Add(creationInfo);
 					}
 				}
 				else {
+					if (rules.correctCostAndQuantityLine.IsMatch(split[i])) {
+						//Found a price/quantity line, safely ignore
+						continue;
+					}
 					ManualResolveChoice choice = new ManualResolveChoice(
 						$"This string is something else.. what is it??\n'{split[i]}'",
 						Choices.FindExistingItemFromList, Choices.DefineNewItem, Choices.NotAnItem);
@@ -76,11 +80,11 @@ namespace BillScannerWPF {
 						(string itemName, int itemPrice, MeassurementUnit itemUnitOfMeassure) = await definition.RegisterItemAsync();
 						int quantity = await GetQuantityAsync(split, i, itemName);
 						Item newItem = new Item(itemName, itemPrice);
-						newItem.AddOCRName(split[i]);
+						newItem.AddOCRNameNew(split[i]);
 
-						UIItemCreationInfo newlyMatched = new UIItemCreationInfo(newItem, false, quantity, itemPrice, MatchRating.Success, split[i]);
+						UIItemCreationInfo newlyMatched = new UIItemCreationInfo(newItem, quantity, itemPrice, MatchRating.Success, split[i]);
+						newlyMatched.Item.SetUnitOfMeassure(itemUnitOfMeassure);
 						DatabaseAccess.access.WriteItemDefinitionToDatabase(newItem, purchaseTime);
-						newlyMatched.item.SetUnitOfMeassure(itemUnitOfMeassure);
 						matchedItems.Add(newlyMatched);
 					}
 					else if (c == Choices.FindExistingItemFromList) {
@@ -88,16 +92,16 @@ namespace BillScannerWPF {
 						Item manuallyMatchedItem = await list.SelectItemAsync();
 						if (manuallyMatchedItem == null) {
 							i--;
-							// Basically reprocess this item as if this newer happend
+							// Basically reprocess this item as if this newer happened
 							continue;
 						}
-						int quantity = await GetQuantityAsync(split, i, manuallyMatchedItem.userFriendlyName);
-						UIItemCreationInfo fromExistingMatched = new UIItemCreationInfo(manuallyMatchedItem, false, quantity, manuallyMatchedItem.currentPrice, MatchRating.Success, split[i]);
-						fromExistingMatched.item.ocrNames.Add(split[i]);
+						int quantity = await GetQuantityAsync(split, i, manuallyMatchedItem.ItemName);
+						UIItemCreationInfo fromExistingMatched = new UIItemCreationInfo(manuallyMatchedItem, quantity, manuallyMatchedItem.CurrentPriceInt, MatchRating.Success, split[i]);
+						fromExistingMatched.Item.OcrNames.Add(split[i]);
 						matchedItems.Add(fromExistingMatched);
 					}
 					else if (c == Choices.NotAnItem) {
-						unmatchedItems.Add(new UIItemCreationInfo(new Item(split[i], -1), false, -1, -1, MatchRating.Fail, ""));
+						unmatchedItems.Add(new UIItemCreationInfo(new Item(split[i], -1), -1, -1, MatchRating.Fail, ""));
 					}
 				}
 			}
@@ -109,7 +113,7 @@ namespace BillScannerWPF {
 			int ocrLowestIndex = -1;
 
 			for (int j = 0; j < items.Length; j++) {
-				foreach (string ocrName in items[j].ocrNames) {
+				foreach (string ocrName in items[j].OcrNames) {
 					int currentOCRNameDist = WordSimilarity.Compute(split[index], ocrName);
 					if (currentOCRNameDist < ocrLowestDist) {
 						ocrLowestDist = currentOCRNameDist;
@@ -187,11 +191,11 @@ namespace BillScannerWPF {
 				}
 				Choices choice = await res.SelectChoiceAsync();
 				if (choice == Choices.UseLatestValue) {
-					return DatabaseAccess.access.GetItems()[fallbackItemIndex].currentPrice;
+					return DatabaseAccess.access.GetItems()[fallbackItemIndex].CurrentPriceInt;
 				}
 				else if (choice == Choices.ManuallyEnterPrice) {
 					if (decimal.TryParse(res.MANUAL_RESOLUTION_Solution5_Box.Text, NumberStyles.Currency | NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture, out decimal result)) {
-						return (int)result * 100;
+						return (int)(result * 100);
 					}
 					else {
 						return await GetCurrentPriceAsync(split, splitIndex, fallbackItemIndex);
