@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using Core.Database;
 
 namespace BillScannerCore {
@@ -18,29 +17,39 @@ namespace BillScannerCore {
 		/// <summary>
 		/// The date this purchase was made
 		/// </summary>
-		public DateTime date { get; }
+		public DateTime PurchaseDate { get; }
 
 		/// <summary>
 		/// Total amount paid for this purchase
 		/// </summary>
-		public int totalCost { get; private set; } = 0;
+		public int TotalCost { get; private set; } = 0;
 
 		/// <summary>
-		/// List of item GUIDs that were bought
+		/// List of items that were bought
 		/// </summary>
-		public Item[] purchasedItems => DatabaseAccess.access.GetItems(ID);
+		public Item[] AsociatedItems {
+			get {
+				if (_purchasedDbItems == null) {
+					return DatabaseAccess.access.GetItems(ID);
+				}
+				throw new Exception("This purchase does not yet have any items registered to it. Purchase must be finalized first.");
+			}
+		}
 
 		/// <summary>
 		/// The Shop this purchase was made in
 		/// </summary>
-		public Shop shop { get; }
+		public Shop Shop { get; }
 
-		private DbItemPurchase[] purchasedDbItems { get; set; }
+		private ItemPurchaseData[] _purchasedDbItems;
 
+		/// <summary>
+		/// Create a purchase from database entry
+		/// </summary>
 		public Purchase(DbPurchase current) {
 			ID = current.ID;
-			date = DateTime.Parse(current.Date);
-			shop = (Shop)current.ShopID;
+			PurchaseDate = DateTime.Parse(current.Date);
+			Shop = (Shop)current.ShopID;
 		}
 
 
@@ -48,11 +57,12 @@ namespace BillScannerCore {
 		/// Create a new <see cref="Purchase"/>
 		/// </summary>
 		/// <param name="date">The date this purchase was made</param>
-		public Purchase(DateTime date, ItemPurchaseData[] collection) {
-			this.date = date;
-			purchasedDbItems = new DbItemPurchase[collection.Length];
-			for (int i = 0; i < collection.Length; i++) {
-				purchasedDbItems[i] = new DbItemPurchase() { Amount = collection[i].amount, ValuePerItem = collection[i].item.currentPrice };
+		public Purchase(Shop shop, DateTime date, ItemPurchaseData[] collection) {
+			PurchaseDate = date;
+			_purchasedDbItems = collection;
+			Shop = shop;
+			for (int i = 0; i < _purchasedDbItems.Length; i++) {
+				TotalCost += _purchasedDbItems[i].Amount * _purchasedDbItems[i].Item.CurrentPriceInt;
 			}
 		}
 
@@ -61,11 +71,7 @@ namespace BillScannerCore {
 		/// Preforms the actual writing to the database
 		/// </summary>
 		public void FinalizePurchase() {
-			for (int i = 0; i < purchasedItems.Length; i++) {
-				DatabaseAccess.access.AddNewPurchaseForItemToDatabase(purchasedDbItems[i].ItemID, new ItemPurchaseHistory(ID, purchasedDbItems[i].Amount, purchasedDbItems[i].ValuePerItem),date);
-				totalCost += purchasedDbItems[i].Amount * purchasedDbItems[i].ValuePerItem;
-			}
-			DatabaseAccess.access.WriteNewPurchaseInstance(this);
+			DatabaseAccess.access.RecordPurchase(this, _purchasedDbItems);
 		}
 	}
 }

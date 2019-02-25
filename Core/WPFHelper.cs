@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
-using System.Windows;
 
 namespace BillScannerCore {
 
@@ -15,6 +14,11 @@ namespace BillScannerCore {
 		/// Returns an absolute path to this application's path inside the %appdata% (Roaming) folder
 		/// </summary>
 		public static string dataPath { get { return Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + Path.DirectorySeparatorChar + "BillScanner" + Path.DirectorySeparatorChar; } }
+
+		/// <summary>
+		/// Name of the database
+		/// </summary>
+		public static string databaseFileName => "ShoppingDB.db";
 
 		/// <summary>
 		/// Returns an absolute path to Resources inside the executable
@@ -40,6 +44,26 @@ namespace BillScannerCore {
 			}
 			if (list.Count > 0) {
 				builder.Remove(builder.Length - 2, 2);
+			}
+			return builder.ToString();
+		}
+
+
+		/// <summary>
+		/// Helper function to merge a dictionary of elements into one <see cref="string"/> separated by a <see cref="char"/> calls the <see cref="object.ToString()"/> function
+		/// </summary>
+		/// <typeparam name="T">Type of the data to merge</typeparam>
+		/// <param name="list">List containing the data to merge</param>
+		/// <param name="connector">A character to put between two elements of the list</param>
+		public static string Merge<T, U>(this Dictionary<T, U> list, char connector) {
+			StringBuilder builder = new StringBuilder();
+			string separator = "";
+			foreach (T key in list.Keys) {
+				builder.Append(separator);
+				builder.Append(key.ToString());
+				builder.Append(":");
+				builder.Append(list[key].ToString());
+				separator = connector.ToString() + " ";
 			}
 			return builder.ToString();
 		}
