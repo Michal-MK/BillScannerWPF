@@ -96,7 +96,6 @@
     <Compile Include="WPFHelper.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="app.config" />
     <Resource Include="Database\ShoppingDB.db">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>

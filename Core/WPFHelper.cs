@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
-using System.Windows;
 
 namespace BillScannerCore {
 
@@ -16,7 +15,9 @@ namespace BillScannerCore {
 		/// </summary>
 		public static string dataPath { get { return Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + Path.DirectorySeparatorChar + "BillScanner" + Path.DirectorySeparatorChar; } }
 
-
+		/// <summary>
+		/// Name of the database
+		/// </summary>
 		public static string databaseFileName => "ShoppingDB.db";
 
 		/// <summary>
@@ -54,7 +55,7 @@ namespace BillScannerCore {
 		/// <typeparam name="T">Type of the data to merge</typeparam>
 		/// <param name="list">List containing the data to merge</param>
 		/// <param name="connector">A character to put between two elements of the list</param>
-		public static string Merge<T,U>(this Dictionary<T,U> list, char connector) {
+		public static string Merge<T, U>(this Dictionary<T, U> list, char connector) {
 			StringBuilder builder = new StringBuilder();
 			string separator = "";
 			foreach (T key in list.Keys) {

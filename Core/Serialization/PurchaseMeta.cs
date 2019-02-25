@@ -9,16 +9,16 @@ namespace BillScannerCore {
 		/// <summary>
 		/// The date this item was purchased at
 		/// </summary>
-		public DateTime purchasedAt { get; }
+		public DateTime PurchasedAt { get; }
 
 		/// <summary>
 		/// The date this item was scanned at
 		/// </summary>
-		public DateTime scannedAt { get; }
+		public DateTime ScannedAt { get; }
 
 		public PurchaseMeta(DateTime purchaseDate) {
-			purchasedAt = purchaseDate;
-			scannedAt = DateTime.Now;
+			PurchasedAt = purchaseDate;
+			ScannedAt = DateTime.Now;
 		}
 	}
 }

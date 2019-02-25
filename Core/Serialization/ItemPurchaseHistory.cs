@@ -11,22 +11,22 @@ namespace BillScannerCore {
 		/// <summary>
 		/// Unique identifier of this purchase
 		/// </summary>
-		public int purchaseID { get; }
+		public int PurchaseID { get; }
 
 		/// <summary>
 		/// How many items of this type were bought at that time
 		/// </summary>
-		public int amount { get; }
+		public int Amount { get; }
 
 		/// <summary>
 		/// The amount of money the item cost at that time
 		/// </summary>
-		public int price { get; }
+		public int Price { get; }
 
 		public ItemPurchaseHistory(int purchaseID, int amount, int price) {
-			this.purchaseID = purchaseID;
-			this.amount = amount;
-			this.price = price;
+			PurchaseID = purchaseID;
+			Amount = amount;
+			Price = price;
 		}
 	}
 }
