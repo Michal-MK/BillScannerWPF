@@ -1,4 +1,5 @@
 ﻿using BillScannerCore;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Threading;
 using System.Threading.Tasks;
@@ -12,33 +13,35 @@ namespace BillScannerWPF {
 	/// </summary>
 	public partial class ItemList : UserControl {
 
-		private ObservableCollection<ItemList_Item> observedItems;
+		private ObservableCollection<ItemList_Item> Items { get; set; }
+
 		private readonly ManualResetEventSlim evnt = new ManualResetEventSlim();
-		private bool wasAborted = false;
+		private bool _wasAborted = false;
 
 		/// <summary>
 		/// Create a list of items for the UI from a normal <see cref="Item"/> class
 		/// </summary>
-		/// <param name="items"></param>
-		public ItemList(Item[] items) {
+		public ItemList() {
 			InitializeComponent();
-
-			((MainWindow)App.Current.MainWindow).MAIN_Grid.Children.Add(this);
-
-			observedItems = new ObservableCollection<ItemList_Item>();
-			foreach (Item item in items) {
-				ItemList_Item i = new ItemList_Item(this, item);
-				observedItems.Add(i);
-			}
-
-			ITEMLIST_Items_ListBox.ItemsSource = observedItems;
+			DataContext = this;
 			ITEMLIST_Select_Button.Click += ITEMLIST_Select_Click;
 			ITEMLIST_Back_Button.Click += ITEMLIST_Back_Click;
 		}
 
+		/// <summary>
+		/// Add items to display in this ItemList
+		/// </summary>
+		public void AddItems(IEnumerable<Item> items) {
+			Items = new ObservableCollection<ItemList_Item>();
+			foreach (Item item in items) {
+				ItemList_Item i = new ItemList_Item(this, item);
+				Items.Add(i);
+			}
+		}
+
 
 		private void ITEMLIST_Back_Click(object sender, RoutedEventArgs e) {
-			wasAborted = true;
+			_wasAborted = true;
 			evnt.Set();
 		}
 
@@ -58,12 +61,11 @@ namespace BillScannerWPF {
 				await Task.Run(() => {
 					evnt.Wait();
 				});
-				if (wasAborted) {
+				if (_wasAborted) {
 					((MainWindow)App.Current.MainWindow).MAIN_Grid.Children.Remove(this);
 					return null;
 				}
 			}
-			((MainWindow)App.Current.MainWindow).MAIN_Grid.Children.Remove(this);
 			return ((ItemList_Item)ITEMLIST_Items_ListBox.SelectedItem).asociatedItem;
 		}
 	}

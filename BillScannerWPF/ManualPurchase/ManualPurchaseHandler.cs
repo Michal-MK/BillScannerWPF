@@ -1,9 +1,9 @@
 ﻿using System;
+using System.Globalization;
 using System.Windows;
 using BillScannerCore;
 
-namespace BillScannerWPF
-{
+namespace BillScannerWPF {
 	class ManualPurchaseHandler {
 
 		private readonly Shop _shop;
@@ -14,8 +14,15 @@ namespace BillScannerWPF
 			_mainWindow = mainWindow;
 		}
 
-		internal void Begin(object sender, RoutedEventArgs e) {
-			throw new NotImplementedException();
+		internal async void Begin(object sender, RoutedEventArgs e) {
+			ManualPurchaseView view = new ManualPurchaseView();
+			ManualResolveChoice dateChoice = new ManualResolveChoice("Enter purchase date:", Choices.ManuallyEnterDate);
+			await dateChoice.SelectChoiceAsync();
+			DateTime purchaseDate;
+			while (!DateTime.TryParseExact(dateChoice.MANUAL_RESOLUTION_Solution5_DateBox.DATEBOX_Input_Box.Text,"dd:MM:yyyy hh:mm:ss", CultureInfo.GetCultureInfo("cs"), DateTimeStyles.AllowWhiteSpaces, out purchaseDate)) {
+				await dateChoice.SelectChoiceAsync();
+			}
+			_mainWindow.MAIN_Grid.Children.Add(view);
 		}
 	}
 }

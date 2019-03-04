@@ -88,11 +88,12 @@ namespace BillScannerWPF {
 						matchedItems.Add(newlyMatched);
 					}
 					else if (c == Choices.FindExistingItemFromList) {
-						ItemList list = new ItemList(DatabaseAccess.access.GetItems(rules.shop));
+						ItemList list = new ItemList();
+						list.AddItems(DatabaseAccess.access.GetItems(rules.shop));
 						Item manuallyMatchedItem = await list.SelectItemAsync();
 						if (manuallyMatchedItem == null) {
 							i--;
-							// Basically reprocess this item as if this newer happened
+							// Basically reprocess this item as if this never happened
 							continue;
 						}
 						int quantity = await GetQuantityAsync(split, i, manuallyMatchedItem.ItemName);
