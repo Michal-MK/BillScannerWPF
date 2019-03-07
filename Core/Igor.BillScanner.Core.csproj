@@ -110,6 +110,7 @@
     <Compile Include="Serialization\Purchase.cs" />
     <Compile Include="Serialization\PurchaseMeta.cs" />
     <Compile Include="Services.cs" />
+    <Compile Include="ViewModels\BaseViewModel.cs" />
     <Compile Include="ViewModels\StatusBarViewModel.cs" />
     <Compile Include="WPFHelper.cs" />
   </ItemGroup>
