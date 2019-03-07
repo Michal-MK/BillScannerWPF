@@ -1,9 +1,10 @@
 ﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
 
 namespace Igor.BillScanner.Core {
 
 	public interface IItemPreview {
-		void ConstructUI(bool match, IEnumerable<UIItemCreationInfo> creation);
+		ObservableCollection<object> ConstructUI(IEnumerable<UIItemCreationInfo> creation);
 
 		void Clear();
 
