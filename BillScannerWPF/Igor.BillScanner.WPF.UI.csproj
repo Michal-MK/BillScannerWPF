@@ -66,9 +66,9 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="ManualPurchase\ManualPurchaseHandler.cs" />
-    <Compile Include="ManualUserInput.cs" />
-    <Compile Include="ScannerHelper.cs" />
-    <Compile Include="ServerStateManager.cs" />
+    <Compile Include="ManualPurchase\ManualUserInput.cs" />
+    <Compile Include="Helpers\ScannerHelper.cs" />
+    <Compile Include="Helpers\ServerStateManager.cs" />
     <Compile Include="XAML\DateBox.xaml.cs">
       <DependentUpon>DateBox.xaml</DependentUpon>
     </Compile>
