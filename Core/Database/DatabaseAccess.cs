@@ -1,11 +1,11 @@
-﻿using System.Data.SQLite;
-using Dapper;
-using System.Data;
-using System;
-using Core.Database;
+﻿using System;
 using System.Collections.Generic;
+using System.Data;
+using System.Data.SQLite;
+using Dapper;
+using Igor.BillScanner.Core.Database;
 
-namespace BillScannerCore {
+namespace Igor.BillScanner.Core {
 
 	/// <summary>
 	/// Provides methods for database IO.

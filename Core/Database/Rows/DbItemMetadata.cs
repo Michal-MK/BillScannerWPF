@@ -1,7 +1,6 @@
-﻿using BillScannerCore;
-using System;
+﻿using System;
 
-namespace Core.Database {
+namespace Igor.BillScanner.Core.Database {
 	/// <summary>
 	/// Class representing an Item Meta-data row in the database
 	/// </summary>

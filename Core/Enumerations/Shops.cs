@@ -1,4 +1,4 @@
-﻿namespace BillScannerCore {
+﻿namespace Igor.BillScanner.Core {
 
 	/// <summary>
 	/// All shops that are ready to have their bills parsed

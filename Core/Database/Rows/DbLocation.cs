@@ -1,4 +1,4 @@
-﻿namespace Core.Database {
+﻿namespace Igor.BillScanner.Core.Database {
 
 	/// <summary>
 	/// Class representing a Location row in the database

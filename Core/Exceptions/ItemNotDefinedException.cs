@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace BillScannerCore {
+namespace Igor.BillScanner.Core {
 
 	/// <summary>
 	/// Exception that is thrown when an Item can not be found inside the internal representation of database file.

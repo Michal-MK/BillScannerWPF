@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using Igor.BillScanner.Core.Database;
 
-namespace BillScannerCore {
+namespace Igor.BillScanner.Core {
 
 	public class Item {
 
@@ -12,7 +13,7 @@ namespace BillScannerCore {
 			OcrNames = new List<string>();
 			PriceHistory = new Dictionary<DateTime, int>();
 
-			this.ItemName = userFriendlyName;
+			ItemName = userFriendlyName;
 			CurrentPriceInt = currentPrice;
 			ID = -1;
 		}
@@ -20,8 +21,8 @@ namespace BillScannerCore {
 		/// <summary>
 		/// Create a new <see cref="Item"/> by querying the database and connecting all the needed entries
 		/// </summary>
-		public Item(Core.Database.DbItem current, IEnumerator<string> ocrNames, IEnumerator<Core.Database.DbItemValueHistory> pastValues) {
-			this.OcrNames = new List<string>();
+		public Item(DbItem current, IEnumerator<string> ocrNames, IEnumerator<Database.DbItemValueHistory> pastValues) {
+			OcrNames = new List<string>();
 			PriceHistory = new Dictionary<DateTime, int>();
 
 			ID = current.ID;
@@ -29,7 +30,7 @@ namespace BillScannerCore {
 			CurrentPriceInt = current.Value;
 
 			while (ocrNames.MoveNext()) {
-				this.OcrNames.Add(ocrNames.Current);
+				OcrNames.Add(ocrNames.Current);
 			}
 			while (pastValues.MoveNext()) {
 				PriceHistory.Add(DateTime.Parse(pastValues.Current.Date), pastValues.Current.Value);

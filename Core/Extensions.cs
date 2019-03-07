@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Text;
 
-namespace BillScannerCore {
+namespace Igor.BillScanner.Core {
 	public static class Extensions {
 
 		public static string ReplaceAt(this string s, int index, char toPlace) {
