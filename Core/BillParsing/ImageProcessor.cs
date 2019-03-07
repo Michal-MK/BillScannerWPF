@@ -15,6 +15,8 @@ namespace Igor.BillScanner.Core {
 		private readonly TesseractEngine _engine;
 		private readonly IRuleset _ruleset;
 
+		public event EventHandler<ParsingResult> OnImageParsed;
+
 		/// <summary>
 		/// Static reference to the <see cref="ImageProcessor"/> and its content
 		/// </summary>
@@ -72,10 +74,8 @@ namespace Igor.BillScanner.Core {
 
 			result = await parser.ParseAsync(lines);
 
-
-			preview.ConstructUI(true, result.MachedItems);
-			preview.ConstructUI(false, result.UnknownItems);
 			CurrentParsingResult = result;
+			OnImageParsed?.Invoke(this, CurrentParsingResult);
 		}
 
 		private string[] GetOCRLines(string imagePath) {
