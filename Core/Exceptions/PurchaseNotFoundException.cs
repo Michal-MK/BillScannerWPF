@@ -1,10 +1,9 @@
 ﻿using System;
-using System.Runtime.Serialization;
 
-namespace BillScannerCore {
+namespace Igor.BillScanner.Core {
 
 	/// <summary>
-	/// Exception thrown when attempting to find a purchase with GUID that does not exist.
+	/// Exception thrown when attempting to find a purchase with ID that does not exist.
 	/// </summary>
 	[Serializable]
 	internal class PurchaseNotFoundException : Exception {

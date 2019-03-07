@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel;
 
-namespace BillScannerCore {
+namespace Igor.BillScanner.Core {
 	public class StatusBarViewModel : INotifyPropertyChanged {
 		public event PropertyChangedEventHandler PropertyChanged;
 

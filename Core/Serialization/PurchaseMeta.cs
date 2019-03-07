@@ -1,5 +1,5 @@
 ﻿using System;
-namespace BillScannerCore {
+namespace Igor.BillScanner.Core {
 
 	/// <summary>
 	/// Class holding the time at which the purchase was made and the time at which the bill was scanned into the database

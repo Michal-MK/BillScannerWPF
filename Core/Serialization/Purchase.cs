@@ -1,7 +1,7 @@
 ﻿using System;
-using Core.Database;
+using Igor.BillScanner.Core.Database;
 
-namespace BillScannerCore {
+namespace Igor.BillScanner.Core {
 
 	/// <summary>
 	/// Class representing a singe purchase

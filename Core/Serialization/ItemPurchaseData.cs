@@ -1,4 +1,4 @@
-﻿namespace BillScannerCore {
+﻿namespace Igor.BillScanner.Core {
 	public class ItemPurchaseData {
 
 		/// <summary>

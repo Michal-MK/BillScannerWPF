@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace BillScannerCore {
+namespace Igor.BillScanner.Core {
 
 	/// <summary>
 	/// Class holding the information about each purchase of an item.

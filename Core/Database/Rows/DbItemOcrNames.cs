@@ -1,4 +1,4 @@
-﻿namespace Core.Database {
+﻿namespace Igor.BillScanner.Core.Database {
 	/// <summary>
 	/// Class representing an Item OCR names row in the database
 	/// </summary>
