@@ -1,9 +1,5 @@
-﻿using System.ComponentModel;
-
-namespace Igor.BillScanner.Core {
-	public class StatusBarViewModel : INotifyPropertyChanged {
-		public event PropertyChangedEventHandler PropertyChanged;
-
+﻿namespace Igor.BillScanner.Core {
+	public class StatusBarViewModel : BaseViewModel {
 		/// <summary>
 		/// Default constructor
 		/// </summary>
@@ -32,7 +28,7 @@ namespace Igor.BillScanner.Core {
 			get { return serverOnlineString; }
 			set {
 				serverOnlineString = value;
-				PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ServerOnlineString)));
+				Notify(nameof(ServerOnlineString));
 			}
 		}
 		private string serverOnlineString;
@@ -47,7 +43,7 @@ namespace Igor.BillScanner.Core {
 				clientConnected = value;
 				if (value) { ClientConnectedString = "Client Connected"; }
 				else { ClientConnectedString = "No Connection"; }
-				PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ClientConnected)));
+				Notify(nameof(ClientConnected));
 			}
 		}
 		private bool clientConnected = false;
@@ -59,7 +55,7 @@ namespace Igor.BillScanner.Core {
 			get { return clientConnectedString; }
 			set {
 				clientConnectedString = value;
-				PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ClientConnectedString)));
+				Notify(nameof(ClientConnectedString));
 			}
 		}
 		private string clientConnectedString;
@@ -72,7 +68,7 @@ namespace Igor.BillScanner.Core {
 			get { return shop; }
 			set {
 				shop = value;
-				PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CurrentShop)));
+				Notify(nameof(CurrentShop));
 			}
 		}
 		private Shop shop;

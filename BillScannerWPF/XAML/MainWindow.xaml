@@ -7,50 +7,57 @@
         mc:Ignorable="d"
         Title="Bill Scanner" Height="500" Width="1000">
 
-	<Grid Name="MAIN_Grid">
-		<!--Base-->
-		<Grid Margin="0,16,0,0">
-			<Grid.ColumnDefinitions>
-				<ColumnDefinition Width="3*"></ColumnDefinition>
-				<ColumnDefinition Width="3*"></ColumnDefinition>
-				<ColumnDefinition Width="3*"></ColumnDefinition>
-			</Grid.ColumnDefinitions>
-			<Image x:Name="MAIN_PhotoPreview_Image" Grid.Column="0" MouseLeftButtonDown="PreviewImgMouse" MouseRightButtonDown="MAIN_PhotoPreview_RightClick" HorizontalAlignment="Center" VerticalAlignment="Center" Stretch="Uniform" Margin="10" Source="/BillScannerWPF;component/Resources/Transparent.png"/>
+	<Grid x:Name="MAIN_Root_Grid">
+		<local:StatusBar x:Name="StatusBar"></local:StatusBar>
+		
+		<Grid Margin="5,16,5,5"  Name="MAIN_Grid">
+			<Grid>
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="3*"></ColumnDefinition>
+					<ColumnDefinition Width="3*"></ColumnDefinition>
+					<ColumnDefinition Width="3*"></ColumnDefinition>
+				</Grid.ColumnDefinitions>
+				<Image x:Name="MAIN_PhotoPreview_Image" Grid.Column="0"
+					   MouseLeftButtonDown="PreviewImgMouse" 
+					   MouseRightButtonDown="MAIN_PhotoPreview_RightClick"
+					   Stretch="Uniform" Margin="10"
+					   Source="/Igor.BillScanner.WPF.UI;component/Resources/Transparent.png"/>
 
-			<Label Content="Matched Products" Grid.Column="1" />
-			<ScrollViewer Grid.Column="1"  Margin="0,30,0,70">
-				<StackPanel>
-					<StackPanel.Resources>
-						<Style TargetType="{x:Type local:UIItem}">
-							<Setter Property="Margin" Value="0,5"/>
-						</Style>
-					</StackPanel.Resources>
-					<ItemsControl x:Name="MAIN_MatchedItems_Stack"></ItemsControl>
-				</StackPanel>
-			</ScrollViewer>
+				<Label Content="Matched Products" Grid.Column="1" />
+				<ScrollViewer Grid.Column="1"  Margin="0,30,0,70">
+					<StackPanel>
+						<StackPanel.Resources>
+							<Style TargetType="{x:Type local:UIItem}">
+								<Setter Property="Margin" Value="0,5"/>
+							</Style>
+						</StackPanel.Resources>
+						<ItemsControl x:Name="MAIN_MatchedItems_Stack"></ItemsControl>
+					</StackPanel>
+				</ScrollViewer>
 
-			<Label Content="Unknown Products" Grid.Column="2" />
-			<ScrollViewer Grid.Column="2" Margin="0,30,0,70">
-				<StackPanel>
-					<StackPanel.Resources>
-						<Style TargetType="{x:Type local:UIItem}">
-							<Setter Property="Margin" Value="0,5"/>
-						</Style>
-					</StackPanel.Resources>
-					<ItemsControl x:Name="MAIN_UnknownProducts_Stack"></ItemsControl>
-				</StackPanel>
-			</ScrollViewer>
+				<Label Content="Unknown Products" Grid.Column="2" />
+				<ScrollViewer Grid.Column="2" Margin="0,30,0,70">
+					<StackPanel>
+						<StackPanel.Resources>
+							<Style TargetType="{x:Type local:UIItem}">
+								<Setter Property="Margin" Value="0,5"/>
+							</Style>
+						</StackPanel.Resources>
+						<ItemsControl x:Name="MAIN_UnknownProducts_Stack"></ItemsControl>
+					</StackPanel>
+				</ScrollViewer>
 
-		</Grid>
-		<Grid HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="10,0,10,10" Height="50">
-			<Grid.ColumnDefinitions>
-				<ColumnDefinition Width="auto"></ColumnDefinition>
-				<ColumnDefinition Width="120"></ColumnDefinition>
-			</Grid.ColumnDefinitions>
-			<Button x:Name="MAIN_Finalize_Button"			Grid.Column="1" Content="Finalize"				Margin="10,0,0,0"/>
-			<Button x:Name="MAIN_Clear_Button"				Grid.Column="1" Content="Clear Contents"		Margin="10,0,0,0" Visibility="Collapsed"/>
-			<Button x:Name="MAIN_Analyze_Button"			Grid.Column="0" Content="Analyze"				Margin="10,0,0,0"/>
-			<Button x:Name="MAIN_ManualPurchase_Button"		Grid.Column="0" Content="New Manual Purchase"	Margin="10,0,0,0"/>
+			</Grid>
+			<Grid HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="10,0,10,10" Height="50">
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition MinWidth="120"></ColumnDefinition>
+					<ColumnDefinition MinWidth="120"></ColumnDefinition>
+				</Grid.ColumnDefinitions>
+				<Button x:Name="MAIN_Finalize_Button"			Grid.Column="1" Content="Finalize"				Margin="10,0,0,0"/>
+				<Button x:Name="MAIN_Clear_Button"				Grid.Column="1" Content="Clear Contents"		Margin="10,0,0,0" Visibility="Collapsed"/>
+				<Button x:Name="MAIN_Analyze_Button"			Grid.Column="0" Content="Analyze"				Margin="10,0,0,0"/>
+				<Button x:Name="MAIN_ManualPurchase_Button"		Grid.Column="0" Content="Manual Purchase"	Margin="10,0,0,0"/>
+			</Grid>
 		</Grid>
 	</Grid>
 </Window>

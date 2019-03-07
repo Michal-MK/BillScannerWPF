@@ -9,10 +9,9 @@ namespace Igor.BillScanner.WPF.UI {
 
 		public StatusBarViewModel Model { get; }
 
-		public StatusBar(StatusBarViewModel model) {
+		public StatusBar() {
 			InitializeComponent();
-			Model = model;
-			DataContext = model;
+			DataContext = Model = new StatusBarViewModel();
 		}
 	}
 }

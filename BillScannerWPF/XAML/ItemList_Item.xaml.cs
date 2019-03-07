@@ -26,7 +26,7 @@ namespace Igor.BillScanner.WPF.UI {
 
 			ITEMLISTCONTENT_ItemName_Text.Text = asociatedItem.ItemName;
 			ITEMLISTCONTENT_ItemValue_Text.Text = string.Format("{0:f2}Kč", asociatedItem.CurrentPriceDecimal);
-			ITEMLISTCONTENT_ItemMeassurement_Text.Text = asociatedItem.UnitOfMeassure.ToString();
+			//ITEMLISTCONTENT_ItemMeassurement_Text.Text = asociatedItem.UnitOfMeassure.ToString();
 			this.parent = parent;
 			this.asociatedItem = asociatedItem;
 		}

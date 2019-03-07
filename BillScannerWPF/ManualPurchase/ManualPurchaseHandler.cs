@@ -4,18 +4,18 @@ using System.Windows;
 using Igor.BillScanner.Core;
 
 namespace Igor.BillScanner.WPF.UI {
-	class ManualPurchaseHandler {
+	public class ManualPurchaseHandler {
 
-		private readonly Shop _shop;
+		public Shop Shop { get; }
 		private readonly MainWindow _mainWindow;
 
 		public ManualPurchaseHandler(Shop selectedShop, MainWindow mainWindow) {
-			_shop = selectedShop;
+			Shop = selectedShop;
 			_mainWindow = mainWindow;
 		}
 
 		internal async void Begin(object sender, RoutedEventArgs e) {
-			ManualPurchaseView view = new ManualPurchaseView();
+			ManualPurchaseView view = new ManualPurchaseView(this);
 			ManualResolveChoice dateChoice = new ManualResolveChoice("Enter purchase date:", Choices.ManuallyEnterDate);
 			await dateChoice.SelectChoiceAsync();
 			DateTime purchaseDate;

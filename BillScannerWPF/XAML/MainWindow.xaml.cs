@@ -54,14 +54,8 @@ namespace Igor.BillScanner.WPF.UI {
 		/// </summary>
 		internal IRuleset SelectedShopRuleset { get; }
 
-		/// <summary>
-		/// The status bar at the top, provides general information about the state of the program
-		/// </summary>
-		internal StatusBar StatusBar { get; }
-
-
-		internal ObservableCollection<UIItem> matchedItems = new ObservableCollection<UIItem>();
-		internal ObservableCollection<UIItem> unknownItems = new ObservableCollection<UIItem>();
+		internal ObservableCollection<UIItem> matchedItems;
+		internal ObservableCollection<UIItem> unknownItems;
 
 		/// <summary>
 		/// Create a default Albert window (Debug)
@@ -78,9 +72,6 @@ namespace Igor.BillScanner.WPF.UI {
 
 			DatabaseAccess.LoadDatabase(selectedShop);
 			SelectedShopRuleset = BaseRuleset.GetRuleset(selectedShop);
-
-			StatusBar = new StatusBar(new StatusBarViewModel());
-			MAIN_Grid.Children.Add(StatusBar);
 
 			StatusBar.Model.CurrentShop = selectedShop;
 			StatusBar.BAR_CurrentLoadedShop_Text.MouseLeftButtonDown += OnShopClicked;
@@ -100,6 +91,9 @@ namespace Igor.BillScanner.WPF.UI {
 			});
 
 			ImgProcessing = new ImageProcessor(SelectedShopRuleset, this);
+
+			ImgProcessing.OnImageParsed += OnImageParsed;
+
 			ManualPurchase = new ManualPurchaseHandler(selectedShop, this);
 
 			MAIN_Analyze_Button.Click += AnalyzeMethod;
@@ -114,6 +108,18 @@ namespace Igor.BillScanner.WPF.UI {
 			DebugDelay();
 		}
 
+		private void OnImageParsed(object sender, ParsingResult e) {
+			matchedItems = UIItemConversion(ConstructUI(e.MachedItems));
+			unknownItems = UIItemConversion(ConstructUI(e.UnknownItems));
+		}
+
+		public ObservableCollection<UIItem> UIItemConversion(ObservableCollection<object> observableCollection) {
+			ObservableCollection<UIItem> okay = new ObservableCollection<UIItem>();
+			foreach (object item in observableCollection) {
+				okay.Add((UIItem)item);
+			}
+			return okay;
+		}
 
 		private void OnShopClicked(object sender, MouseButtonEventArgs e) {
 			SetupWindow w = new SetupWindow();
@@ -141,7 +147,6 @@ namespace Igor.BillScanner.WPF.UI {
 		}
 
 		#region Server Startup/Events
-
 
 		private async Task StartServer() {
 			if (ServerStateManager.isHoldingInstance) {
@@ -209,6 +214,9 @@ namespace Igor.BillScanner.WPF.UI {
 			CurrentImageSource = imgUri.AbsolutePath;
 
 			MAIN_PhotoPreview_Image.Source = image;
+
+			MAIN_ManualPurchase_Button.Visibility = Visibility.Collapsed;
+			MAIN_Analyze_Button.Visibility = Visibility.Visible;
 		}
 
 		private int attempt = -1;
@@ -244,7 +252,6 @@ namespace Igor.BillScanner.WPF.UI {
 
 		private void MAIN_Clear_Click(object sender, RoutedEventArgs e) {
 			Clear();
-			Clear();
 
 			SetPreviewImage(new Uri(WPFHelper.resourcesPath + "Transparent.png"));
 
@@ -252,21 +259,16 @@ namespace Igor.BillScanner.WPF.UI {
 			((Button)sender).Visibility = Visibility.Collapsed;
 		}
 
-		public void ConstructUI(bool match, IEnumerable<UIItemCreationInfo> creation) {
-			ObservableCollection<UIItem> receiver;
-			if (match) {
-				receiver = matchedItems;
-			}
-			else {
-				receiver = unknownItems;
-			}
+		public ObservableCollection<object> ConstructUI(IEnumerable<UIItemCreationInfo> creation) {
+			ObservableCollection<object> receiver = new ObservableCollection<object>();
 			foreach (UIItemCreationInfo item in creation) {
 				receiver.Add(new UIItem(item));
 			}
+			return receiver;
 		}
 
 		public void Clear() {
-			throw new NotImplementedException();
+			//TODO
 		}
 
 		#endregion
