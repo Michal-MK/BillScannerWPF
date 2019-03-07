@@ -1,23 +1,23 @@
-﻿using Microsoft.Win32;
-using System;
+﻿using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.IO;
+using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
-using System.Diagnostics;
-
+using Igor.BillScanner.Core;
+using Igor.BillScanner.Core.Rules;
 using Igor.TCP;
-using BillScannerWPF.Rules;
-using BillScannerCore;
-using BillScannerStartup;
-using System.Windows.Controls;
-using System.Threading.Tasks;
+using Microsoft.Win32;
 
-namespace BillScannerWPF {
+namespace Igor.BillScanner.WPF.UI {
 	/// <summary>
 	/// Interaction logic for MainWindow.xaml
 	/// </summary>
-	public partial class MainWindow : Window, IDisposable {
+	public partial class MainWindow : Window, IDisposable, IDispatcher, IItemPreview {
 
 		/// <summary>
 		/// The constant port the server is listening on for incoming phone connections
@@ -27,37 +27,41 @@ namespace BillScannerWPF {
 		/// <summary>
 		/// Static reference to the server
 		/// </summary>
-		public static TCPServer server;
+		public static TCPServer server { get; internal set; }
 
 		/// <summary>
 		/// Image processing class that does the scanning and subsequent parsing of the image
 		/// </summary>
-		internal ImageProcessor imgProcessing;
+		public ImageProcessor ImgProcessing;
 
 		/// <summary>
 		/// Manual bill creation without using OCR technology
 		/// </summary>
-		internal ManualPurchaseHandler manualPurchase;
+		internal ManualPurchaseHandler ManualPurchase;
 
 		/// <summary>
 		/// Absolute path to the image currently being displayed in the image preview control
 		/// </summary>
-		public string currentImageSource { get; set; }
+		public string CurrentImageSource { get; set; }
 
 		/// <summary>
 		/// The container that displays currently previewed item
 		/// </summary>
-		public UIItem currentItemBeingInspected { get; set; }
+		public UIItem CurrentItemBeingInspected { get; set; }
 
 		/// <summary>
 		/// The rule-set selected at the launch of the application
 		/// </summary>
-		internal IRuleset selectedShopRuleset { get; }
+		internal IRuleset SelectedShopRuleset { get; }
 
 		/// <summary>
 		/// The status bar at the top, provides general information about the state of the program
 		/// </summary>
-		internal StatusBar statusBar { get; }
+		internal StatusBar StatusBar { get; }
+
+
+		internal ObservableCollection<UIItem> matchedItems = new ObservableCollection<UIItem>();
+		internal ObservableCollection<UIItem> unknownItems = new ObservableCollection<UIItem>();
 
 		/// <summary>
 		/// Create a default Albert window (Debug)
@@ -70,14 +74,16 @@ namespace BillScannerWPF {
 		/// <param name="selectedShop">The shop to load data for</param>
 		public MainWindow(Shop selectedShop) {
 			InitializeComponent();
+			Services.Instance.AddMainThreadDispatcher(this);
+
 			DatabaseAccess.LoadDatabase(selectedShop);
-			selectedShopRuleset = BaseRuleset.GetRuleset(selectedShop);
+			SelectedShopRuleset = BaseRuleset.GetRuleset(selectedShop);
 
-			statusBar = new StatusBar(new StatusBarViewModel());
-			MAIN_Grid.Children.Add(statusBar);
+			StatusBar = new StatusBar(new StatusBarViewModel());
+			MAIN_Grid.Children.Add(StatusBar);
 
-			statusBar.model.CurrentShop = selectedShop;
-			statusBar.BAR_CurrentLoadedShop_Text.MouseLeftButtonDown += OnShopClicked;
+			StatusBar.Model.CurrentShop = selectedShop;
+			StatusBar.BAR_CurrentLoadedShop_Text.MouseLeftButtonDown += OnShopClicked;
 
 			this.Closed += OnMainWindowClose;
 
@@ -90,20 +96,20 @@ namespace BillScannerWPF {
 									, "Server Off-line!", MessageBoxButton.OK, MessageBoxImage.Exclamation);
 				}
 
-				statusBar.model.ServerOnline = true;
+				StatusBar.Model.ServerOnline = true;
 			});
 
-			imgProcessing = new ImageProcessor(selectedShopRuleset, this);
-			manualPurchase = new ManualPurchaseHandler(selectedShop, this);
+			ImgProcessing = new ImageProcessor(SelectedShopRuleset, this);
+			ManualPurchase = new ManualPurchaseHandler(selectedShop, this);
 
-			MAIN_Analyze_Button.Click += imgProcessing.Analyze;
+			MAIN_Analyze_Button.Click += AnalyzeMethod;
 			MAIN_Analyze_Button.Visibility = Visibility.Collapsed;
 
-			MAIN_ManualPurchase_Button.Click += manualPurchase.Begin;
+			MAIN_ManualPurchase_Button.Click += ManualPurchase.Begin;
 			MAIN_Finalize_Button.Click += MAIN_FinalizePurchase_Click;
 			MAIN_Clear_Button.Click += MAIN_Clear_Click;
 
-			statusBar.model.ClientConnected = false;
+			StatusBar.Model.ClientConnected = false;
 
 			DebugDelay();
 		}
@@ -119,14 +125,18 @@ namespace BillScannerWPF {
 			Dispose();
 		}
 
+		public void Run(Action action) {
+			Dispatcher.Invoke(action);
+		}
+
 		private void OnMainWindowClose(object sender, EventArgs e) {
 			server.OnClientConnected -= Server_OnConnectionEstablished;
 			server.OnClientDisconnected -= Server_OnClientDisconnected;
 
-			MAIN_Analyze_Button.Click -= imgProcessing.Analyze;
+			MAIN_Analyze_Button.Click -= AnalyzeMethod;
 			MAIN_Finalize_Button.Click -= MAIN_FinalizePurchase_Click;
 
-			statusBar.BAR_CurrentLoadedShop_Text.MouseLeftButtonDown -= OnShopClicked;
+			StatusBar.BAR_CurrentLoadedShop_Text.MouseLeftButtonDown -= OnShopClicked;
 			this.Closed -= OnMainWindowClose;
 		}
 
@@ -156,16 +166,23 @@ namespace BillScannerWPF {
 		}
 
 		private void Server_OnConnectionEstablished(object sender, ClientConnectedEventArgs e) {
-			server.DefineCustomPacket<byte[]>(e.clientInfo.clientID, 55, imgProcessing.OnImageDataReceived);
+			server.DefineCustomPacket<byte[]>(e.clientInfo.clientID, 55, ImgProcessing.OnImageDataReceived);
 			Dispatcher.Invoke(() => {
-				statusBar.model.ClientConnected = true;
+				StatusBar.Model.ClientConnected = true;
 			});
 		}
 
 		private void Server_OnClientDisconnected(object sender, ClientDisconnectedEventArgs e) {
 			Dispatcher.Invoke(() => {
-				statusBar.model.ClientConnected = false;
+				StatusBar.Model.ClientConnected = false;
 			});
+		}
+
+		private void AnalyzeMethod(object sender, RoutedEventArgs e) {
+			if (CurrentImageSource == null) {
+				return;
+			}
+			ImgProcessing.Analyze(CurrentImageSource);
 		}
 
 		#endregion
@@ -179,37 +196,37 @@ namespace BillScannerWPF {
 				InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory)
 			};
 			if (dialog.ShowDialog() == true) {
-				SetPrevImage(new Uri(dialog.FileName));
+				SetPreviewImage(new Uri(dialog.FileName));
 			}
 		}
 
-		internal void SetPrevImage(Uri imgUri) {
+		internal void SetPreviewImage(Uri imgUri) {
 			BitmapImage image = new BitmapImage();
 			image.BeginInit();
 			image.CacheOption = BitmapCacheOption.OnLoad;
 			image.UriSource = imgUri;
 			image.EndInit();
-			currentImageSource = imgUri.AbsolutePath;
+			CurrentImageSource = imgUri.AbsolutePath;
 
 			MAIN_PhotoPreview_Image.Source = image;
 		}
 
 		private int attempt = -1;
-		internal void SetPrevImage(byte[] imgData) {
+		public void SetPreviewImage(byte[] imgData) {
 			File.WriteAllBytes(WPFHelper.dataPath + "current" + ++attempt + ".jpg", imgData);
-			currentImageSource = WPFHelper.dataPath + "current" + attempt + ".jpg";
-			SetPrevImage(new Uri(currentImageSource));
+			CurrentImageSource = WPFHelper.dataPath + "current" + attempt + ".jpg";
+			SetPreviewImage(new Uri(CurrentImageSource));
 			MAIN_ManualPurchase_Button.Visibility = Visibility.Collapsed;
 			MAIN_Analyze_Button.Visibility = Visibility.Visible;
 		}
 
 		//Open Selected image in default image viewer
 		private void MAIN_PhotoPreview_RightClick(object sender, MouseButtonEventArgs e) {
-			if (string.IsNullOrEmpty(currentImageSource)) {
+			if (string.IsNullOrEmpty(CurrentImageSource)) {
 				return;
 			}
 			new Process {
-				StartInfo = new ProcessStartInfo(currentImageSource)
+				StartInfo = new ProcessStartInfo(CurrentImageSource)
 			}.Start();
 		}
 
@@ -219,20 +236,37 @@ namespace BillScannerWPF {
 		#region Control button functionality
 
 		private void MAIN_FinalizePurchase_Click(object sender, RoutedEventArgs e) {
-			Purchase s = new Purchase(selectedShopRuleset.shop, imgProcessing.currentParsingResult.meta.PurchasedAt, imgProcessing.uiItemsMatched.Transform());
+			Purchase s = new Purchase(SelectedShopRuleset.shop, ImgProcessing.CurrentParsingResult.Meta.PurchasedAt, matchedItems.Transform());
 			s.FinalizePurchase();
 			MAIN_Clear_Button.Visibility = Visibility.Visible;
 			((Button)sender).Visibility = Visibility.Collapsed;
 		}
 
 		private void MAIN_Clear_Click(object sender, RoutedEventArgs e) {
-			imgProcessing.uiItemsMatched.Clear();
-			imgProcessing.uiItemsUnknown.Clear();
+			Clear();
+			Clear();
 
-			SetPrevImage(new Uri(WPFHelper.resourcesPath + "Transparent.png"));
+			SetPreviewImage(new Uri(WPFHelper.resourcesPath + "Transparent.png"));
 
 			MAIN_Finalize_Button.Visibility = Visibility.Visible;
 			((Button)sender).Visibility = Visibility.Collapsed;
+		}
+
+		public void ConstructUI(bool match, IEnumerable<UIItemCreationInfo> creation) {
+			ObservableCollection<UIItem> receiver;
+			if (match) {
+				receiver = matchedItems;
+			}
+			else {
+				receiver = unknownItems;
+			}
+			foreach (UIItemCreationInfo item in creation) {
+				receiver.Add(new UIItem(item));
+			}
+		}
+
+		public void Clear() {
+			throw new NotImplementedException();
 		}
 
 		#endregion
@@ -243,7 +277,7 @@ namespace BillScannerWPF {
 
 		protected virtual void Dispose(bool disposing) {
 			if (!disposedValue) {
-				imgProcessing.Dispose();
+				ImgProcessing.Dispose();
 				disposedValue = true;
 			}
 		}

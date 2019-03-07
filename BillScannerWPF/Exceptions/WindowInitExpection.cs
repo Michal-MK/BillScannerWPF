@@ -7,7 +7,7 @@ internal enum InitExpectionType {
 	SHOP_NOT_SELECTED
 }
 
-namespace BillScannerWPF {
+namespace Igor.BillScanner.WPF.UI {
 
 	/// <summary>
 	/// Exception thrown on unsuccessful load into the main window

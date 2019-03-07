@@ -1,10 +1,10 @@
-﻿using BillScannerCore;
-using System;
+﻿using System;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media.Imaging;
+using Igor.BillScanner.Core;
 
-namespace BillScannerWPF {
+namespace Igor.BillScanner.WPF.UI {
 
 	/// <summary>
 	/// Code for MatchedProduct.xaml
@@ -32,17 +32,17 @@ namespace BillScannerWPF {
 		/// <param name="itemCreation">The associated item</param>
 		/// <param name="quantityPurchased">The amount bought</param>
 		/// <param name="quality">Match quality</param>
-		internal UIItem(UIItemCreationInfo itemCreation, int quantityPurchased, MatchRating quality) {
+		internal UIItem(UIItemCreationInfo itemCreation) {
 			InitializeComponent();
-			if (quality == MatchRating.Success) {
+			if (itemCreation.MatchQuality == MatchRating.Success) {
 				UITEM_OriginalName_Text.Text = itemCreation.Item.ItemName + " | Price: " + string.Format("{0:f2}", itemCreation.CurrentPrice) + "Kč";
 			}
 			else {
 				UITEM_OriginalName_Text.Text = string.IsNullOrEmpty(itemCreation.MatchTriggerLine) ? itemCreation.Item.ItemName : itemCreation.MatchTriggerLine + " | Price: " + string.Format("{0:f2}", itemCreation.CurrentPrice) + "Kč";
 			}
 			Item = itemCreation.Item;
-			MatchQuality = quality;
-			AmountPurchased = quantityPurchased;
+			MatchQuality = itemCreation.MatchQuality;
+			AmountPurchased = itemCreation.Amount;
 			SetMatchRatingImage();
 		}
 

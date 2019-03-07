@@ -1,7 +1,7 @@
 ﻿using System.Collections.ObjectModel;
-using BillScannerCore;
+using Igor.BillScanner.Core;
 
-namespace BillScannerWPF {
+namespace Igor.BillScanner.WPF.UI {
 	internal static class ScannerHelper {
 		public static ItemPurchaseData[] Transform(this ObservableCollection<UIItem> items) {
 			ItemPurchaseData[] data = new ItemPurchaseData[items.Count];

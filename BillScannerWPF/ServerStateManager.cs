@@ -1,7 +1,7 @@
 ﻿using Igor.TCP;
 using System;
 
-namespace BillScannerWPF {
+namespace Igor.BillScanner.WPF.UI {
 
 	internal static class ServerStateManager {
 		private static TCPServer serverHolder;
@@ -29,6 +29,6 @@ namespace BillScannerWPF {
 		/// <summary>
 		/// Do we have a server active and running
 		/// </summary>
-		internal static bool isHoldingInstance { get { return serverHolder != null; } }
+		internal static bool isHoldingInstance => serverHolder != null;
 	}
 }

@@ -5,15 +5,16 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using Igor.BillScanner.Core;
 
-namespace BillScannerWPF {
+namespace Igor.BillScanner.WPF.UI {
 
 	/// <summary>
 	/// Code for ManualResolveChoice.xaml
 	/// </summary>
 	public partial class ManualResolveChoice : UserControl {
 
-		ManualResetEventSlim evnt = new ManualResetEventSlim();
+		private readonly ManualResetEventSlim evnt = new ManualResetEventSlim();
 
 		private readonly Dictionary<Choices, string> texts = new Dictionary<Choices, string>() {
 			{ Choices.NOOP, "NOOP" },
@@ -31,30 +32,10 @@ namespace BillScannerWPF {
 
 		private Button focusableElement;
 
-		#region Constructors
-
-		/// <summary>
-		/// Create new <see cref="ManualResolveChoice"/> with an error message and one solution
-		/// </summary>
-		internal ManualResolveChoice(string error, Choices choice) : this(error, new Choices[4] { choice, 0, 0, 0 }) { }
-
-		/// <summary>
-		/// Create new <see cref="ManualResolveChoice"/> with an error message and two solutions
-		/// </summary>
-		internal ManualResolveChoice(string error, Choices choice1, Choices choice2) : this(error, new Choices[4] { choice1, choice2, 0, 0 }) { }
-
-		/// <summary>
-		/// Create new <see cref="ManualResolveChoice"/> with an error message and three solutions
-		/// </summary>
-		internal ManualResolveChoice(string error, Choices choice1, Choices choice2, Choices choice3) : this(error, new Choices[4] { choice1, choice2, choice3, 0 }) { }
-
-		#endregion
-
-
 		/// <summary>
 		/// Create new <see cref="ManualResolveChoice"/> with an error message and defined solutions
 		/// </summary>
-		internal ManualResolveChoice(string errorText, Choices[] choices) {
+		internal ManualResolveChoice(string errorText, params Choices[] choices) {
 			InitializeComponent();
 			Button[] solutionTexts1to4 = new Button[] {
 				MANUAL_RESOLUTION_Solution1_Button,

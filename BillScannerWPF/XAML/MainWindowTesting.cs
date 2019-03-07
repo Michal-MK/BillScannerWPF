@@ -1,8 +1,8 @@
-﻿using BillScannerCore;
+﻿using Igor.BillScanner.Core;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace BillScannerWPF {
+namespace Igor.BillScanner.WPF.UI {
 	public partial class MainWindow {
 
 
@@ -16,9 +16,10 @@ namespace BillScannerWPF {
 		}
 
 		public async Task DebugListAsync() {
-			//ItemList list = new ItemList(DatabaseAccess.access.GetItems());
-			//Item i = await list.SelectItemAsync();
-			//System.Diagnostics.Debug.Print(i.ID.ToString());
+			ItemList list = new ItemList();
+			list.AddItems(DatabaseAccess.access.GetItems());
+			Item i = await list.SelectItemAsync();
+			System.Diagnostics.Debug.Print(i.ID.ToString());
 		}
 
 		public async Task DebugManualResolveAsync() {

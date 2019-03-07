@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using System.Windows.Controls;
 using System.Windows.Media;
 
-namespace BillScannerWPF {
+namespace Igor.BillScanner.WPF.UI {
 	/// <summary>
 	/// Core for DateBox.xaml
 	/// </summary>

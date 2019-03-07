@@ -1,12 +1,12 @@
-﻿using BillScannerCore;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using Igor.BillScanner.Core;
 
-namespace BillScannerWPF {
+namespace Igor.BillScanner.WPF.UI {
 
 	/// <summary>
 	/// Code for ItemList.xaml

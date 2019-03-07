@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Globalization;
 using System.Windows;
-using BillScannerCore;
+using Igor.BillScanner.Core;
 
-namespace BillScannerWPF {
+namespace Igor.BillScanner.WPF.UI {
 	class ManualPurchaseHandler {
 
 		private readonly Shop _shop;
@@ -19,7 +19,7 @@ namespace BillScannerWPF {
 			ManualResolveChoice dateChoice = new ManualResolveChoice("Enter purchase date:", Choices.ManuallyEnterDate);
 			await dateChoice.SelectChoiceAsync();
 			DateTime purchaseDate;
-			while (!DateTime.TryParseExact(dateChoice.MANUAL_RESOLUTION_Solution5_DateBox.DATEBOX_Input_Box.Text,"dd:MM:yyyy hh:mm:ss", CultureInfo.GetCultureInfo("cs"), DateTimeStyles.AllowWhiteSpaces, out purchaseDate)) {
+			while (!DateTime.TryParseExact(dateChoice.MANUAL_RESOLUTION_Solution5_DateBox.DATEBOX_Input_Box.Text, "dd:MM:yyyy hh:mm:ss", CultureInfo.GetCultureInfo("cs"), DateTimeStyles.AllowWhiteSpaces, out purchaseDate)) {
 				await dateChoice.SelectChoiceAsync();
 			}
 			_mainWindow.MAIN_Grid.Children.Add(view);

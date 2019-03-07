@@ -6,8 +6,8 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{AE279787-AC74-4365-B601-C0DF35441988}</ProjectGuid>
     <OutputType>WinExe</OutputType>
-    <RootNamespace>BillScannerWPF</RootNamespace>
-    <AssemblyName>BillScannerWPF</AssemblyName>
+    <RootNamespace>Igor.BillScanner.WPF.UI</RootNamespace>
+    <AssemblyName>Igor.BillScanner.WPF.UI</AssemblyName>
     <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
@@ -65,15 +65,8 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Enumerations\ManualResolutionChoices.cs" />
-    <Compile Include="Enumerations\MatchRating.cs" />
-    <Compile Include="Exceptions\GenericParsingException.cs" />
-    <Compile Include="BillParsing\ImageProcessor.cs" />
-    <Compile Include="Exceptions\PriceParsingException.cs" />
-    <Compile Include="Exceptions\NameParsingException.cs" />
-    <Compile Include="Exceptions\QuantityParsingException.cs" />
-    <Compile Include="BillParsing\UIItemCreationInfo.cs" />
     <Compile Include="ManualPurchase\ManualPurchaseHandler.cs" />
+    <Compile Include="ManualUserInput.cs" />
     <Compile Include="ScannerHelper.cs" />
     <Compile Include="ServerStateManager.cs" />
     <Compile Include="XAML\DateBox.xaml.cs">
@@ -95,21 +88,12 @@
     <Compile Include="XAML\ItemInfoOverlay.xaml.cs">
       <DependentUpon>ItemInfoOverlay.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Exceptions\ParsingEntryNotFoundException.cs" />
-    <Compile Include="BillParsing\ParsingResult.cs" />
-    <Compile Include="Rules\AlbertRuleset.cs" />
-    <Compile Include="Rules\BaseRuleset.cs" />
-    <Compile Include="Rules\IRuleset.cs" />
-    <Compile Include="Rules\LidlRuleset.cs" />
-    <Compile Include="Rules\McDonaldsRuleset.cs" />
     <Compile Include="XAML\UIItem.xaml.cs">
       <DependentUpon>UIItem.xaml</DependentUpon>
     </Compile>
     <Compile Include="XAML\NewItemDefinitionPanel.xaml.cs">
       <DependentUpon>NewItemDefinitionPanel.xaml</DependentUpon>
     </Compile>
-    <Compile Include="BillParsing\StringParser.cs" />
-    <Compile Include="BillParsing\WordSimilarity.cs" />
     <Compile Include="Exceptions\WindowInitExpection.cs" />
     <Compile Include="XAML\SetupWindow.xaml.cs">
       <DependentUpon>SetupWindow.xaml</DependentUpon>
@@ -237,9 +221,9 @@
     <Resource Include="Resources\Transparent.png" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Core\Core.csproj">
+    <ProjectReference Include="..\Core\Igor.BillScanner.Core.csproj">
       <Project>{8FF4B367-EA82-458B-90C6-E152811E6C3B}</Project>
-      <Name>Core</Name>
+      <Name>Igor.BillScanner.Core</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

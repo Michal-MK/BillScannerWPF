@@ -1,7 +1,7 @@
-﻿using BillScannerCore;
-using System.Windows.Controls;
+﻿using System.Windows.Controls;
+using Igor.BillScanner.Core;
 
-namespace BillScannerWPF {
+namespace Igor.BillScanner.WPF.UI {
 
 	/// <summary>
 	/// Code for ItemList_Item.xaml
