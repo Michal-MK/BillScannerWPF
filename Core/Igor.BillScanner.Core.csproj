@@ -96,7 +96,7 @@
     <Compile Include="Exceptions\PriceParsingException.cs" />
     <Compile Include="Exceptions\PurchaseNotFoundException.cs" />
     <Compile Include="Exceptions\QuantityParsingException.cs" />
-    <Compile Include="Extensions.cs" />
+    <Compile Include="Helpers\Extensions.cs" />
     <Compile Include="Interfaces\IDispatcher.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Rules\AlbertRuleset.cs" />
