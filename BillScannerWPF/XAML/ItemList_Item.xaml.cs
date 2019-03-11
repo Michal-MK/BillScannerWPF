@@ -9,26 +9,16 @@ namespace Igor.BillScanner.WPF.UI {
 	public partial class ItemList_Item : UserControl {
 
 		/// <summary>
-		/// The parent element this item is a child of
+		/// The view model
 		/// </summary>
-		private ItemList parent;
-
-		/// <summary>
-		/// The item connected to this UI representation
-		/// </summary>
-		internal Item asociatedItem { get; }
+		public ItemList_ItemViewModel Model { get; set; }
 
 		/// <summary>
 		/// Create a new visual representation of an item in a list
 		/// </summary>
-		public ItemList_Item(ItemList parent, Item asociatedItem) {
+		public ItemList_Item() {
 			InitializeComponent();
-
-			ITEMLISTCONTENT_ItemName_Text.Text = asociatedItem.ItemName;
-			ITEMLISTCONTENT_ItemValue_Text.Text = string.Format("{0:f2}Kč", asociatedItem.CurrentPriceDecimal);
-			//ITEMLISTCONTENT_ItemMeassurement_Text.Text = asociatedItem.UnitOfMeassure.ToString();
-			this.parent = parent;
-			this.asociatedItem = asociatedItem;
+			DataContext = Model = new ItemList_ItemViewModel();
 		}
 	}
 }

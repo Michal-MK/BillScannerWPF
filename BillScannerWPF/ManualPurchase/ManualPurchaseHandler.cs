@@ -4,7 +4,7 @@ using System.Windows;
 using Igor.BillScanner.Core;
 
 namespace Igor.BillScanner.WPF.UI {
-	public class ManualPurchaseHandler {
+	public class ManualPurchaseHandler : IManualPurchaseHandler {
 
 		public Shop Shop { get; }
 		private readonly MainWindow _mainWindow;
@@ -15,13 +15,15 @@ namespace Igor.BillScanner.WPF.UI {
 		}
 
 		internal async void Begin(object sender, RoutedEventArgs e) {
-			ManualPurchaseView view = new ManualPurchaseView(this);
+			ManualPurchaseView view = new ManualPurchaseView();
+			view.Model = new ManualPurchaseViewModel(this);
 			ManualResolveChoice dateChoice = new ManualResolveChoice("Enter purchase date:", Choices.ManuallyEnterDate);
 			await dateChoice.SelectChoiceAsync();
 			DateTime purchaseDate;
 			while (!DateTime.TryParseExact(dateChoice.MANUAL_RESOLUTION_Solution5_DateBox.DATEBOX_Input_Box.Text, "dd:MM:yyyy hh:mm:ss", CultureInfo.GetCultureInfo("cs"), DateTimeStyles.AllowWhiteSpaces, out purchaseDate)) {
 				await dateChoice.SelectChoiceAsync();
 			}
+			Console.WriteLine(purchaseDate);
 			_mainWindow.MAIN_Grid.Children.Add(view);
 		}
 	}

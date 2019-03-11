@@ -11,11 +11,11 @@ namespace Igor.BillScanner.WPF.UI {
 	/// Core for DateBox.xaml
 	/// </summary>
 	public partial class DateBox : UserControl {
+		private ManualResetEventSlim _evnt = new ManualResetEventSlim();
+
 		public DateBox() {
 			InitializeComponent();
 		}
-
-		ManualResetEventSlim evnt = new ManualResetEventSlim();
 
 		private void DATEBOX_Input_TextChanged(object sender, TextChangedEventArgs e) {
 			TextBox senderBox = (TextBox)sender;
@@ -55,7 +55,7 @@ namespace Igor.BillScanner.WPF.UI {
 				ValidateDate(senderBox.Text);
 			}
 			if (currentValue.Length == 19) {
-				evnt.Set();
+				_evnt.Set();
 			}
 		}
 
@@ -121,12 +121,13 @@ namespace Igor.BillScanner.WPF.UI {
 					return;
 				}
 			}
+			DATEBOX_Input_Box.Foreground = Brushes.Green;
 		}
 
 		internal async Task<DateTime> FinalizeDateAsync() {
 			((MainWindow)App.Current.MainWindow).MAIN_Grid.Children.Add(this);
 			await Task.Run(() => {
-				evnt.Wait();
+				_evnt.Wait();
 			});
 			((MainWindow)App.Current.MainWindow).MAIN_Grid.Children.Remove(this);
 			return DateTime.ParseExact(DATEBOX_Input_Box.Text, "dd:MM:yyyy HH:mm:ss", CultureInfo.InvariantCulture);

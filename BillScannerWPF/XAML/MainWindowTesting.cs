@@ -17,8 +17,8 @@ namespace Igor.BillScanner.WPF.UI {
 
 		public async Task DebugListAsync() {
 			ItemList list = new ItemList();
-			list.AddItems(DatabaseAccess.access.GetItems());
-			Item i = await list.SelectItemAsync();
+			list.Model.AddItems(DatabaseAccess.access.GetItems());
+			Item i = (await list.Model.SelectItemAsync())[0].Item;
 			System.Diagnostics.Debug.Print(i.ID.ToString());
 		}
 

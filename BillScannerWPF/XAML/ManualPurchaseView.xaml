@@ -33,7 +33,7 @@
 					<ColumnDefinition Width="*"></ColumnDefinition>
 				</Grid.ColumnDefinitions>
 				<TextBlock Text="Search items by name:" Background="Aquamarine"></TextBlock>
-				<TextBox Text="{Binding SearchQuery, UpdateSourceTrigger=PropertyChanged}" TextChanged="OnNewSearchQuery" Background="Aqua" Grid.Column="1"></TextBox>
+				<TextBox Text="{Binding SearchQuery, UpdateSourceTrigger=PropertyChanged}" TextChanged="OnTextChanged" Background="Aqua" Grid.Column="1"></TextBox>
 
 			</Grid>
 			<local:ItemList Grid.Row="1" Background="Gray" x:Name="MANUALPURCHASE_Items_List"></local:ItemList>
@@ -41,7 +41,7 @@
 		</Grid>
 		
 		<StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="20">
-			<Button Click="MANUALPURCHASAE_RegisterNewItem_Button" Content="Register new Item"></Button>
+			<Button Content="Register new Item"></Button>
 		</StackPanel>
 	</Grid>
 </UserControl>

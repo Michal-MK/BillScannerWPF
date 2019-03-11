@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Threading.Tasks;
 using Igor.BillScanner.Core;
@@ -68,8 +69,9 @@ namespace Igor.BillScanner.WPF.UI {
 
 		public async Task<Item> SelectOneItemFromListAsync(Item[] items) {
 			ItemList list = new ItemList();
-			list.AddItems(items);
-			return await list.SelectItemAsync();
+			list.Model.AddItems(items);
+			List<ItemList_ItemViewModel> selected = await list.Model.SelectItemAsync();
+			return selected[0].Item;
 		}
 
 		public async Task<(string itemName, int itemPrice, MeassurementUnit itemUnitOfMeassure)> DefineNewItemAsync() {
