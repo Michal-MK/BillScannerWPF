@@ -65,9 +65,5 @@ namespace Igor.BillScanner.WPF.UI {
 		private void UITEM_ShowDetails_Click(object sender, RoutedEventArgs e) {
 			ItemInfoOverlay overlay = new ItemInfoOverlay(this);
 		}
-
-		public static implicit operator ItemPurchaseData(UIItem item) {
-			return new ItemPurchaseData(item.Item, item.AmountPurchased);
-		}
 	}
 }

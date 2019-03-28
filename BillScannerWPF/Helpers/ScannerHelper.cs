@@ -6,7 +6,7 @@ namespace Igor.BillScanner.WPF.UI {
 		public static ItemPurchaseData[] Transform(this ObservableCollection<UIItem> items) {
 			ItemPurchaseData[] data = new ItemPurchaseData[items.Count];
 			for (int i = 0; i < data.Length; i++) {
-				data[i] = items[i];
+				data[i] = new ItemPurchaseData(items[i].Item, items[i].AmountPurchased);
 			}
 			return data;
 		}
