@@ -1,19 +1,17 @@
 ﻿namespace Igor.BillScanner.Core {
 	public class ItemList_ItemViewModel : BaseViewModel {
-		public string ItemName => _item.ItemName;
+		public string ItemName => Item.ItemName;
 
-		public string ItemPrice => string.Format("{0:f2}Kč", _item.CurrentPriceDecimal);
+		public string ItemPrice => string.Format("{0:f2}Kč", Item.CurrentPriceDecimal);
 
-		public Item Item => _item;
-
-		private Item _item;
+		public Item Item { get; }
 
 		public ItemList_ItemViewModel() {
-			_item = new Item("UNDEFINED", -1);
+			Item = new Item("Undefined Item", int.MinValue);
 		}
 
 		public ItemList_ItemViewModel(Item asociated) {
-			_item = asociated;
+			Item = asociated;
 		}
 	}
 }

@@ -3,10 +3,14 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:Igor.BillScanner.WPF.UI"
+             xmlns:core="clr-namespace:Igor.BillScanner.Core;assembly=Igor.BillScanner.Core"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
-	<Grid x:Name="MAIN_ItemInfoOverlay_Grid" Panel.ZIndex="1" Visibility="Visible">
+	<UserControl.DataContext>
+		<core:ItemOverlayViewModel></core:ItemOverlayViewModel>
+	</UserControl.DataContext>
+
+		<Grid x:Name="MAIN_ItemInfoOverlay_Grid" Panel.ZIndex="1" Visibility="Visible">
 		<Grid.Background>
 			<SolidColorBrush Color="Black" Opacity=".8"/>
 		</Grid.Background>
@@ -43,11 +47,11 @@
 						<TextBlock Grid.Row="4" Grid.Column="0" Text="Current Price:"																								 ></TextBlock>
 						<TextBlock Grid.Row="5" Grid.Column="0" Text="Price history:"																								 ></TextBlock>
 						<TextBlock Grid.Row="6" Grid.Column="0" Text="Bought total:"																								 ></TextBlock>
-						<TextBlock Grid.Row="2" Grid.Column="1"								x:Name="INFO_MainName_Text"		   MinWidth="100"										 ></TextBlock>
-						<TextBlock Grid.Row="3" Grid.Column="1"								x:Name="INFO_ORC_Text"																	 ></TextBlock>
-						<TextBlock Grid.Row="4" Grid.Column="1"								x:Name="INFO_CurrentValue_Text"															 ></TextBlock>
-						<TextBlock Grid.Row="5" Grid.Column="1"								x:Name="INFO_PricesBefore_Text"															 ></TextBlock>
-						<TextBlock Grid.Row="6" Grid.Column="1"								x:Name="INFO_AmountBought_Text"															 ></TextBlock>
+						<TextBlock Grid.Row="2" Grid.Column="1"	Text="{Binding ItemName}"	MinWidth="100"></TextBlock>
+						<TextBlock Grid.Row="3" Grid.Column="1"	Text="{Binding OCRNames}"				></TextBlock>
+						<TextBlock Grid.Row="4" Grid.Column="1"	Text="{Binding CurrentPrice}"			></TextBlock>
+						<TextBlock Grid.Row="5" Grid.Column="1"	Text="{Binding PriceHistory}"			></TextBlock>
+						<TextBlock Grid.Row="6" Grid.Column="1"	Text="{Binding BoughtTotal}"			></TextBlock>
 						<TextBlock Grid.Row="4" Grid.Column="2" Text="Kč"																											 ></TextBlock>
 						<TextBlock Grid.Row="5" Grid.Column="2" Text="Kč"																											 ></TextBlock>
 					</Grid>

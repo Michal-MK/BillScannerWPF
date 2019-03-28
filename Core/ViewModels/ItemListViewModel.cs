@@ -7,7 +7,7 @@ using System.Windows.Input;
 namespace Igor.BillScanner.Core {
 	public class ItemListViewModel : BaseViewModel {
 
-		public ObservableCollection<ItemList_ItemViewModel> Items { get; set; }
+		public ObservableCollection<ItemList_ItemViewModel> Items { get; set; } = new ObservableCollection<ItemList_ItemViewModel>();
 
 		public List<ItemList_ItemViewModel> SelectedItems { get; set; }
 
@@ -29,8 +29,6 @@ namespace Igor.BillScanner.Core {
 
 
 		public ItemListViewModel() {
-			Items = new ObservableCollection<ItemList_ItemViewModel>();
-
 			AbortCommand = new Command(Abort);
 			SelectedCommand = new Command(SelectButton);
 		}
@@ -63,18 +61,16 @@ namespace Igor.BillScanner.Core {
 			_evnt.Set();
 		}
 
-
 		/// <summary>
 		/// Add items to display in this ItemList
 		/// </summary>
 		public void AddItems(IEnumerable<Item> items) {
-			Items = new ObservableCollection<ItemList_ItemViewModel>();
+			Items.Clear();
 			foreach (Item item in items) {
-				ItemList_ItemViewModel i = new ItemList_ItemViewModel();
+				ItemList_ItemViewModel i = new ItemList_ItemViewModel(item);
 				Items.Add(i);
 			}
 		}
-
 
 		/// <summary>
 		/// Handle user selection of an item and clicking of "Select" button, repeat on unsuccessful select

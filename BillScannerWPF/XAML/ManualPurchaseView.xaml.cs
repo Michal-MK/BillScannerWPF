@@ -1,5 +1,4 @@
 ﻿using System.Windows.Controls;
-using System.Windows.Input;
 using Igor.BillScanner.Core;
 
 namespace Igor.BillScanner.WPF.UI {
@@ -8,15 +7,17 @@ namespace Igor.BillScanner.WPF.UI {
 	/// </summary>
 	public partial class ManualPurchaseView : UserControl {
 
-		public ManualPurchaseViewModel Model { get; set; }
-
 		public ManualPurchaseView() {
 			InitializeComponent();
-			DataContext = Model;
 		}
 
 		public void OnTextChanged(object sender, TextChangedEventArgs e) {
-			Model.PopulateList();
+			ManualPurchaseViewModel purchaseModel = DataContext as ManualPurchaseViewModel;
+			ItemListViewModel listModel = MANUALPURCHASE_Items_List.DataContext as ItemListViewModel;
+
+			purchaseModel.PopulateList();
+			listModel.Items = purchaseModel.Items;
+			listModel.Notify("Items");
 		}
 	}
 }

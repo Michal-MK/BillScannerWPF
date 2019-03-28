@@ -73,7 +73,7 @@ namespace Igor.BillScanner.WPF.UI {
 			DatabaseAccess.LoadDatabase(selectedShop);
 			SelectedShopRuleset = BaseRuleset.GetRuleset(selectedShop);
 
-			StatusBar.Model.CurrentShop = selectedShop;
+			(StatusBar.DataContext as StatusBarViewModel).CurrentShop = selectedShop;
 			StatusBar.BAR_CurrentLoadedShop_Text.MouseLeftButtonDown += OnShopClicked;
 
 			this.Closed += OnMainWindowClose;
@@ -87,7 +87,7 @@ namespace Igor.BillScanner.WPF.UI {
 									, "Server Off-line!", MessageBoxButton.OK, MessageBoxImage.Exclamation);
 				}
 
-				StatusBar.Model.ServerOnline = true;
+				Dispatcher.Invoke(() => (StatusBar.DataContext as StatusBarViewModel).ServerOnline = true);
 			});
 
 			ImgProcessing = new ImageProcessor(SelectedShopRuleset, this);
@@ -103,7 +103,7 @@ namespace Igor.BillScanner.WPF.UI {
 			MAIN_Finalize_Button.Click += MAIN_FinalizePurchase_Click;
 			MAIN_Clear_Button.Click += MAIN_Clear_Click;
 
-			StatusBar.Model.ClientConnected = false;
+			(StatusBar.DataContext as StatusBarViewModel).ClientConnected = false;
 
 			DebugDelay();
 		}
@@ -173,13 +173,13 @@ namespace Igor.BillScanner.WPF.UI {
 		private void Server_OnConnectionEstablished(object sender, ClientConnectedEventArgs e) {
 			server.DefineCustomPacket<byte[]>(e.clientInfo.clientID, 55, ImgProcessing.OnImageDataReceived);
 			Dispatcher.Invoke(() => {
-				StatusBar.Model.ClientConnected = true;
+				(StatusBar.DataContext as StatusBarViewModel).ClientConnected = true;
 			});
 		}
 
 		private void Server_OnClientDisconnected(object sender, ClientDisconnectedEventArgs e) {
 			Dispatcher.Invoke(() => {
-				StatusBar.Model.ClientConnected = false;
+				(StatusBar.DataContext as StatusBarViewModel).ClientConnected = false;
 			});
 		}
 

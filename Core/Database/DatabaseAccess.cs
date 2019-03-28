@@ -23,7 +23,7 @@ namespace Igor.BillScanner.Core {
 		public static DatabaseAccess access { get; private set; }
 
 
-		private string DbConnectionString => $@"Data Source={WPFHelper.dataPath}ShoppingDB.db;Version=3;";
+		private string DbConnectionString => $"Data Source={WPFHelper.dataPath}ShoppingDB.db;Version=3;";
 		private string DbDateTimeFormat => "yyyy-MM-dd hh:mm:ss";
 
 		private DatabaseAccess(Shop s) {

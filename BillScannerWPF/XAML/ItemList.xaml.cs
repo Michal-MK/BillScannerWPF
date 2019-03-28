@@ -8,18 +8,15 @@ namespace Igor.BillScanner.WPF.UI {
 	/// </summary>
 	public partial class ItemList : UserControl {
 
-		public ItemListViewModel Model { get; set; }
-
 		/// <summary>
 		/// Create a list of items for the UI from a normal <see cref="Item"/> class
 		/// </summary>
 		public ItemList() {
 			InitializeComponent();
-			DataContext = Model = new ItemListViewModel();			
 		}
 
 		private void ITEMLIST_Items_ListBox_SelectionChanged(object sender, SelectionChangedEventArgs e) {
-			Model.Selected(((ListBox)sender).SelectedItem);
+			(DataContext as ItemListViewModel).Selected(((ListBox)sender).SelectedItem);
 		}
 	}
 }

@@ -16,7 +16,6 @@ namespace Igor.BillScanner.WPF.UI {
 
 		internal async void Begin(object sender, RoutedEventArgs e) {
 			ManualPurchaseView view = new ManualPurchaseView();
-			view.Model = new ManualPurchaseViewModel(this);
 			ManualResolveChoice dateChoice = new ManualResolveChoice("Enter purchase date:", Choices.ManuallyEnterDate);
 			await dateChoice.SelectChoiceAsync();
 			DateTime purchaseDate;

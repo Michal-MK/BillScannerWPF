@@ -3,15 +3,14 @@ using System.Linq;
 
 namespace Igor.BillScanner.Core {
 	public class ManualPurchaseViewModel : BaseViewModel {
+
 		private Item[] _items;
-		private readonly IManualPurchaseHandler _handler;
 		public string SearchQuery { get; set; }
 
 		public ObservableCollection<ItemList_ItemViewModel> Items { get; set; }
 
-		public ManualPurchaseViewModel(IManualPurchaseHandler handler) {
-			_handler = handler;
-			_items = DatabaseAccess.access.GetItems(_handler.Shop);
+		public ManualPurchaseViewModel() {
+			_items = DatabaseAccess.access.GetItems();
 		}
 
 		public void PopulateList() {

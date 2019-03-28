@@ -22,11 +22,6 @@ namespace Igor.BillScanner.WPF.UI {
 			holder = ((MainWindow)App.Current.MainWindow).MAIN_Grid;
 
 			holder.Children.Add(this);
-			INFO_MainName_Text.Text = source.Item.ItemName;
-			INFO_ORC_Text.Text = string.Join(",", source.Item.OcrNames);
-			INFO_CurrentValue_Text.Text = source.Item.CurrentPriceDecimal.ToString();
-			INFO_PricesBefore_Text.Text = string.Join(",", source.Item.PriceHistory.Values);
-			INFO_AmountBought_Text.Text = source.Item.TotalPurchased.ToString();
 			INFO_PURCHASE_ItemQuantity.Text = source.AmountPurchased.ToString();
 		}
 
