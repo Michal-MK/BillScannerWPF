@@ -68,7 +68,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Command.cs" />
+    <Compile Include="Commands\Command.cs" />
     <Compile Include="Interfaces\IItemPreview.cs" />
     <Compile Include="BillParsing\ImageProcessor.cs" />
     <Compile Include="Interfaces\IManualPurchaseHandler.cs" />
@@ -112,7 +112,7 @@
     <Compile Include="Serialization\Purchase.cs" />
     <Compile Include="Serialization\PurchaseMeta.cs" />
     <Compile Include="Services.cs" />
-    <Compile Include="SingleParamaterCommand.cs" />
+    <Compile Include="Commands\SingleParamaterCommand.cs" />
     <Compile Include="ViewModels\BaseViewModel.cs" />
     <Compile Include="ViewModels\ItemListViewModel.cs" />
     <Compile Include="ViewModels\ItemList_ItemViewModel.cs" />
