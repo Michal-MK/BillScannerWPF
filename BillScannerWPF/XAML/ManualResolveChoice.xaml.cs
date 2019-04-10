@@ -30,7 +30,7 @@ namespace Igor.BillScanner.WPF.UI {
 			{ Choices.ManuallyEnterQuantity, "Enter the amount here manually: " }
 		};
 
-		private Button focusableElement;
+		private FrameworkElement focusableElement;
 
 		/// <summary>
 		/// Create new <see cref="ManualResolveChoice"/> with an error message and defined solutions
@@ -57,15 +57,18 @@ namespace Igor.BillScanner.WPF.UI {
 					solution5Button.Click += ManualResolveChoice_Click;
 					solution5Button.Name = choices[i].ToString();
 					if (choices[i] == Choices.ManuallyEnterDate) {
-						MANUAL_RESOLUTION_Solution5_DateBox.Visibility = Visibility;
+						MANUAL_RESOLUTION_Solution5_DateBox.Visibility = Visibility.Visible;
+						focusableElement = MANUAL_RESOLUTION_Solution5_DateBox;
 					}
 					if (choices[i] == Choices.ManuallyEnterPrice) {
 						MANUAL_RESOLUTION_Solution5_Box.Text = "0.0";
 						MANUAL_RESOLUTION_Solution5_Box.Visibility = Visibility.Visible;
+						focusableElement = MANUAL_RESOLUTION_Solution5_Box;
 					}
 					if (choices[i] == Choices.ManuallyEnterQuantity) {
 						MANUAL_RESOLUTION_Solution5_Box.Text = "1";
 						MANUAL_RESOLUTION_Solution5_Box.Visibility = Visibility.Visible;
+						focusableElement = MANUAL_RESOLUTION_Solution5_Box;
 					}
 				}
 				if (focusableElement == null) {

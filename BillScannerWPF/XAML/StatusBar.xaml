@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Igor.BillScanner.WPF.UI"
+             xmlns:core="clr-namespace:Igor.BillScanner.Core;assembly=Igor.BillScanner.Core"
              mc:Ignorable="d" >
 	<UserControl.Resources>
 
@@ -19,7 +20,7 @@
 				</DataTrigger>
 			</Style.Triggers>
 		</Style>
-		
+
 		<Style x:Key="ServerStatus" TargetType="TextBlock">
 			<Style.Triggers>
 				<DataTrigger Binding="{Binding ServerOnlineString}" Value="Online">
@@ -31,7 +32,11 @@
 			</Style.Triggers>
 		</Style>
 	</UserControl.Resources>
-
+	
+	<UserControl.DataContext>
+		<core:StatusBarViewModel/>
+	</UserControl.DataContext>
+	
 	<Grid HorizontalAlignment="Stretch" VerticalAlignment="Top" Height="16" Background="LightSlateGray">
 		<Grid.ColumnDefinitions>
 			<ColumnDefinition Width="10"></ColumnDefinition>
@@ -42,9 +47,9 @@
 			<ColumnDefinition Width="auto"></ColumnDefinition>
 			<ColumnDefinition Width="auto"></ColumnDefinition>
 		</Grid.ColumnDefinitions>
-		
+
 		<TextBlock	Grid.Column="1"	Text="Server:"																																			></TextBlock>
-		<TextBlock	Grid.Column="2"	Text="{Binding ServerOnlineString}"		x:Name="BAR_ServerOnline_Text"			Margin="5,0,0,0"	Style="{DynamicResource ServerStatus }"				></TextBlock>
+		<TextBlock	Grid.Column="2"	Text="{Binding ServerOnlineString}"		x:Name="BAR_ServerOnline_Text"			Margin="5,0,0,0"	Style="{DynamicResource ServerStatus}"				></TextBlock>
 		<TextBlock	Grid.Column="3"	Text="Client Status:"															Margin="20,0,0,0"														></TextBlock>
 		<TextBlock	Grid.Column="4"	Text="{Binding ClientConnectedString}"	x:Name="BAR_ConnectedClients_Text"		Margin="5,0,0,0"	Style="{DynamicResource ClientConnection}"			></TextBlock>
 		<TextBlock	Grid.Column="5"	Text="Loaded Shop:"																Margin="20,0,0,0"														></TextBlock>

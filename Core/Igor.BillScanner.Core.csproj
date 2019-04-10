@@ -116,6 +116,7 @@
     <Compile Include="ViewModels\BaseViewModel.cs" />
     <Compile Include="ViewModels\ItemListViewModel.cs" />
     <Compile Include="ViewModels\ItemList_ItemViewModel.cs" />
+    <Compile Include="ViewModels\ItemOverlayViewModel.cs" />
     <Compile Include="ViewModels\ManualPurchaseViewModel.cs" />
     <Compile Include="ViewModels\StatusBarViewModel.cs" />
     <Compile Include="WPFHelper.cs" />
