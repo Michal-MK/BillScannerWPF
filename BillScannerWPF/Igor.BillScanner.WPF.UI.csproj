@@ -62,11 +62,13 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Converters\BaseValueConverter.cs" />
+    <Compile Include="Converters\MatchRatingToImageConverter.cs" />
     <Compile Include="ManualPurchase\ManualPurchaseHandler.cs" />
     <Compile Include="ManualPurchase\ManualUserInput.cs" />
     <Compile Include="Helpers\ScannerHelper.cs" />
     <Compile Include="Helpers\ServerStateManager.cs" />
-    <Compile Include="ViewModelToViewConverter.cs" />
+    <Compile Include="Converters\ViewModelToViewConverter.cs" />
     <Compile Include="XAML\DateBox.xaml.cs">
       <DependentUpon>DateBox.xaml</DependentUpon>
     </Compile>
@@ -77,7 +79,7 @@
       <DependentUpon>ItemList_Item.xaml</DependentUpon>
     </Compile>
     <Compile Include="XAML\MainWindowTesting.cs" />
-    <Compile Include="XAML\ManualPurchaseView.xaml.cs">
+    <Compile Include="ManualPurchase\ManualPurchaseView.xaml.cs">
       <DependentUpon>ManualPurchaseView.xaml</DependentUpon>
     </Compile>
     <Compile Include="XAML\ManualResolveChoice.xaml.cs">
@@ -111,7 +113,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="XAML\ManualPurchaseView.xaml">
+    <Page Include="ManualPurchase\ManualPurchaseView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -69,6 +69,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Commands\Command.cs" />
+    <Compile Include="Events\ParsingCompleteEventArgs.cs" />
     <Compile Include="Interfaces\IItemPreview.cs" />
     <Compile Include="BillParsing\ImageProcessor.cs" />
     <Compile Include="Interfaces\IManualPurchaseHandler.cs" />
@@ -119,6 +120,7 @@
     <Compile Include="ViewModels\ItemOverlayViewModel.cs" />
     <Compile Include="ViewModels\ManualPurchaseViewModel.cs" />
     <Compile Include="ViewModels\StatusBarViewModel.cs" />
+    <Compile Include="ViewModels\UIItemViewModel.cs" />
     <Compile Include="WPFHelper.cs" />
   </ItemGroup>
   <ItemGroup>

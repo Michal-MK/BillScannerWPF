@@ -23,7 +23,7 @@ namespace Igor.BillScanner.Core {
 		/// <summary>
 		/// Returns an absolute path to Resources inside the executable
 		/// </summary>
-		public static string resourcesPath { get { return @"pack://application:,,,/BillScannerWPF;component/Resources/"; } }
+		public static string resourcesPath { get { return @"pack://application:,,,/Igor.BillScanner.WPF.UI;component/Resources/"; } }
 
 		/// <summary>
 		/// Uses <see cref="resourcesPath"/> and adds part of the path to point into <see cref="MatchRating"/> images directory

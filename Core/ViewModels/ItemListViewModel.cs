@@ -9,7 +9,7 @@ namespace Igor.BillScanner.Core {
 
 		public ObservableCollection<ItemList_ItemViewModel> Items { get; set; } = new ObservableCollection<ItemList_ItemViewModel>();
 
-		public List<ItemList_ItemViewModel> SelectedItems { get; set; }
+		public List<ItemList_ItemViewModel> SelectedItems { get; set; } = new List<ItemList_ItemViewModel>();
 
 		public ItemList_ItemViewModel SelectedItem => SingleItemSelection ? SelectedItems[0] :
 													  throw new System.InvalidOperationException("Calling SelectItem on list with that can select multiple.");
@@ -70,6 +70,7 @@ namespace Igor.BillScanner.Core {
 				ItemList_ItemViewModel i = new ItemList_ItemViewModel(item);
 				Items.Add(i);
 			}
+			Notify(nameof(Items));
 		}
 
 		/// <summary>

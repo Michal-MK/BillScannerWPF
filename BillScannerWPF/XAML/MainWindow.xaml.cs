@@ -69,6 +69,7 @@ namespace Igor.BillScanner.WPF.UI {
 		public MainWindow(Shop selectedShop) {
 			InitializeComponent();
 			Services.Instance.AddMainThreadDispatcher(this);
+			Services.Instance.AddManualUserInput(new ManualUserInput(this));
 
 			DatabaseAccess.LoadDatabase(selectedShop);
 			SelectedShopRuleset = BaseRuleset.GetRuleset(selectedShop);
@@ -108,9 +109,9 @@ namespace Igor.BillScanner.WPF.UI {
 			DebugDelay();
 		}
 
-		private void OnImageParsed(object sender, ParsingResult e) {
-			matchedItems = UIItemConversion(ConstructUI(e.MachedItems));
-			unknownItems = UIItemConversion(ConstructUI(e.UnknownItems));
+		private void OnImageParsed(object sender, ParsingCompleteEventArgs e) {
+			matchedItems = UIItemConversion(ConstructUI(e.Result.MachedItems));
+			unknownItems = UIItemConversion(ConstructUI(e.Result.UnknownItems));
 		}
 
 		public ObservableCollection<UIItem> UIItemConversion(ObservableCollection<object> observableCollection) {

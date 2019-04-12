@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Drawing;
 using System.Linq;
@@ -15,7 +16,7 @@ namespace Igor.BillScanner.Core {
 		private readonly TesseractEngine _engine;
 		private readonly IRuleset _ruleset;
 
-		public event EventHandler<ParsingResult> OnImageParsed;
+		public event EventHandler<ParsingCompleteEventArgs> OnImageParsed;
 
 		/// <summary>
 		/// Static reference to the <see cref="ImageProcessor"/> and its content
@@ -25,12 +26,12 @@ namespace Igor.BillScanner.Core {
 		/// <summary>
 		/// Bound container that holds all matched <see cref="UIItem"/>s
 		/// </summary>
-		internal ObservableCollection<UIItemCreationInfo> UIItemsMatched = new ObservableCollection<UIItemCreationInfo>();
+		internal List<UIItemCreationInfo> UIItemsMatched = new List<UIItemCreationInfo>();
 
 		/// <summary>
 		/// Bound container that holds all unknown <see cref="UIItem"/>s
 		/// </summary>
-		internal ObservableCollection<UIItemCreationInfo> UIItemsUnknown = new ObservableCollection<UIItemCreationInfo>();
+		internal List<UIItemCreationInfo> UIItemsUnknown = new List<UIItemCreationInfo>();
 
 		/// <summary>
 		/// Parse results and other information from current scan
@@ -75,7 +76,7 @@ namespace Igor.BillScanner.Core {
 			result = await parser.ParseAsync(lines);
 
 			CurrentParsingResult = result;
-			OnImageParsed?.Invoke(this, CurrentParsingResult);
+			OnImageParsed?.Invoke(this, new ParsingCompleteEventArgs(CurrentParsingResult));
 		}
 
 		private string[] GetOCRLines(string imagePath) {

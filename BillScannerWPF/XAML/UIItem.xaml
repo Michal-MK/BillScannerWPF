@@ -4,8 +4,17 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Igor.BillScanner.WPF.UI"
+             xmlns:core="clr-namespace:Igor.BillScanner.Core;assembly=Igor.BillScanner.Core"
              mc:Ignorable="d" 
              d:DesignWidth="400">
+	<d:UserControl.DataContext>
+		<core:UIItemViewModel/>
+	</d:UserControl.DataContext>
+
+	<UserControl.Resources>
+		<local:MatchRatingToImageConverter x:Key="MatchToImageConv"></local:MatchRatingToImageConverter>
+	</UserControl.Resources>
+	
 	<Grid>
 		<Grid.ColumnDefinitions>
 			<ColumnDefinition Width="10"></ColumnDefinition>
@@ -17,8 +26,8 @@
 		<Grid.Background>
 			<SolidColorBrush Color="LightSlateGray"></SolidColorBrush>
 		</Grid.Background>
-		<TextBlock x:Name="UITEM_OriginalName_Text" Grid.Column="1" Text="Original Name" VerticalAlignment="Center" HorizontalAlignment="Left" ></TextBlock>
+		<TextBlock x:Name="UITEM_OriginalName_Text" Grid.Column="1" Text="{Binding ItemName}" VerticalAlignment="Center" HorizontalAlignment="Left" ></TextBlock>
 		<Button x:Name="UITEM_ShowDetails_Button" Grid.Column="2" Content="Details" Click="UITEM_ShowDetails_Click" Padding="10 0"></Button>
-		<Image x:Name="UITEM_MatchQuality_Image" Grid.Column="3" Height="32px" HorizontalAlignment="Right" Margin="10 0"/>
+		<Image x:Name="UITEM_MatchQuality_Image" Grid.Column="3" Source="{Binding MatchQuiality, Converter={StaticResource MatchToImageConv}}" Height="32px" HorizontalAlignment="Right" Margin="10 0"/>
 	</Grid>
 </UserControl>

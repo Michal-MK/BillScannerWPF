@@ -30,8 +30,6 @@ namespace Igor.BillScanner.WPF.UI {
 		/// Create new <see cref="UIItem"/>
 		/// </summary>
 		/// <param name="itemCreation">The associated item</param>
-		/// <param name="quantityPurchased">The amount bought</param>
-		/// <param name="quality">Match quality</param>
 		internal UIItem(UIItemCreationInfo itemCreation) {
 			InitializeComponent();
 			if (itemCreation.MatchQuality == MatchRating.Success) {
@@ -44,6 +42,11 @@ namespace Igor.BillScanner.WPF.UI {
 			MatchQuality = itemCreation.MatchQuality;
 			AmountPurchased = itemCreation.Amount;
 			SetMatchRatingImage();
+		}
+
+		internal UIItem(UIItemViewModel model) {
+			InitializeComponent();
+			DataContext = model;
 		}
 
 		/// <summary>
@@ -63,7 +66,7 @@ namespace Igor.BillScanner.WPF.UI {
 		}
 
 		private void UITEM_ShowDetails_Click(object sender, RoutedEventArgs e) {
-			ItemInfoOverlay overlay = new ItemInfoOverlay(this);
+			new ItemInfoOverlay(this);
 		}
 	}
 }

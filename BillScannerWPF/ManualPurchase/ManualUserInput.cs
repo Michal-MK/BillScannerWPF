@@ -70,7 +70,12 @@ namespace Igor.BillScanner.WPF.UI {
 		public async Task<Item> SelectOneItemFromListAsync(Item[] items) {
 			ItemList list = new ItemList();
 			(list.DataContext as ItemListViewModel).AddItems(items);
+			_mainWindow.MAIN_Grid.Children.Add(list);
 			List<ItemList_ItemViewModel> selected = await (list.DataContext as ItemListViewModel).SelectItemAsync();
+			_mainWindow.MAIN_Grid.Children.Remove(list);
+			if (selected == null) {
+				return null;
+			}
 			return selected[0].Item;
 		}
 
