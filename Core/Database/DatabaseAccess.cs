@@ -47,10 +47,13 @@ namespace Igor.BillScanner.Core {
 		public Item GetItem(int ID) {
 			using (IDbConnection connection = new SQLiteConnection(DbConnectionString)) {
 				connection.Open();
+				if(ID == -1) {
+					return null;
+				}
 				DbItem item = connection.QueryFirst<DbItem>($"SELECT * FROM {DbItem.DName}" +
-															$"WHERE {nameof(DbItem.ID)} = {ID}");
+															$"WHERE {nameof(DbItem.ID)} = \"{ID}\"");
 				if (item == null) {
-					throw new ItemNotDefinedException($"Item with ID {ID} is not present in the database");
+					return null;
 				}
 
 				IEnumerator<string> ocrNames = connection.Query<string>($"SELECT {nameof(DbItemOcrNames.OcrName)} FROM {DbItemOcrNames.DName} " +

@@ -1,8 +1,7 @@
 ﻿using System;
-using System.Windows.Input;
 
 namespace Igor.BillScanner.Core {
-	public class Command : ICommand {
+	public class Command : BaseCommand {
 
 		private readonly Action _action;
 
@@ -10,13 +9,7 @@ namespace Igor.BillScanner.Core {
 			_action = action;
 		}
 
-		public event EventHandler CanExecuteChanged;
-
-		public bool CanExecute(object parameter) {
-			return true;
-		}
-
-		public void Execute(object parameter) {
+		public override void Execute(object parameter) {
 			_action();
 		}
 	}

@@ -15,7 +15,7 @@ namespace Igor.BillScanner.WPF.UI {
 			InitializeComponent();
 		}
 
-		private void ITEMLIST_Items_ListBox_SelectionChanged(object sender, SelectionChangedEventArgs e) {
+		private void ItemsSelectionChanged(object sender, SelectionChangedEventArgs e) {
 			(DataContext as ItemListViewModel).Selected(((ListBox)sender).SelectedItem);
 		}
 	}

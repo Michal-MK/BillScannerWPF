@@ -9,7 +9,7 @@ namespace Igor.BillScanner.WPF.UI {
 
 		private async void DebugDelay() {
 			await Task.Run(() => { Thread.Sleep(500); });
-			await DebugListAsync();
+			//await DebugListAsync();
 			///await DebugManualResolveAsync();
 			//	await DebugDateBoxAsync();
 		}

@@ -10,8 +10,9 @@
 	<UserControl.DataContext>
 		<core:ItemListViewModel/>
 	</UserControl.DataContext>
+	
 	<UserControl.Resources>
-		<local:ViewModelToViewConverter x:Key="VMtoVConverter"></local:ViewModelToViewConverter>
+		<local:ViewModelToViewConverter x:Key="VMtoVConverter"/>
 	</UserControl.Resources>
 	
 	<Grid Background="WhiteSmoke">
@@ -27,17 +28,26 @@
 		</Grid.RowDefinitions>
 
 		<ScrollViewer Grid.Row="1" Grid.Column="1" VerticalScrollBarVisibility="Auto">
-			<ListBox x:Name="ITEMLIST_List" HorizontalContentAlignment="Stretch"
+			<ListBox HorizontalContentAlignment="Stretch"
 					 ItemsSource="{Binding Items, Converter={StaticResource VMtoVConverter}}"
-					 SelectionChanged="ITEMLIST_Items_ListBox_SelectionChanged">
+					 SelectionChanged="ItemsSelectionChanged">
 			</ListBox>
 
 		</ScrollViewer>
 
-		<StackPanel Grid.Row="2" Grid.Column="1" VerticalAlignment="Bottom" HorizontalAlignment="Right" Orientation="Horizontal">
-			<TextBlock	HorizontalAlignment="Left" x:Name="ITEMLIST_ErrorInfo_Text" Foreground="Red"></TextBlock>
-			<Button	HorizontalAlignment="Right" Command="{Binding SelectCommand}" Content="Select" Margin="0,10,10,10" Padding="20,5"></Button>
-			<Button	HorizontalAlignment="Right" Command="{Binding AbortCommand}" Content="Back" Margin="0,10,10,10" Padding="20,5"></Button>
-		</StackPanel>
+		<Grid Grid.Row="2"
+			  Grid.Column="1">
+
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="auto"/>
+				<ColumnDefinition Width="*"/>
+				<ColumnDefinition Width="auto"/>
+				<ColumnDefinition Width="auto"/>
+			</Grid.ColumnDefinitions>
+			
+			<TextBlock Grid.Column="0" Text="{Binding ErrorOutput}" Foreground="Red" VerticalAlignment="Center"></TextBlock>
+			<Button Grid.Column="2" Command="{Binding SelectedCommand}" Content="Select" Margin="0,10,10,10" Padding="20,5"></Button>
+			<Button Grid.Column="3" Command="{Binding AbortedCommand}"  Content="Back"   Margin="0,10,10,10" Padding="20,5"></Button>
+		</Grid>
 	</Grid>
 </UserControl>

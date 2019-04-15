@@ -11,7 +11,7 @@ namespace Igor.BillScanner.WPF.UI {
 		/// <summary>
 		/// Parent element of this control
 		/// </summary>
-		private Grid holder;
+		private readonly Grid holder;
 
 		/// <summary>
 		/// Construct a new Item info from a small preview <see cref="UIItem"/>
@@ -22,7 +22,7 @@ namespace Igor.BillScanner.WPF.UI {
 			holder = ((MainWindow)App.Current.MainWindow).MAIN_Grid;
 
 			holder.Children.Add(this);
-			INFO_PURCHASE_ItemQuantity.Text = source.AmountPurchased.ToString();
+			INFO_PURCHASE_ItemQuantity.Text = source.Model.AmountPurchased.ToString();
 		}
 
 		private void INFO_Back_Click(object sender, RoutedEventArgs e) {

@@ -37,10 +37,6 @@
     <Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.11.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
-    <Reference Include="SimpleTCP, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\SimpleTCP\SimpleTCP.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
@@ -63,11 +59,10 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Converters\BaseValueConverter.cs" />
+    <Compile Include="Converters\BoolToVisibilityCollapseConverter.cs" />
     <Compile Include="Converters\MatchRatingToImageConverter.cs" />
     <Compile Include="ManualPurchase\ManualPurchaseHandler.cs" />
     <Compile Include="ManualPurchase\ManualUserInput.cs" />
-    <Compile Include="Helpers\ScannerHelper.cs" />
-    <Compile Include="Helpers\ServerStateManager.cs" />
     <Compile Include="Converters\ViewModelToViewConverter.cs" />
     <Compile Include="XAML\DateBox.xaml.cs">
       <DependentUpon>DateBox.xaml</DependentUpon>

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using Igor.BillScanner.Core.Rules;
 using Tesseract;
@@ -38,28 +39,14 @@ namespace Igor.BillScanner.Core {
 		/// </summary>
 		public ParsingResult CurrentParsingResult { get; private set; }
 
-		internal IItemPreview preview { get; }
-
 		/// <summary>
 		/// Create new <see cref="ImageProcessor"/> with needed references
 		/// </summary>
-		/// <param name="access">Reference to database IO</param>
 		/// <param name="ruleset">Reference to selected <see cref="Shop"/>'s rules</param>
-		/// <param name="main">Reference to main application window</param>
-		public ImageProcessor(IRuleset ruleset, IItemPreview itemPrev) {
+		public ImageProcessor(IRuleset ruleset) {
 			Instance = this;
-			_engine = new TesseractEngine("Resources" + System.IO.Path.DirectorySeparatorChar + "tessdata", "ces");
+			_engine = new TesseractEngine("Resources" + Path.DirectorySeparatorChar + "tessdata", "ces");
 			_ruleset = ruleset;
-			preview = itemPrev;
-		}
-
-		/// <summary>
-		/// Event for receiving image data from a mobile device
-		/// </summary>
-		public void OnImageDataReceived(byte sender, byte[] imageData) {
-			Services.Instance.UIThread.Run(() => {
-				preview.SetPreviewImage(imageData);
-			});
 		}
 
 		/// <summary>
@@ -70,12 +57,9 @@ namespace Igor.BillScanner.Core {
 			UIItemsUnknown.Clear();
 
 			string[] lines = GetOCRLines(imagePath);
-			ParsingResult result = null;
 			StringParser parser = new StringParser(_ruleset);
 
-			result = await parser.ParseAsync(lines);
-
-			CurrentParsingResult = result;
+			CurrentParsingResult = await parser.ParseAsync(lines);
 			OnImageParsed?.Invoke(this, new ParsingCompleteEventArgs(CurrentParsingResult));
 		}
 

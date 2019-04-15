@@ -7,13 +7,14 @@
              xmlns:core="clr-namespace:Igor.BillScanner.Core;assembly=Igor.BillScanner.Core"
              mc:Ignorable="d" 
              d:DesignWidth="400">
-	<d:UserControl.DataContext>
-		<core:UIItemViewModel/>
-	</d:UserControl.DataContext>
 
 	<UserControl.Resources>
 		<local:MatchRatingToImageConverter x:Key="MatchToImageConv"></local:MatchRatingToImageConverter>
 	</UserControl.Resources>
+
+	<d:UserControl.DataContext>
+		<core:UIItemViewModel/>
+	</d:UserControl.DataContext>
 	
 	<Grid>
 		<Grid.ColumnDefinitions>
@@ -23,11 +24,13 @@
 			<ColumnDefinition Width="auto"></ColumnDefinition>
 			<ColumnDefinition Width="10"></ColumnDefinition>
 		</Grid.ColumnDefinitions>
+		
 		<Grid.Background>
 			<SolidColorBrush Color="LightSlateGray"></SolidColorBrush>
 		</Grid.Background>
-		<TextBlock x:Name="UITEM_OriginalName_Text" Grid.Column="1" Text="{Binding ItemName}" VerticalAlignment="Center" HorizontalAlignment="Left" ></TextBlock>
-		<Button x:Name="UITEM_ShowDetails_Button" Grid.Column="2" Content="Details" Click="UITEM_ShowDetails_Click" Padding="10 0"></Button>
-		<Image x:Name="UITEM_MatchQuality_Image" Grid.Column="3" Source="{Binding MatchQuiality, Converter={StaticResource MatchToImageConv}}" Height="32px" HorizontalAlignment="Right" Margin="10 0"/>
+		
+		<TextBlock	Grid.Column="1" Text="{Binding ItemName}" VerticalAlignment="Center" HorizontalAlignment="Left" ></TextBlock>
+		<Button		Grid.Column="2" Content="Details" Click="UITEM_ShowDetails_Click" Padding="10 0"></Button>
+		<Image		Grid.Column="3" Source="{Binding MatchQuiality, Converter={StaticResource MatchToImageConv}}" Height="32px" HorizontalAlignment="Right" Margin="10 0"/>
 	</Grid>
 </UserControl>

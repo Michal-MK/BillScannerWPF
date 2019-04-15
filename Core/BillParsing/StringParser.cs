@@ -48,7 +48,7 @@ namespace Igor.BillScanner.Core {
 				if (ocrLowestDist <= 6) {
 
 					Choices choice = await Services.Instance.UserInput.SelectChoiceAsync(
-						$"Found Item named {split[i]} with {ocrLowestIndex} character difference, closest: {items[ocrLowestIndex].ItemName}",
+						$"Found Item named {split[i]} with {ocrLowestDist} character difference, closest: {items[ocrLowestIndex].ItemName}",
 						Choices.MatchAnyway, Choices.MatchWithoutAddingAmbiguities, Choices.NotAnItem);
 
 					if (choice != Choices.NotAnItem) {

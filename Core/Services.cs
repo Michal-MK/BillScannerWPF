@@ -11,14 +11,14 @@
 
 		public IManualUserInput UserInput { get; private set; }
 
-		public IDispatcher UIThread { get; private set; }
+		public MainWindowViewModel MainWindow { get; private set; }
 
 		public void AddManualUserInput(IManualUserInput input) {
 			UserInput = input;
 		}
 
-		public void AddMainThreadDispatcher(IDispatcher dispatcher) {
-			UIThread = dispatcher;
+		public void AddMainWindowModel(MainWindowViewModel model) {
+			MainWindow = model;
 		}
 	}
 }

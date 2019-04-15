@@ -7,6 +7,14 @@ using System.Windows.Input;
 namespace Igor.BillScanner.Core {
 	public class ItemListViewModel : BaseViewModel {
 
+		#region BackingFields
+
+		private ICommand _selectedCommand;
+		private ICommand _abortCommand;
+		private string _errorOutput;
+
+		#endregion
+
 		public ObservableCollection<ItemList_ItemViewModel> Items { get; set; } = new ObservableCollection<ItemList_ItemViewModel>();
 
 		public List<ItemList_ItemViewModel> SelectedItems { get; set; } = new List<ItemList_ItemViewModel>();
@@ -18,28 +26,34 @@ namespace Igor.BillScanner.Core {
 
 		public bool Aborted { get; set; } = false;
 
-		public ICommand SelectedCommand { get; set; }
+		public ICommand SelectedCommand { get => _selectedCommand; set { _selectedCommand = value; Notify(nameof(SelectedCommand)); } }
 
-		public ICommand AbortCommand { get; set; }
+		public ICommand AbortedCommand { get => _abortCommand; set { _abortCommand = value; Notify(nameof(AbortedCommand)); } }
 
-		public ICommand SelectButtonCommand { get; set; }
-
+		public string ErrorOutput { get => _errorOutput; set { _errorOutput = value; Notify(nameof(ErrorOutput)); } }
 
 		public readonly ManualResetEventSlim _evnt = new ManualResetEventSlim();
 
 
 		public ItemListViewModel() {
-			AbortCommand = new Command(Abort);
+			AbortedCommand = new Command(AbortButton);
 			SelectedCommand = new Command(SelectButton);
 		}
 
-		public void Abort() {
+		public void SelectButton() {
+			if (SelectedItems.Count == 0) {
+				return;
+			}
+			_evnt.Set();
+		}
+
+		public void AbortButton() {
 			Aborted = true;
 			_evnt.Set();
 		}
 
-		public void Selected(object changed) {
-			ItemList_ItemViewModel model = (ItemList_ItemViewModel)changed;
+		public void Selected(dynamic changed) {
+			ItemList_ItemViewModel model = changed.DataContext as ItemList_ItemViewModel;
 			if (SingleItemSelection) {
 				SelectedItems.Clear();
 				SelectedItems.Add(model);
@@ -54,12 +68,6 @@ namespace Igor.BillScanner.Core {
 			}
 		}
 
-		public void SelectButton() {
-			if (SelectedItems.Count == 0) {
-				return;
-			}
-			_evnt.Set();
-		}
 
 		/// <summary>
 		/// Add items to display in this ItemList
@@ -85,6 +93,7 @@ namespace Igor.BillScanner.Core {
 					return null;
 				}
 			}
+			_evnt.Dispose();
 			return SelectedItems;
 		}
 	}

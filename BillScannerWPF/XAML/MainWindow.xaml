@@ -4,59 +4,104 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Igor.BillScanner.WPF.UI"
+        xmlns:core="clr-namespace:Igor.BillScanner.Core;assembly=Igor.BillScanner.Core"
         mc:Ignorable="d"
         Title="Bill Scanner" Height="500" Width="1000">
 
+	<Window.DataContext>
+		<core:MainWindowViewModel/>
+	</Window.DataContext>
+
+	<Window.Resources>
+		<local:BoolToVisibilityCollapseConverter x:Key="BoolToVisCollapse"/>
+	</Window.Resources>
+
 	<Grid x:Name="MAIN_Root_Grid">
-		<local:StatusBar x:Name="StatusBar"></local:StatusBar>
-		
-		<Grid Margin="5,16,5,5"  Name="MAIN_Grid">
-			<Grid>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="auto"/>
+			<RowDefinition Height="*"/>
+		</Grid.RowDefinitions>
+
+		<local:StatusBar Grid.Row="0" x:Name="StatusBar"/>
+
+		<Grid Grid.Row="1" Name="MAIN_Grid" Margin="10,10,10,0">
+			<Grid.RowDefinitions>
+				<RowDefinition Height="*"/>
+				<RowDefinition Height="auto"/>
+			</Grid.RowDefinitions>
+
+			<Grid Grid.Row="0">
 				<Grid.ColumnDefinitions>
-					<ColumnDefinition Width="3*"></ColumnDefinition>
-					<ColumnDefinition Width="3*"></ColumnDefinition>
-					<ColumnDefinition Width="3*"></ColumnDefinition>
+					<ColumnDefinition Width="*"></ColumnDefinition>
+					<ColumnDefinition Width="*"></ColumnDefinition>
+					<ColumnDefinition Width="*"></ColumnDefinition>
 				</Grid.ColumnDefinitions>
+
 				<Image x:Name="MAIN_PhotoPreview_Image" Grid.Column="0"
 					   MouseLeftButtonDown="PreviewImgMouse" 
 					   MouseRightButtonDown="MAIN_PhotoPreview_RightClick"
-					   Stretch="Uniform" Margin="10"
-					   Source="/Igor.BillScanner.WPF.UI;component/Resources/Transparent.png"/>
+					   Stretch="Uniform"
+					   Source="{Binding ImageSource}"/>
 
 				<Label Content="Matched Products" Grid.Column="1" />
-				<ScrollViewer Grid.Column="1"  Margin="0,30,0,70">
-					<StackPanel>
-						<StackPanel.Resources>
+				<ScrollViewer Grid.Column="1"  Margin="0,30,0,10" VerticalScrollBarVisibility="Disabled">
+					<ListBox ItemsSource="{Binding MatchedItems}">
+						<!--<ListBox.ItemTemplate>
+							<DataTemplate DataType="{x:Type local:UIItem}">
+							</DataTemplate>
+						</ListBox.ItemTemplate>-->
+						<!--<ListBox.Resources>
 							<Style TargetType="{x:Type local:UIItem}">
 								<Setter Property="Margin" Value="0,5"/>
 							</Style>
-						</StackPanel.Resources>
-						<ItemsControl x:Name="MAIN_MatchedItems_Stack"></ItemsControl>
-					</StackPanel>
+						</ListBox.Resources>-->
+					</ListBox>
 				</ScrollViewer>
 
 				<Label Content="Unknown Products" Grid.Column="2" />
-				<ScrollViewer Grid.Column="2" Margin="0,30,0,70">
-					<StackPanel>
-						<StackPanel.Resources>
+				<ScrollViewer Grid.Column="2" Margin="0,30,0,10" VerticalScrollBarVisibility="Disabled">
+					<ListBox ItemsSource="{Binding UnknownItems}">
+						<ListBox.ItemTemplate>
+							<DataTemplate>
+								<local:UIItem/>
+							</DataTemplate>
+						</ListBox.ItemTemplate>
+						<!--<ListBox.Resources>
 							<Style TargetType="{x:Type local:UIItem}">
 								<Setter Property="Margin" Value="0,5"/>
 							</Style>
-						</StackPanel.Resources>
-						<ItemsControl x:Name="MAIN_UnknownProducts_Stack"></ItemsControl>
-					</StackPanel>
+						</ListBox.Resources>-->
+					</ListBox>
 				</ScrollViewer>
 
 			</Grid>
-			<Grid HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="10,0,10,10" Height="50">
+
+			<Grid Grid.Row="1"
+				  Margin="0,0,0,10"
+				  MinHeight="32" MaxHeight="64"
+				  HorizontalAlignment="Right">
+
 				<Grid.ColumnDefinitions>
 					<ColumnDefinition MinWidth="120"></ColumnDefinition>
 					<ColumnDefinition MinWidth="120"></ColumnDefinition>
 				</Grid.ColumnDefinitions>
-				<Button x:Name="MAIN_Finalize_Button"			Grid.Column="1" Content="Finalize"				Margin="10,0,0,0"/>
-				<Button x:Name="MAIN_Clear_Button"				Grid.Column="1" Content="Clear Contents"		Margin="10,0,0,0" Visibility="Collapsed"/>
-				<Button x:Name="MAIN_Analyze_Button"			Grid.Column="0" Content="Analyze"				Margin="10,0,0,0"/>
-				<Button x:Name="MAIN_ManualPurchase_Button"		Grid.Column="0" Content="Manual Purchase"	Margin="10,0,0,0"/>
+
+				<Button Command="{Binding Finalize}"
+						Grid.Column="1" Content="Finalize"
+						Margin="10,0,0,0" Visibility="{Binding FinalizeButtonVisible, Converter={StaticResource BoolToVisCollapse}}" />
+
+				<Button Command="{Binding Clear}"
+						Grid.Column="1" Content="Clear Contents" Margin="10,0,0,0"
+						Visibility="{Binding ClearButtonVisible, Converter={StaticResource BoolToVisCollapse}}"/>
+
+				<Button Command="{Binding Analyze}"
+						Grid.Column="1" Content="Analyze"		 Margin="10,0,0,0"
+						Visibility="{Binding AnalyzeButtonVisible, Converter={StaticResource BoolToVisCollapse}}"/>
+
+				<Button x:Name="MAIN_ManualPurchase_Button"
+						Command="{Binding ManualPurchase}"
+						Grid.Column="0" Content="Manual Purchase"		Margin="10,0,0,0"
+						Visibility="{Binding ManualPurchaseButtonVisible, Converter={StaticResource BoolToVisCollapse}}"/>
 			</Grid>
 		</Grid>
 	</Grid>
