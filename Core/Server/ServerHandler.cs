@@ -78,7 +78,7 @@ namespace Igor.BillScanner.Core {
 				File.WriteAllBytes(path, imageData);
 				OnImageReceived?.Invoke(this, path);
 			}
-			catch (Exception e) {
+			catch (Exception) {
 				Debugger.Break();
 				//TODO
 			}

@@ -1,20 +1,24 @@
 ﻿using System;
 using System.Threading.Tasks;
+using System.Windows.Input;
 
 namespace Igor.BillScanner.Core {
 	public interface IManualUserInput {
-		Task<Choices> SelectChoiceAsync(string displayText, params Choices[] choices);
 
-		Task<(Choices choice, int value)> GetIntInputAsync(string displayText, params Choices[] choices);
+		Task<ManualResolutionViewModel> GetCustom(ManualResolutionViewModel input);
 
-		Task<(Choices choice, string value)> GetStringInput(string displayText, params Choices[] choices);
+		Task PressOneOf(string displayText, params ICommand[] choices);
 
-		Task<(Choices choice, DateTime value)> GetDateTimeInputAsync(string displayText, params Choices[] choices);
+		Task<int> GetIntInputAsync(string displayText);
 
-		Task<(Choices choice, int value)> GetDecimalInputAsIntAsync(string displayText, params Choices[] choices);
+		Task<string> GetStringInput(string displayText);
+
+		Task<DateTime> GetDateTimeInputAsync(string displayText, bool allowNow = true);
+
+		Task<int?> GetDecimalInputAsIntAsync(string displayText, bool allowKnown = false);
 
 		Task<Item> SelectOneItemFromListAsync(Item[] items);
 
-		Task<(string itemName, int itemPrice, MeassurementUnit itemUnitOfMeassure)> DefineNewItemAsync();
+		Task<(string Name, int Price, MeassurementUnit UnitOfMeassure)> DefineNewItemAsync();
 	}
 }

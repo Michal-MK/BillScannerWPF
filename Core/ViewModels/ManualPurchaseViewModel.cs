@@ -1,32 +1,18 @@
-﻿using System.Collections.ObjectModel;
+﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 
 namespace Igor.BillScanner.Core {
 	public class ManualPurchaseViewModel : BaseViewModel {
 
-		private Item[] _items;
-		public string SearchQuery { get; set; }
+		private ObservableCollection<ItemList_ItemViewModel> _items = new ObservableCollection<ItemList_ItemViewModel> {
+			new ItemList_ItemViewModel(new Item("Test", 20))
+		};
 
-		public ObservableCollection<ItemList_ItemViewModel> Items { get; set; }
+		public ObservableCollection<ItemList_ItemViewModel> ManualItems { get => _items; set { _items = value; Notify(nameof(ManualItems)); } }
 
 		public ManualPurchaseViewModel() {
-			_items = DatabaseAccess.access.GetItems();
-		}
-
-		public void PopulateList() {
-			Items = new ObservableCollection<ItemList_ItemViewModel>();
-
-			if (string.IsNullOrWhiteSpace(SearchQuery)) {
-				foreach (Item i in _items) {
-					Items.Add(new ItemList_ItemViewModel(i));
-				}
-			}
-			else {
-				foreach (Item i in _items.Where((i) => { return i.ItemName.Contains(SearchQuery); })) {
-					Items.Add(new ItemList_ItemViewModel(i));
-				}
-			}
-			Notify(nameof(Items));
+			ManualItems = DatabaseAccess.access.GetItems().Select(s => new ItemList_ItemViewModel(s)).ToObservable();
 		}
 	}
 }

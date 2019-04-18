@@ -4,54 +4,74 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Igor.BillScanner.WPF.UI"
+             xmlns:core="clr-namespace:Igor.BillScanner.Core;assembly=Igor.BillScanner.Core"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800"
-			 KeyboardNavigation.TabNavigation="Cycle">
-	<Grid x:Name="MAIN_ManualResolveChoice_Grid" Panel.ZIndex="1" Visibility="Visible">
+			 KeyboardNavigation.TabNavigation="None">
+
+	<UserControl.DataContext>
+		<core:ManualResolutionViewModel/>
+	</UserControl.DataContext>
+
+	<UserControl.Resources>
+		<local:BoolToVisibilityCollapseConverter x:Key="BoolToVis"/>
+
+		<Style TargetType="StackPanel" x:Key="GlobalStackPanelStyle">
+			<Style.Resources>
+				<Style TargetType="Button">
+					<Setter Property="Margin" Value="4" />
+					<Setter Property="Padding" Value="10,2" />
+					<Setter Property="HorizontalContentAlignment" Value="Left" />
+				</Style>
+			</Style.Resources>
+		</Style>
+	</UserControl.Resources>
+
+	<Grid>
 		<Grid.Background>
-			<SolidColorBrush Color="DarkRed"  Opacity=".4"/>
+			<SolidColorBrush Color="DarkRed" Opacity="0.4"/>
 		</Grid.Background>
-		<Viewbox>
-			<Grid Panel.ZIndex="2" Margin="75" Background="WhiteSmoke">
-				<Grid Margin="10">
-					<Grid.RowDefinitions>
-						<RowDefinition Height="auto"></RowDefinition>
-						<RowDefinition Height="auto"></RowDefinition>
-						<RowDefinition Height="auto"></RowDefinition>
-						<RowDefinition Height="auto"></RowDefinition>
-						<RowDefinition Height="auto"></RowDefinition>
-						<RowDefinition Height="auto"></RowDefinition>
-						<RowDefinition Height="auto"></RowDefinition>
-						<RowDefinition Height="*"></RowDefinition>
-						<RowDefinition Height="80"></RowDefinition>
-					</Grid.RowDefinitions>
-					<Grid.ColumnDefinitions>
-						<ColumnDefinition Width="auto"></ColumnDefinition>
-						<ColumnDefinition Width="auto"></ColumnDefinition>
-					</Grid.ColumnDefinitions>
-					<TextBlock Grid.Row="0" Grid.Column="0" Text="The parser encountered a situation where it is unsure what to do!"	Margin="0,0,0,20" FontWeight="Heavy"></TextBlock>
-					<TextBlock Grid.Row="1" Grid.Column="0" Text="$Error Desc." x:Name="MANUAL_RESOLUTION_ErrorType_Text"				Margin="0,0,0,10" FontWeight="DemiBold" Foreground="Red" FocusManager.FocusedElement="{Binding}"></TextBlock>
-					
-					
-					<Button Grid.Row="2" Grid.Column="0" Content="$Solution 1" HorizontalContentAlignment="Left" x:Name="MANUAL_RESOLUTION_Solution1_Button" Margin="4" Visibility="Collapsed" Padding="10,2"></Button>
-					<Button Grid.Row="3" Grid.Column="0" Content="$Solution 2" HorizontalContentAlignment="Left" x:Name="MANUAL_RESOLUTION_Solution2_Button" Margin="4" Visibility="Collapsed" Padding="10,2"></Button>
-					<Button Grid.Row="4" Grid.Column="0" Content="$Solution 3" HorizontalContentAlignment="Left" x:Name="MANUAL_RESOLUTION_Solution3_Button" Margin="4" Visibility="Collapsed" Padding="10,2"></Button>
-					<Button Grid.Row="5" Grid.Column="0" Content="$Solution 4" HorizontalContentAlignment="Left" x:Name="MANUAL_RESOLUTION_Solution4_Button" Margin="4" Visibility="Collapsed" Padding="10,2"></Button>
-					
-					<Grid Grid.Row="6" Grid.Column="0">
+		<Border Background="WhiteSmoke" Margin="85">
+			<Grid Panel.ZIndex="1" Margin="10">
+				<StackPanel Style="{StaticResource GlobalStackPanelStyle}">
+					<TextBlock	Text="{Binding Header}"		Margin="0,0,0,20" FontWeight="Heavy"	FontSize="16"></TextBlock>
+					<TextBlock	Text="{Binding ErrorText}"	Margin="0,0,0,10" FontWeight="DemiBold" Foreground="Red" FocusManager.FocusedElement="{Binding}"></TextBlock>
+					<!-- Simple buttons -->
+					<Button	Content="{Binding ButtonOne}"
+							Visibility="{Binding ButtonOneVisibility, Converter={StaticResource BoolToVis}}"
+							Command="{Binding ButtonOneCommand}"/>
+
+					<Button	Content="{Binding ButtonTwo}"
+							Visibility="{Binding ButtonTwoVisibility, Converter={StaticResource BoolToVis}}"
+							Command="{Binding ButtonTwoCommand}"/>
+
+					<Button	Content="{Binding ButtonThree}"
+							Visibility="{Binding ButtonThreeVisibility, Converter={StaticResource BoolToVis}}"
+							Command="{Binding ButtonThreeCommand}"/>
+
+					<!-- Manual Input of value -->
+					<Grid Visibility="{Binding SimpleInputControlVisible, Converter={StaticResource BoolToVis}}">
 						<Grid.ColumnDefinitions>
 							<ColumnDefinition Width="7*"></ColumnDefinition>
 							<ColumnDefinition Width="3*"></ColumnDefinition>
 						</Grid.ColumnDefinitions>
 
-						<Button			Grid.Column="0" Content="$Solution 5"	x:Name="MANUAL_RESOLUTION_Solution5_Button"		Margin="4" Visibility="Collapsed" Padding="10,2" HorizontalContentAlignment="Left"></Button>
-						<TextBox		Grid.Column="1" Text="$Solution 5.1"	x:Name="MANUAL_RESOLUTION_Solution5_Box"		Margin="4" Visibility="Collapsed" ></TextBox>
-						<local:DateBox	Grid.Column="1"							x:Name="MANUAL_RESOLUTION_Solution5_DateBox"	Margin="4" Visibility="Collapsed" ></local:DateBox>
+						<Button	 Grid.Column="0" Content="{Binding ButtonStdInput}" Command="{Binding ButtonStdInputCommand}"	 Margin="4" Padding="10,2" HorizontalContentAlignment="Left"></Button>
+						<TextBox Grid.Column="1" Text="{Binding CustomInputText}"	 Margin="4" ></TextBox>
 					</Grid>
 
-				</Grid>
-			</Grid>
-		</Viewbox>
-	</Grid>
+					<!-- Manual input of Date -->
+					<Grid Visibility="{Binding DateBoxControlVisible, Converter={StaticResource BoolToVis}}">
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="7*"></ColumnDefinition>
+							<ColumnDefinition Width="3*"></ColumnDefinition>
+						</Grid.ColumnDefinitions>
 
+						<Button			Grid.Column="0" Content="{Binding ButtonDateTimeInput}" Command="{Binding ButtonDateTimeCommand}" Margin="4" Padding="10,2" HorizontalContentAlignment="Left"></Button>
+						<local:DateBox	Grid.Column="1"	Text="{Binding DateTimeInputText}" DataContext="{Binding DataContext.DateBoxControlModel, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=UserControl}}" 	Margin="4" ></local:DateBox>
+					</Grid>
+				</StackPanel>
+			</Grid>
+		</Border>
+	</Grid>
 </UserControl>

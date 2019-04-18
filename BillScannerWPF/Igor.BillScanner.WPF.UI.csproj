@@ -60,10 +60,10 @@
     </ApplicationDefinition>
     <Compile Include="Converters\BaseValueConverter.cs" />
     <Compile Include="Converters\BoolToVisibilityCollapseConverter.cs" />
+    <Compile Include="Converters\DebugDataBindingConv.cs" />
     <Compile Include="Converters\MatchRatingToImageConverter.cs" />
     <Compile Include="ManualPurchase\ManualPurchaseHandler.cs" />
     <Compile Include="ManualPurchase\ManualUserInput.cs" />
-    <Compile Include="Converters\ViewModelToViewConverter.cs" />
     <Compile Include="XAML\DateBox.xaml.cs">
       <DependentUpon>DateBox.xaml</DependentUpon>
     </Compile>

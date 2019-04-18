@@ -4,9 +4,17 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Igor.BillScanner.WPF.UI"
+             xmlns:core="clr-namespace:Igor.BillScanner.Core;assembly=Igor.BillScanner.Core"
              mc:Ignorable="d" 
              d:DesignHeight="32" d:DesignWidth="100">
+	
+	<UserControl.DataContext>
+		<core:DateBoxViewModel/>
+	</UserControl.DataContext>
+	
     <Grid>
-		<TextBox Grid.Row="0" x:Name="DATEBOX_Input_Box" Text="" TextChanged="DATEBOX_Input_TextChanged" MaxWidth="100" MaxHeight="50"></TextBox>
-    </Grid>
+		<Border BorderBrush="{Binding Color}" Visibility="{Binding IsValidInput}" BorderThickness="2.5">
+			<TextBox Text="{Binding CurrentText, UpdateSourceTrigger=PropertyChanged}" VerticalContentAlignment="Center"></TextBox>
+		</Border>
+	</Grid>
 </UserControl>

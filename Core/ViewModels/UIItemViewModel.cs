@@ -3,12 +3,7 @@
 
 		#region Backing Fields
 
-		private MatchRating _matchQuality = MatchRating.Success;
-		private Item _item;
 		private UIItemCreationInfo _creationInfo;
-		private int _amountPurchased;
-
-
 
 		#endregion
 
@@ -16,29 +11,25 @@
 
 		public UIItemViewModel(UIItemCreationInfo item) {
 			_creationInfo = item;
-			_matchQuality = item.MatchQuality;
-			_item = item.Item;
-			_amountPurchased = item.Amount;
 		}
 
-		public string ItemName => "Helo";/*string.IsNullOrEmpty(ItemCreation.MatchTriggerLine) ? Item.ItemName : ItemCreation.MatchTriggerLine +
-								  " | Price: " + string.Format("{0:f2}", ItemCreation.CurrentPrice) + "Kč";*/
+		public string ItemName {
+			get {
+				string ret = (int)MatchQuality <= 1 ? Item.ItemName : ItemCreation.MatchTriggerLine;
+				ret += " | Price: " + string.Format("{0:f2}", ItemCreation.CurrentPrice) + "Kč";
+				return ret;
+			}
+		}
 
-		public int AmountPurchased {
-			get { return _amountPurchased; }
-			set { _amountPurchased = value; Notify(nameof(AmountPurchased)); Notify(ItemName); }
-		}
-		public MatchRating MatchQuality {
-			get { return _matchQuality; }
-			set { _matchQuality = value; Notify(nameof(MatchQuality)); }
-		}
-		public Item Item {
-			get { return _item; }
-			set { _item = value; Notify(nameof(Item)); Notify(ItemName); }
-		}
+		public int AmountPurchased => ItemCreation.Amount;
+
+		public MatchRating MatchQuality => ItemCreation.MatchQuality;
+
+		public Item Item => ItemCreation.Item;
+
 		public UIItemCreationInfo ItemCreation {
 			get { return _creationInfo; }
-			set { _creationInfo = value; Notify(nameof(ItemCreation)); Notify(ItemName); }
+			set { _creationInfo = value; Notify(nameof(ItemCreation)); Notify(nameof(ItemName)); }
 		}
 	}
 }

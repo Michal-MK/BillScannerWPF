@@ -1,22 +1,30 @@
-﻿using System.Windows.Controls;
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Windows;
+using System.Windows.Controls;
 using Igor.BillScanner.Core;
 
 namespace Igor.BillScanner.WPF.UI {
 
-	/// <summary>
-	/// Code for ItemList.xaml
-	/// </summary>
 	public partial class ItemList : UserControl {
 
-		/// <summary>
-		/// Create a list of items for the UI from a normal <see cref="Item"/> class
-		/// </summary>
 		public ItemList() {
 			InitializeComponent();
 		}
 
-		private void ItemsSelectionChanged(object sender, SelectionChangedEventArgs e) {
-			(DataContext as ItemListViewModel).Selected(((ListBox)sender).SelectedItem);
+		public IEnumerable<object> Items {
+			get { return (DataContext as ItemListViewModel).AllItems; }
+			set { (DataContext as ItemListViewModel).AddItems(value as ObservableCollection<ItemList_ItemViewModel>); }
+		}
+
+		public static readonly DependencyProperty ItemsProperty =
+			DependencyProperty.Register(nameof(Items), typeof(IEnumerable<object>), typeof(ItemList)
+				, new PropertyMetadata(OnChange));
+
+		private static void OnChange(DependencyObject d, DependencyPropertyChangedEventArgs e) {
+			(d as ItemList).Items =(ObservableCollection<ItemList_ItemViewModel>)e.NewValue;
 		}
 	}
 }

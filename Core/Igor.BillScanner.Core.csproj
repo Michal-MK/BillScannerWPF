@@ -74,6 +74,7 @@
     <Compile Include="Commands\BaseCommand.cs" />
     <Compile Include="Commands\ButtonCommand.cs" />
     <Compile Include="Commands\Command.cs" />
+    <Compile Include="Commands\ReturnCommand.cs" />
     <Compile Include="Events\ParsingCompleteEventArgs.cs" />
     <Compile Include="Interfaces\IItemPreview.cs" />
     <Compile Include="BillParsing\ImageProcessor.cs" />
@@ -121,11 +122,13 @@
     <Compile Include="Services.cs" />
     <Compile Include="Commands\SingleParamaterCommand.cs" />
     <Compile Include="ViewModels\BaseViewModel.cs" />
+    <Compile Include="ViewModels\DateBoxViewModel.cs" />
     <Compile Include="ViewModels\ItemListViewModel.cs" />
     <Compile Include="ViewModels\ItemList_ItemViewModel.cs" />
     <Compile Include="ViewModels\ItemOverlayViewModel.cs" />
     <Compile Include="ViewModels\MainWindowViewModel.cs" />
     <Compile Include="ViewModels\ManualPurchaseViewModel.cs" />
+    <Compile Include="ViewModels\ManualResolutionViewModel.cs" />
     <Compile Include="ViewModels\StatusBarViewModel.cs" />
     <Compile Include="ViewModels\UIItemViewModel.cs" />
     <Compile Include="WPFHelper.cs" />

@@ -7,15 +7,13 @@
 			 xmlns:local="clr-namespace:Igor.BillScanner.WPF.UI"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
+	
 	<UserControl.DataContext>
 		<core:ItemListViewModel/>
 	</UserControl.DataContext>
-	
-	<UserControl.Resources>
-		<local:ViewModelToViewConverter x:Key="VMtoVConverter"/>
-	</UserControl.Resources>
-	
+
 	<Grid Background="WhiteSmoke">
+
 		<Grid.ColumnDefinitions>
 			<ColumnDefinition Width="10"></ColumnDefinition>
 			<ColumnDefinition Width="*"></ColumnDefinition>
@@ -23,19 +21,35 @@
 		</Grid.ColumnDefinitions>
 		<Grid.RowDefinitions>
 			<RowDefinition Height="10"></RowDefinition>
+			<RowDefinition Height="auto"></RowDefinition>
 			<RowDefinition Height="*"></RowDefinition>
 			<RowDefinition Height="auto"></RowDefinition>
 		</Grid.RowDefinitions>
 
-		<ScrollViewer Grid.Row="1" Grid.Column="1" VerticalScrollBarVisibility="Auto">
+		<Grid Grid.Row="1" Grid.Column="1" Margin="0,5" >
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="auto"/>
+				<ColumnDefinition Width="auto"/>
+			</Grid.ColumnDefinitions>
+			<TextBlock Grid.Column="0" Text="Search: "/>
+			<TextBox   Grid.Column="1" HorizontalAlignment="Stretch" Text="{Binding SearchString, UpdateSourceTrigger=PropertyChanged}" MinWidth="200"/>
+		</Grid>
+		
+		<ScrollViewer Grid.Row="2" Grid.Column="1" VerticalScrollBarVisibility="Auto">
 			<ListBox HorizontalContentAlignment="Stretch"
-					 ItemsSource="{Binding Items, Converter={StaticResource VMtoVConverter}}"
-					 SelectionChanged="ItemsSelectionChanged">
+					 ItemsSource="{Binding Items}"
+					 SelectionMode="Single"
+					 SelectedItem="{Binding SelectedItem}">
+				<ListBox.ItemTemplate>
+					<DataTemplate>
+						<local:ItemList_Item/>
+					</DataTemplate>
+				</ListBox.ItemTemplate>
 			</ListBox>
 
 		</ScrollViewer>
 
-		<Grid Grid.Row="2"
+		<Grid Grid.Row="3"
 			  Grid.Column="1">
 
 			<Grid.ColumnDefinitions>

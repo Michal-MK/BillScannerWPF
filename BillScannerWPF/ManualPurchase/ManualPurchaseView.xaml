@@ -11,6 +11,10 @@
 	<UserControl.DataContext>
 		<core:ManualPurchaseViewModel/>
 	</UserControl.DataContext>
+	<UserControl.Resources>
+		<local:DebugDataBindingConv x:Key="test"/>
+	</UserControl.Resources>
+	
 	<Grid>
 		<Grid.Background>
 			<SolidColorBrush Color="Gray" Opacity=".4"></SolidColorBrush>
@@ -30,18 +34,10 @@
 				<ColumnDefinition></ColumnDefinition>
 				<ColumnDefinition></ColumnDefinition>
 			</Grid.ColumnDefinitions>
-			
-			<Grid Margin="0 5 0 0">
-				<Grid.ColumnDefinitions>
-					<ColumnDefinition Width="auto"></ColumnDefinition>
-					<ColumnDefinition Width="*"></ColumnDefinition>
-				</Grid.ColumnDefinitions>
-				
-				<TextBlock Text="Search items by name:   " FontWeight="Bold"></TextBlock>
-				<TextBox Text="{Binding SearchQuery, UpdateSourceTrigger=PropertyChanged}" TextChanged="OnTextChanged" Background="Aqua" Grid.Column="1"></TextBox>
-			</Grid>
-			
-			<local:ItemList Grid.Row="1" Background="Gray" x:Name="MANUALPURCHASE_Items_List"></local:ItemList>
+
+			<local:ItemList Grid.Row="1" Background="Gray" Items="{Binding DataContext.ManualItems, 
+																		   Mode=TwoWay, 
+																		   RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=UserControl}}"/>
 
 		</Grid>
 		

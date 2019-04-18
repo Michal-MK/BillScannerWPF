@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Globalization;
-using System.Windows.Media.Imaging;
 using Igor.BillScanner.Core;
 
 namespace Igor.BillScanner.WPF.UI {

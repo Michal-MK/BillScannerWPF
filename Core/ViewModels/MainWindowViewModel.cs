@@ -26,8 +26,10 @@ namespace Igor.BillScanner.Core {
 
 			Clear = new ButtonCommand((obj) => {
 				ImageSource = WPFHelper.resourcesPath + "Transparent.png";
-				FinalizeButtonVisible = true;
+				FinalizeButtonVisible = false;
 				ClearButtonVisible = false;
+				ManualPurchaseButtonVisible = true;
+				AnalyzeButtonVisible = true;
 			});
 
 			Analyze = new ButtonCommand((obj) => {
@@ -56,10 +58,8 @@ namespace Igor.BillScanner.Core {
 		private bool _clearButtonVisible = false;
 		private bool _manualPurchaseButtonVisible = true;
 
-		private ObservableCollection<UIItemViewModel> _matchedItems = new ObservableCollection<UIItemViewModel> { new UIItemViewModel(new UIItemCreationInfo(new Item("Test", 10), 1, 10, MatchRating.One, "test")) };
-		private ObservableCollection<UIItemViewModel> _unknownItems = new ObservableCollection<UIItemViewModel> { new UIItemViewModel(new UIItemCreationInfo(new Item("FAIL", 10), 1, 10, MatchRating.Five, "failasd")) };
-
-
+		private ObservableCollection<UIItemViewModel> _matchedItems = new ObservableCollection<UIItemViewModel>();
+		private ObservableCollection<UIItemViewModel> _unknownItems = new ObservableCollection<UIItemViewModel>();
 
 		private string _imageSource = "/Igor.BillScanner.WPF.UI;component/Resources/Transparent.png";
 
@@ -102,8 +102,6 @@ namespace Igor.BillScanner.Core {
 		/// </summary>
 		public ImageProcessor ImgProcessing { get; private set; }
 
-
-
 		public StatusBarViewModel StatusBar { get; set; }
 
 		#region Actions
@@ -111,6 +109,9 @@ namespace Igor.BillScanner.Core {
 		private void OnImageParsed(object sender, ParsingCompleteEventArgs e) {
 			MatchedItems = e.Result.MachedItems.Select(s => new UIItemViewModel(s)).ToObservable();
 			UnknownItems = e.Result.UnknownItems.Select(s => new UIItemViewModel(s)).ToObservable();
+			AnalyzeButtonVisible = false;
+			FinalizeButtonVisible = true;
+			ClearButtonVisible = true;
 		}
 
 		public void CoreLoaded() {

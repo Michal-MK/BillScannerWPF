@@ -46,16 +46,18 @@ namespace Igor.BillScanner.Core {
 				}
 
 				if (ocrLowestDist <= 6) {
-
-					Choices choice = await Services.Instance.UserInput.SelectChoiceAsync(
+					Choices selected = (Choices)(-1);
+					await Services.Instance.UserInput.PressOneOf(
 						$"Found Item named {split[i]} with {ocrLowestDist} character difference, closest: {items[ocrLowestIndex].ItemName}",
-						Choices.MatchAnyway, Choices.MatchWithoutAddingAmbiguities, Choices.NotAnItem);
+						new Command(() => selected = Choices.MatchAnyway),
+						new Command(() => selected = Choices.MatchWithoutAddingAmbiguities),
+						new Command(() => selected = Choices.NotAnItem));
 
-					if (choice != Choices.NotAnItem) {
+					if (selected != Choices.NotAnItem) {
 						int currentPrice = await GetCurrentPriceAsync(split, i, ocrLowestIndex);
 						int quantity = await GetQuantityAsync(split, i, items[ocrLowestIndex].ItemName);
 						UIItemCreationInfo creationInfo = new UIItemCreationInfo(items[ocrLowestIndex], quantity, currentPrice, MatchRating.FivePlus, split[i]);
-						if (choice == Choices.MatchAnyway) {
+						if (selected == Choices.MatchAnyway) {
 							creationInfo.Item.OcrNames.Add(split[i]);
 						}
 						matchedItems.Add(creationInfo);
@@ -66,11 +68,13 @@ namespace Igor.BillScanner.Core {
 						//Found a price/quantity line, safely ignore
 						continue;
 					}
+					Choices selected = (Choices)(-1);
+					await Services.Instance.UserInput.PressOneOf($"This string is something else.. what is it??\n'{split[i]}'",
+						new Command(() => selected = Choices.FindExistingItemFromList),
+						new Command(() => selected = Choices.DefineNewItem),
+						new Command(() => selected = Choices.NotAnItem));
 
-					Choices c = await Services.Instance.UserInput.SelectChoiceAsync($"This string is something else.. what is it??\n'{split[i]}'",
-						Choices.FindExistingItemFromList, Choices.DefineNewItem, Choices.NotAnItem);
-
-					if (c == Choices.DefineNewItem) {
+					if (selected == Choices.DefineNewItem) {
 						(string itemName, int itemPrice, MeassurementUnit itemUnitOfMeassure) = await Services.Instance.UserInput.DefineNewItemAsync(); //TODO Implement
 						int quantity = await GetQuantityAsync(split, i, itemName);
 						Item newItem = new Item(itemName, itemPrice);
@@ -81,7 +85,7 @@ namespace Igor.BillScanner.Core {
 						DatabaseAccess.access.WriteItemDefinitionToDatabase(newItem, purchaseTime);
 						matchedItems.Add(newlyMatched);
 					}
-					else if (c == Choices.FindExistingItemFromList) {
+					else if (selected == Choices.FindExistingItemFromList) {
 						Item manuallyMatchedItem = await Services.Instance.UserInput.SelectOneItemFromListAsync(DatabaseAccess.access.GetItems(rules.shop)); //TODO Implement
 						if (manuallyMatchedItem == null) {
 							i--;
@@ -93,7 +97,7 @@ namespace Igor.BillScanner.Core {
 						fromExistingMatched.Item.OcrNames.Add(split[i]);
 						matchedItems.Add(fromExistingMatched);
 					}
-					else if (c == Choices.NotAnItem) {
+					else if (selected == Choices.NotAnItem) {
 						unmatchedItems.Add(new UIItemCreationInfo(new Item(split[i], -1), -1, -1, MatchRating.Fail, ""));
 					}
 				}
@@ -169,20 +173,17 @@ namespace Igor.BillScanner.Core {
 				return rules.GetPriceOfOne(split, ref splitIndex);
 			}
 			catch (PriceParsingException) {
-				decimal data;
-				Choices choice;
+				int? data;
 				if (fallbackItemIndex == -1) {
-					(choice, data) = await Services.Instance.UserInput.GetDecimalInputAsIntAsync(
-					$"Unable to get current item's price [{split[splitIndex]}]",
-						new Choices[] { Choices.NOOP, Choices.NOOP, Choices.NOOP, Choices.ManuallyEnterPrice });
+					data = await Services.Instance.UserInput.GetDecimalInputAsIntAsync(
+										$"Unable to get current item's price [{split[splitIndex]}]");
 				}
 				else {
-					(choice, data) = await Services.Instance.UserInput.GetDecimalInputAsIntAsync(
-						$"Unable to get current item's price [{split[splitIndex]}]",
-						new Choices[] { Choices.NOOP, Choices.NOOP, Choices.UseLatestValue, Choices.ManuallyEnterPrice });
+					data = await Services.Instance.UserInput.GetDecimalInputAsIntAsync(
+						$"Unable to get current item's price [{split[splitIndex]}]", true);
 				}
 
-				if (choice == Choices.UseLatestValue) {
+				if (!data.HasValue) {
 					return DatabaseAccess.access.GetItems()[fallbackItemIndex].CurrentPriceInt;
 				}
 				else {
@@ -193,8 +194,7 @@ namespace Igor.BillScanner.Core {
 
 		private async Task<DateTime> GetPurchaseDateAsync() {
 			return (await Services.Instance.UserInput.GetDateTimeInputAsync(
-			"Parser could not find purchase date/time in the bill.",
-								new Choices[] { Choices.NOOP, Choices.NOOP, Choices.UseCurrentTime, Choices.ManuallyEnterDate })).value;
+			"Parser could not find purchase date/time in the bill.", true));
 		}
 
 		private async Task<int> GetQuantityAsync(string[] split, int splitIndex, string itemName) {
@@ -203,7 +203,7 @@ namespace Igor.BillScanner.Core {
 				quantity = rules.GetQuantity(split, splitIndex);
 			}
 			catch (QuantityParsingException) {
-				quantity = (await Services.Instance.UserInput.GetIntInputAsync("Unable to get quantity of goods purchased: Item name '" + itemName + "'", Choices.ManuallyEnterQuantity)).value;
+				quantity = await Services.Instance.UserInput.GetIntInputAsync($"Unable to get quantity of goods purchased: Item name '{itemName}'");
 			}
 			return quantity;
 		}

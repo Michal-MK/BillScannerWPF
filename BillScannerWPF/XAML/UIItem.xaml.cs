@@ -12,7 +12,9 @@ namespace Igor.BillScanner.WPF.UI {
 
 		public UIItemViewModel Model => DataContext as UIItemViewModel;
 
-		public UIItem() { }
+		public UIItem() {
+			InitializeComponent();
+		}
 
 		public UIItem(UIItemViewModel model) {
 			InitializeComponent();

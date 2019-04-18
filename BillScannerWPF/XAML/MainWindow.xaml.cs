@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
@@ -7,7 +6,6 @@ using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
 using Igor.BillScanner.Core;
-using Igor.BillScanner.Core.Rules;
 using Microsoft.Win32;
 
 namespace Igor.BillScanner.WPF.UI {
@@ -15,7 +13,6 @@ namespace Igor.BillScanner.WPF.UI {
 	/// Interaction logic for MainWindow.xaml
 	/// </summary>
 	public partial class MainWindow : Window {
-
 
 		/// <summary>
 		/// Manual bill creation without using OCR technology
@@ -60,19 +57,6 @@ namespace Igor.BillScanner.WPF.UI {
 			model.CoreLoaded();
 
 			DebugDelay();
-		}
-
-
-
-		public ObservableCollection<UIItem> UIItemConversion(ObservableCollection<object> observableCollection) {
-			return (ObservableCollection<UIItem>)observableCollection.Select(s => (UIItem)s);
-			/*
-			ObservableCollection<UIItem> okay = new ObservableCollection<UIItem>();
-			foreach (object item in observableCollection) {
-				okay.Add((UIItem)item);
-			}
-			return okay;
-			*/
 		}
 
 		private void OnShopClicked(object sender, MouseButtonEventArgs e) {
@@ -126,23 +110,6 @@ namespace Igor.BillScanner.WPF.UI {
 			new Process {
 				StartInfo = new ProcessStartInfo((DataContext as MainWindowViewModel).ImageSource)
 			}.Start();
-		}
-
-		#endregion
-
-
-		#region Control button functionality
-
-		public ObservableCollection<object> ConstructUI(IEnumerable<UIItemCreationInfo> creation) {
-			ObservableCollection<object> receiver = new ObservableCollection<object>();
-			foreach (UIItemCreationInfo item in creation) {
-				receiver.Add(new UIItem(new UIItemViewModel(item)));
-			}
-			return receiver;
-		}
-
-		public void Clear() {
-			//TODO
 		}
 
 		#endregion

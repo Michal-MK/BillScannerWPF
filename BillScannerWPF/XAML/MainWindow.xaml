@@ -38,42 +38,32 @@
 				</Grid.ColumnDefinitions>
 
 				<Image x:Name="MAIN_PhotoPreview_Image" Grid.Column="0"
-					   MouseLeftButtonDown="PreviewImgMouse" 
-					   MouseRightButtonDown="MAIN_PhotoPreview_RightClick"
-					   Stretch="Uniform"
-					   Source="{Binding ImageSource}"/>
+						   MouseLeftButtonDown="PreviewImgMouse" 
+						   MouseRightButtonDown="MAIN_PhotoPreview_RightClick"
+						   Stretch="Uniform"
+						   Source="{Binding ImageSource}"/>
 
-				<Label Content="Matched Products" Grid.Column="1" />
-				<ScrollViewer Grid.Column="1"  Margin="0,30,0,10" VerticalScrollBarVisibility="Disabled">
-					<ListBox ItemsSource="{Binding MatchedItems}">
-						<!--<ListBox.ItemTemplate>
-							<DataTemplate DataType="{x:Type local:UIItem}">
-							</DataTemplate>
-						</ListBox.ItemTemplate>-->
-						<!--<ListBox.Resources>
-							<Style TargetType="{x:Type local:UIItem}">
-								<Setter Property="Margin" Value="0,5"/>
-							</Style>
-						</ListBox.Resources>-->
-					</ListBox>
-				</ScrollViewer>
-
-				<Label Content="Unknown Products" Grid.Column="2" />
-				<ScrollViewer Grid.Column="2" Margin="0,30,0,10" VerticalScrollBarVisibility="Disabled">
-					<ListBox ItemsSource="{Binding UnknownItems}">
+				<Label Content="Matched Products" Grid.Column="1"/>
+				<ScrollViewer Grid.Column="1" Margin="0,30,0,10" VerticalScrollBarVisibility="Disabled">
+					<ListBox ItemsSource="{Binding MatchedItems}" HorizontalContentAlignment="Stretch">
 						<ListBox.ItemTemplate>
 							<DataTemplate>
 								<local:UIItem/>
 							</DataTemplate>
 						</ListBox.ItemTemplate>
-						<!--<ListBox.Resources>
-							<Style TargetType="{x:Type local:UIItem}">
-								<Setter Property="Margin" Value="0,5"/>
-							</Style>
-						</ListBox.Resources>-->
 					</ListBox>
 				</ScrollViewer>
 
+				<Label Content="Unknown Products" Grid.Column="2"/>
+				<ScrollViewer Grid.Column="2" Margin="0,30,0,10" VerticalScrollBarVisibility="Disabled">
+					<ListBox ItemsSource="{Binding UnknownItems}" HorizontalContentAlignment="Stretch">
+						<ListBox.ItemTemplate>
+							<DataTemplate>
+								<local:UIItem/>
+							</DataTemplate>
+						</ListBox.ItemTemplate>
+					</ListBox>
+				</ScrollViewer>
 			</Grid>
 
 			<Grid Grid.Row="1"
@@ -88,7 +78,7 @@
 
 				<Button Command="{Binding Finalize}"
 						Grid.Column="1" Content="Finalize"
-						Margin="10,0,0,0" Visibility="{Binding FinalizeButtonVisible, Converter={StaticResource BoolToVisCollapse}}" />
+						Margin="10,0,0,0" Visibility="{Binding FinalizeButtonVisible, Converter={StaticResource BoolToVisCollapse}}"/>
 
 				<Button Command="{Binding Clear}"
 						Grid.Column="1" Content="Clear Contents" Margin="10,0,0,0"
@@ -100,7 +90,7 @@
 
 				<Button x:Name="MAIN_ManualPurchase_Button"
 						Command="{Binding ManualPurchase}"
-						Grid.Column="0" Content="Manual Purchase"		Margin="10,0,0,0"
+						Grid.Column="0" Content="Manual Purchase" Margin="10,0,0,0"
 						Visibility="{Binding ManualPurchaseButtonVisible, Converter={StaticResource BoolToVisCollapse}}"/>
 			</Grid>
 		</Grid>
