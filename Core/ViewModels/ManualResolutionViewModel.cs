@@ -75,17 +75,20 @@ namespace Igor.BillScanner.Core {
 
 		}
 
-		public void SetCommand(int index, ICommand command) {
+		public void SetCommand(int index, string text, ICommand command) {
 			if (index == 1) {
 				ButtonOneCommand = new Command(() => { MadeSelection(); command.Execute(null); });
+				ButtonOne = text;
 				ButtonOneVisibility = true;
 			}
 			else if (index == 2) {
 				ButtonTwoCommand = new Command(() => { MadeSelection(); command.Execute(null); });
+				ButtonTwo = text;
 				ButtonTwoVisibility = true;
 			}
 			if (index == 3) {
 				ButtonThreeCommand = new Command(() => { MadeSelection(); command.Execute(null); });
+				ButtonThree = text;
 				ButtonThreeVisibility = true;
 			}
 		}

@@ -25,8 +25,8 @@ namespace Igor.BillScanner.WPF.UI {
 			ManualResolutionViewModel model = new ManualResolutionViewModel() {
 				Header = displayText,
 				SimpleInputControlVisible = true,
-				ButtonStdInput = "Use the value provided here:",
-				ButtonStdInputCommand = new Command(() => { })
+				ButtonStdInput = "Use my value provided here:",
+				ButtonStdInputCommand = new Command(() => { /*TODO*/ })
 			};
 
 			ManualResolveChoice choice = new ManualResolveChoice(model);
@@ -40,13 +40,18 @@ namespace Igor.BillScanner.WPF.UI {
 		}
 
 		public async Task<string> GetStringInput(string displayText) {
-			ManualResolutionViewModel model = new ManualResolutionViewModel() { Header = displayText, SimpleInputControlVisible = true };
+			ManualResolutionViewModel model = new ManualResolutionViewModel() {
+				Header = displayText,
+				SimpleInputControlVisible = true,
+				ButtonStdInput = "GetStringInput: ",
+				ButtonStdInputCommand = new Command(() => { /*TODO*/ })
+			};
 			ManualResolveChoice choice = new ManualResolveChoice(model);
 			await choice.SelectChoiceAsync();
 			return model.CustomInputText;
 		}
 
-		public async Task PressOneOf(string displayText, params ICommand[] choices) {
+		public async Task PressOneOf(string displayText, params (string, ICommand)[] choices) {
 			ManualResolutionViewModel model = new ManualResolutionViewModel();
 			if (choices.Length > 3) {
 				throw new Exception("Too many Choices");
@@ -54,8 +59,8 @@ namespace Igor.BillScanner.WPF.UI {
 			model.Header = displayText;
 
 			int current = 1;
-			foreach (ICommand command in choices) {
-				model.SetCommand(current, command);
+			foreach ((string text, ICommand command) in choices) {
+				model.SetCommand(current, text, command);
 			}
 
 			ManualResolveChoice choice = new ManualResolveChoice(model);
@@ -66,11 +71,12 @@ namespace Igor.BillScanner.WPF.UI {
 			ManualResolutionViewModel model = new ManualResolutionViewModel {
 				DateBoxControlVisible = true,
 				Header = displayText,
-				ButtonDateTimeCommand = new ReturnCommand<Choices>(() => Choices.ManuallyEnterDate)
+				ButtonDateTimeCommand = new ReturnCommand<Choices>(() => Choices.ManuallyEnterDate),
+				ButtonDateTimeInput = "Use my date provided here: ",
 			};
 
 			if (allowNow) {
-				model.SetCommand(1, new ReturnCommand<DateTime>(() => DateTime.Now));
+				model.SetCommand(1, "Use 'Today' as the date of purchase", new ReturnCommand<DateTime>(() => DateTime.Now));
 			}
 
 			ManualResolveChoice choice = new ManualResolveChoice(model);
@@ -92,10 +98,12 @@ namespace Igor.BillScanner.WPF.UI {
 			Choices buttonChoice = Choices.NOOP;
 			ManualResolutionViewModel model = new ManualResolutionViewModel {
 				SimpleInputControlVisible = true,
-				Header = displayText
+				Header = displayText,
+				ButtonStdInput = "Use my value provided here: ",
+				ButtonStdInputCommand = new Command(() => buttonChoice = Choices.ManuallyEnterPrice)
 			};
 			if (allowKnown) {
-				model.ButtonStdInputCommand = new Command(() => buttonChoice = Choices.UseLatestValue);
+				model.SetCommand(1, "Use latest value from the database.", new Command(() => { buttonChoice = Choices.UseLatestValue; }));
 			}
 
 			ManualResolveChoice choice = new ManualResolveChoice(model);

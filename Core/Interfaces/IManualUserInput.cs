@@ -7,7 +7,7 @@ namespace Igor.BillScanner.Core {
 
 		Task<ManualResolutionViewModel> GetCustom(ManualResolutionViewModel input);
 
-		Task PressOneOf(string displayText, params ICommand[] choices);
+		Task PressOneOf(string displayText, params (string text, ICommand choices)[] data);
 
 		Task<int> GetIntInputAsync(string displayText);
 

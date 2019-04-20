@@ -49,9 +49,9 @@ namespace Igor.BillScanner.Core {
 					Choices selected = (Choices)(-1);
 					await Services.Instance.UserInput.PressOneOf(
 						$"Found Item named {split[i]} with {ocrLowestDist} character difference, closest: {items[ocrLowestIndex].ItemName}",
-						new Command(() => selected = Choices.MatchAnyway),
-						new Command(() => selected = Choices.MatchWithoutAddingAmbiguities),
-						new Command(() => selected = Choices.NotAnItem));
+						("Match anyway", new Command(() => selected = Choices.MatchAnyway)),
+						("Match but dont register this text as valid item name", new Command(() => selected = Choices.MatchWithoutAddingAmbiguities)),
+						("This text should be ignored", new Command(() => selected = Choices.NotAnItem)));
 
 					if (selected != Choices.NotAnItem) {
 						int currentPrice = await GetCurrentPriceAsync(split, i, ocrLowestIndex);
@@ -70,9 +70,9 @@ namespace Igor.BillScanner.Core {
 					}
 					Choices selected = (Choices)(-1);
 					await Services.Instance.UserInput.PressOneOf($"This string is something else.. what is it??\n'{split[i]}'",
-						new Command(() => selected = Choices.FindExistingItemFromList),
-						new Command(() => selected = Choices.DefineNewItem),
-						new Command(() => selected = Choices.NotAnItem));
+						("Find the Item in database", new Command(() => selected = Choices.FindExistingItemFromList)),
+						("Define new item", new Command(() => selected = Choices.DefineNewItem)),
+						("This text should be ignored", new Command(() => selected = Choices.NotAnItem)));
 
 					if (selected == Choices.DefineNewItem) {
 						(string itemName, int itemPrice, MeassurementUnit itemUnitOfMeassure) = await Services.Instance.UserInput.DefineNewItemAsync(); //TODO Implement
