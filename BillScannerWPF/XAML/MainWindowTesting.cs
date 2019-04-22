@@ -2,6 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Data;
 using Igor.BillScanner.Core;
 
 namespace Igor.BillScanner.WPF.UI {
@@ -11,7 +12,7 @@ namespace Igor.BillScanner.WPF.UI {
 			await Task.Run(() => { Thread.Sleep(500); });
 			//await DebugListAsync();
 			///await DebugManualResolveAsync();
-			//	await DebugDateBoxAsync();
+			//await DebugDateBoxAsync();
 		}
 
 		public async Task DebugListAsync() {
@@ -27,13 +28,10 @@ namespace Igor.BillScanner.WPF.UI {
 			}
 		}
 
-		//public async Task DebugManualResolveAsync() {
-
-		//}
-
-		//public async Task DebugDateBoxAsync() {
-		//	DateBox db = new DateBox();
-		//	await db.FinalizeDateAsync();
-		//}
+		public async Task DebugDateBoxAsync() {
+			DateBox db = new DateBox();
+			MAIN_Grid.Children.Add(db);
+			//await db.FinalizeDateAsync();
+		}
 	}
 }

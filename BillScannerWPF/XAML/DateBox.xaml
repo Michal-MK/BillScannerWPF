@@ -7,14 +7,14 @@
              xmlns:core="clr-namespace:Igor.BillScanner.Core;assembly=Igor.BillScanner.Core"
              mc:Ignorable="d" 
              d:DesignHeight="32" d:DesignWidth="100">
-	
+
 	<UserControl.DataContext>
 		<core:DateBoxViewModel/>
 	</UserControl.DataContext>
 	
-    <Grid>
-		<Border BorderBrush="{Binding Color}" Visibility="{Binding IsValidInput}" BorderThickness="2.5">
-			<TextBox Text="{Binding CurrentText, UpdateSourceTrigger=PropertyChanged}" VerticalContentAlignment="Center"></TextBox>
+	<Grid>
+		<Border BorderBrush="{Binding BorderColor}" Visibility="{Binding IsValidInput}" BorderThickness="2.5">
+			<TextBox TextChanged="OnTextChanged" Text="{Binding CurrentText, Mode=OneWay}" VerticalContentAlignment="Center" x:Name="DateBoxInputTextBox"></TextBox>
 		</Border>
 	</Grid>
 </UserControl>

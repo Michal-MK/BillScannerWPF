@@ -31,6 +31,7 @@ namespace Igor.BillScanner.WPF.UI {
 		};
 
 		public ManualResolveChoice(ManualResolutionViewModel model) {
+			((MainWindow)App.Current.MainWindow).MAIN_Grid.Children.Add(this);
 			InitializeComponent();
 			DataContext = model;
 		}
@@ -38,13 +39,6 @@ namespace Igor.BillScanner.WPF.UI {
 		#region Choice Selection
 
 		internal async Task SelectChoiceAsync() {
-			((MainWindow)App.Current.MainWindow).MAIN_Grid.Children.Add(this);
-			await Task.Run(() => {
-				Thread.Sleep(10);
-				Dispatcher.Invoke(() => {
-					//Keyboard.Focus(focusableElement); //TODO
-				});
-			});
 			await Task.Run(() => {
 				evnt.Wait();
 				evnt.Reset();

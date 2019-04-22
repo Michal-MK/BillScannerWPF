@@ -15,7 +15,7 @@
 
 	<UserControl.Resources>
 		<local:BoolToVisibilityCollapseConverter x:Key="BoolToVis"/>
-
+		<local:DebugDataBindingConv x:Key="AA"></local:DebugDataBindingConv>
 		<Style TargetType="StackPanel" x:Key="GlobalStackPanelStyle">
 			<Style.Resources>
 				<Style TargetType="Button">
@@ -68,7 +68,7 @@
 						</Grid.ColumnDefinitions>
 
 						<Button			Grid.Column="0" Content="{Binding ButtonDateTimeInput}" Command="{Binding ButtonDateTimeCommand}" Margin="4" Padding="10,2" HorizontalContentAlignment="Left"></Button>
-						<local:DateBox	Grid.Column="1"	Text="{Binding DateTimeInputText}" DataContext="{Binding DataContext.DateBoxControlModel, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=UserControl}}" 	Margin="4" ></local:DateBox>
+						<local:DateBox	Grid.Column="1" ManualResolveDataContext="{Binding DataContext, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=UserControl}, Converter={StaticResource AA}}" Margin="4" ></local:DateBox>
 					</Grid>
 				</StackPanel>
 			</Grid>
