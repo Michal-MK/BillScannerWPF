@@ -12,7 +12,6 @@ namespace Igor.BillScanner.Core {
 	}
 }
 
-
 namespace System.Linq {
 	public static partial class Extensions {
 		public static ObservableCollection<T> ToObservable<T>(this IEnumerable<T> source) {

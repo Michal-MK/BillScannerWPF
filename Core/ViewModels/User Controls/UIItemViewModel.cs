@@ -1,15 +1,22 @@
-﻿namespace Igor.BillScanner.Core {
+﻿using System.Windows.Input;
+
+namespace Igor.BillScanner.Core {
 	public class UIItemViewModel : BaseViewModel {
 
 		#region Backing Fields
 
 		private UIItemCreationInfo _creationInfo;
+		private ICommand _showDetailsCommand;
 
 		#endregion
 
-		public UIItemViewModel() { }
+		public UIItemViewModel() {
+			ShowDetailsCommand = new Command(() => {
+				MainWindowViewModel.Instance.ItemInfoOverlayViewModel.SetNewSource(Item);
+			});
+		}
 
-		public UIItemViewModel(UIItemCreationInfo item) {
+		public UIItemViewModel(UIItemCreationInfo item) : this() {
 			_creationInfo = item;
 		}
 
@@ -20,6 +27,8 @@
 				return ret;
 			}
 		}
+
+		public ICommand ShowDetailsCommand { get => _showDetailsCommand; set { _showDetailsCommand = value; Notify(nameof(ShowDetailsCommand)); } }
 
 		public int AmountPurchased => ItemCreation.Amount;
 

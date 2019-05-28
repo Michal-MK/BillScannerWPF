@@ -8,9 +8,10 @@
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
 	
-	<UserControl.DataContext>
+	<d:UserControl.DataContext>
 		<core:ManualPurchaseViewModel/>
-	</UserControl.DataContext>
+	</d:UserControl.DataContext>
+	
 	<UserControl.Resources>
 		<local:DebugDataBindingConv x:Key="test"/>
 	</UserControl.Resources>

@@ -5,8 +5,6 @@ using System.Windows.Input;
 namespace Igor.BillScanner.Core {
 	public interface IManualUserInput {
 
-		Task<ManualResolutionViewModel> GetCustom(ManualResolutionViewModel input);
-
 		Task PressOneOf(string displayText, params (string text, ICommand choices)[] data);
 
 		Task<int> GetIntInputAsync(string displayText);
@@ -19,6 +17,6 @@ namespace Igor.BillScanner.Core {
 
 		Task<Item> SelectOneItemFromListAsync(Item[] items);
 
-		Task<(string Name, int Price, MeassurementUnit UnitOfMeassure)> DefineNewItemAsync();
+		Task<NewItemDefViewModel> DefineNewItemAsync();
 	}
 }

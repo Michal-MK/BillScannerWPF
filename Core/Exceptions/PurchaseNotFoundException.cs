@@ -7,6 +7,6 @@ namespace Igor.BillScanner.Core {
 	/// </summary>
 	[Serializable]
 	internal class PurchaseNotFoundException : Exception {
-		public PurchaseNotFoundException(string message) : base(message) { /*TODO*/ }
+		public PurchaseNotFoundException(string message) : base(message) { }
 	}
 }

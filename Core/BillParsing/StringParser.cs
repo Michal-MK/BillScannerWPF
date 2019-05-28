@@ -27,7 +27,7 @@ namespace Igor.BillScanner.Core {
 			ObservableCollection<UIItemCreationInfo> matchedItems = new ObservableCollection<UIItemCreationInfo>();
 			ObservableCollection<UIItemCreationInfo> unmatchedItems = new ObservableCollection<UIItemCreationInfo>();
 
-			Item[] items = DatabaseAccess.access.GetItems(rules.shop);
+			Item[] items = DatabaseAccess.access.GetItems(rules.Shop);
 			DateTime purchaseTime = DateTime.MinValue;
 			(split, purchaseTime) = await CropSplit(split);
 
@@ -75,23 +75,30 @@ namespace Igor.BillScanner.Core {
 						("This text should be ignored", new Command(() => selected = Choices.NotAnItem)));
 
 					if (selected == Choices.DefineNewItem) {
-						(string itemName, int itemPrice, MeassurementUnit itemUnitOfMeassure) = await Services.Instance.UserInput.DefineNewItemAsync(); //TODO Implement
-						int quantity = await GetQuantityAsync(split, i, itemName);
-						Item newItem = new Item(itemName, itemPrice);
+						NewItemDefViewModel result = await Services.Instance.UserInput.DefineNewItemAsync();
+
+						if (result == null) {
+							i--;
+							continue;
+						}
+
+						int quantity = await GetQuantityAsync(split, i, result.ItemName);
+						Item newItem = new Item(result.ItemName, result.DatabaseItemValue.Value);
 						newItem.AddOCRNameNew(split[i]);
 
-						UIItemCreationInfo newlyMatched = new UIItemCreationInfo(newItem, quantity, itemPrice, MatchRating.Success, split[i]);
-						newlyMatched.Item.SetUnitOfMeassure(itemUnitOfMeassure);
+						UIItemCreationInfo newlyMatched = new UIItemCreationInfo(newItem, quantity, result.DatabaseItemValue.Value, MatchRating.Success, split[i]);
+						newlyMatched.Item.SetUnitOfMeassure(result.SelectedMeassureUnit);
 						DatabaseAccess.access.WriteItemDefinitionToDatabase(newItem, purchaseTime);
 						matchedItems.Add(newlyMatched);
 					}
 					else if (selected == Choices.FindExistingItemFromList) {
-						Item manuallyMatchedItem = await Services.Instance.UserInput.SelectOneItemFromListAsync(DatabaseAccess.access.GetItems(rules.shop)); //TODO Implement
+						Item manuallyMatchedItem = await Services.Instance.UserInput.SelectOneItemFromListAsync(DatabaseAccess.access.GetItems(rules.Shop));
+
 						if (manuallyMatchedItem == null) {
 							i--;
-							// Basically reprocess this item as if this never happened
 							continue;
 						}
+
 						int quantity = await GetQuantityAsync(split, i, manuallyMatchedItem.ItemName);
 						UIItemCreationInfo fromExistingMatched = new UIItemCreationInfo(manuallyMatchedItem, quantity, manuallyMatchedItem.CurrentPriceInt, MatchRating.Success, split[i]);
 						fromExistingMatched.Item.OcrNames.Add(split[i]);
@@ -136,13 +143,13 @@ namespace Igor.BillScanner.Core {
 			DateTime purchaseTime = DateTime.MinValue;
 
 			for (int i = 0; i < split.Length; i++) {
-				for (int j = 0; j < rules.startMarkers.Length; j++) {
-					if (rules.startMarkers[j] == split[i]) {
+				for (int j = 0; j < rules.StartMarkers.Length; j++) {
+					if (rules.StartMarkers[j] == split[i]) {
 						startIndex = i;
 					}
 				}
-				for (int j = 0; j < rules.endMarkers.Length; j++) {
-					if (rules.endMarkers[j] == split[i]) {
+				for (int j = 0; j < rules.EndMarkers.Length; j++) {
+					if (rules.EndMarkers[j] == split[i]) {
 						endIndex = i;
 					}
 				}
@@ -193,8 +200,8 @@ namespace Igor.BillScanner.Core {
 		}
 
 		private async Task<DateTime> GetPurchaseDateAsync() {
-			return (await Services.Instance.UserInput.GetDateTimeInputAsync(
-			"Parser could not find purchase date/time in the bill.", true));
+			return await Services.Instance.UserInput.GetDateTimeInputAsync(
+			"Parser could not find purchase date/time in the bill.", true);
 		}
 
 		private async Task<int> GetQuantityAsync(string[] split, int splitIndex, string itemName) {

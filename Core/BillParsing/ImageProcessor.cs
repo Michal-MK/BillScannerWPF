@@ -55,7 +55,9 @@ namespace Igor.BillScanner.Core {
 		public async void Analyze(string imagePath) {
 			UIItemsMatched.Clear();
 			UIItemsUnknown.Clear();
-
+			if (imagePath.StartsWith("/")) {
+				return;
+			}
 			string[] lines = GetOCRLines(imagePath);
 			StringParser parser = new StringParser(_ruleset);
 

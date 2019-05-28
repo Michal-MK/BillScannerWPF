@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Globalization;
 using System.Windows;
 using Igor.BillScanner.Core;
 
@@ -16,9 +15,9 @@ namespace Igor.BillScanner.WPF.UI {
 
 		internal async void Begin(object sender, RoutedEventArgs e) {
 			ManualPurchaseView view = new ManualPurchaseView();
-			DateTime pDate = await Services.Instance.UserInput.GetDateTimeInputAsync("Enter purchase date:",true);
+			DateTime pDate = await Services.Instance.UserInput.GetDateTimeInputAsync("Enter purchase date:", true);
 			Console.WriteLine(pDate);
-			_mainWindow.MAIN_Grid.Children.Add(view);
+			//_mainWindow.MAIN_Grid.Children.Add(view);
 		}
 	}
 }

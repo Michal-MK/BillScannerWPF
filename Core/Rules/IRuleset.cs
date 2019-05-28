@@ -46,21 +46,21 @@ namespace Igor.BillScanner.Core.Rules {
 		/// <summary>
 		/// The strings that mark the start of a items listing
 		/// </summary>
-		string[] startMarkers { get; }
+		string[] StartMarkers { get; }
 
 		/// <summary>
 		/// The strings that mark the end of a items listing
 		/// </summary>
-		string[] endMarkers { get; }
+		string[] EndMarkers { get; }
 
 		/// <summary>
 		/// A character that is used to separate items purchased and the price of one item
 		/// </summary>
-		char costPlusQuantitySeparator { get; }
+		char CostPlusQuantitySeparator { get; }
 
 		/// <summary>
 		/// The shop this rule set matches
 		/// </summary>
-		Shop shop { get; }
+		Shop Shop { get; }
 	}
 }

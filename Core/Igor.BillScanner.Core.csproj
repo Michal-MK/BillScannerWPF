@@ -94,10 +94,10 @@
     <Compile Include="Database\Rows\DbShop.cs" />
     <Compile Include="Database\Rows\DbItemMetadata.cs" />
     <Compile Include="Database\Rows\DbItem.cs" />
-    <Compile Include="Enumerations\ManualResolutionChoices.cs" />
-    <Compile Include="Enumerations\MatchRating.cs" />
-    <Compile Include="Enumerations\MeassurementUnit.cs" />
-    <Compile Include="Enumerations\Shops.cs" />
+    <Compile Include="Enum\ManualResolutionChoices.cs" />
+    <Compile Include="Enum\MatchRating.cs" />
+    <Compile Include="Enum\MeassurementUnit.cs" />
+    <Compile Include="Enum\Shops.cs" />
     <Compile Include="Exceptions\GenericParsingException.cs" />
     <Compile Include="Exceptions\ItemNotDefinedException.cs" />
     <Compile Include="Exceptions\NameParsingException.cs" />
@@ -121,16 +121,17 @@
     <Compile Include="Server\ServerStateManager.cs" />
     <Compile Include="Services.cs" />
     <Compile Include="Commands\SingleParamaterCommand.cs" />
-    <Compile Include="ViewModels\BaseViewModel.cs" />
-    <Compile Include="ViewModels\DateBoxViewModel.cs" />
-    <Compile Include="ViewModels\ItemListViewModel.cs" />
-    <Compile Include="ViewModels\ItemList_ItemViewModel.cs" />
-    <Compile Include="ViewModels\ItemOverlayViewModel.cs" />
+    <Compile Include="ViewModels\Base\BaseViewModel.cs" />
+    <Compile Include="ViewModels\User Controls\DateBoxViewModel.cs" />
+    <Compile Include="ViewModels\User Controls\ItemListViewModel.cs" />
+    <Compile Include="ViewModels\User Controls\ItemList_ItemViewModel.cs" />
+    <Compile Include="ViewModels\User Controls\ItemOverlayViewModel.cs" />
     <Compile Include="ViewModels\MainWindowViewModel.cs" />
-    <Compile Include="ViewModels\ManualPurchaseViewModel.cs" />
-    <Compile Include="ViewModels\ManualResolutionViewModel.cs" />
-    <Compile Include="ViewModels\StatusBarViewModel.cs" />
-    <Compile Include="ViewModels\UIItemViewModel.cs" />
+    <Compile Include="ViewModels\User Controls\ManualPurchaseViewModel.cs" />
+    <Compile Include="ViewModels\User Controls\ManualResolutionViewModel.cs" />
+    <Compile Include="ViewModels\User Controls\NewItemDefViewModel.cs" />
+    <Compile Include="ViewModels\User Controls\StatusBarViewModel.cs" />
+    <Compile Include="ViewModels\User Controls\UIItemViewModel.cs" />
     <Compile Include="WPFHelper.cs" />
   </ItemGroup>
   <ItemGroup>

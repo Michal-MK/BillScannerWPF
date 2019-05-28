@@ -77,13 +77,16 @@ namespace Igor.BillScanner.Core {
 
 
 		public void AddItems(ObservableCollection<ItemList_ItemViewModel> items) {
-			Items.Clear();
-			AllItems.Clear();
-
 			foreach (ItemList_ItemViewModel item in items) {
 				Items.Add(item);
 				AllItems.Add(item);
 			}
+			Notify(nameof(Items));
+		}
+
+		public void ClearItems() {
+			Items.Clear();
+			AllItems.Clear();
 			Notify(nameof(Items));
 		}
 
@@ -92,9 +95,7 @@ namespace Igor.BillScanner.Core {
 		/// </summary>
 		public async Task<ItemList_ItemViewModel> SelectItemAsync() {
 			while (SelectedItem == null) {
-				await Task.Run(() => {
-					_evnt.Wait();
-				});
+				await Task.Run(_evnt.Wait);
 				if (Aborted) {
 					return null;
 				}

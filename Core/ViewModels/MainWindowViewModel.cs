@@ -1,23 +1,29 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.ObjectModel;
+using System.Linq;
+using System.Reflection;
 using System.Windows.Input;
 using Igor.BillScanner.Core.Rules;
-using System.Linq;
-using System.Collections.Generic;
-using System;
 
 namespace Igor.BillScanner.Core {
 	public class MainWindowViewModel : BaseViewModel {
 
+		public static MainWindowViewModel Instance { get; private set; }
 
 		public MainWindowViewModel() {
 			Services.Instance.AddMainWindowModel(this);
-
-			SelectedShopRuleset = BaseRuleset.GetRuleset(Shop.Lidl);
+			Services.Instance.AddManualUserInput(ManualResolveViewModel);
+			if (SelectedShopRuleset == null)
+				SelectedShopRuleset = BaseRuleset.GetRuleset(Shop.Lidl);
 
 			ImgProcessing = new ImageProcessor(SelectedShopRuleset);
+			Services.Instance.ServerHandler.StartServer();
+
+			Services.Instance.ServerHandler.OnImageReceived += (s, e) => { ImageSource = e; };
+			ImgProcessing.OnImageParsed += OnImageParsed;
 
 			Finalize = new ButtonCommand((obj) => {
-				Purchase purchase = new Purchase(SelectedShopRuleset.shop, ImgProcessing.CurrentParsingResult.Meta.PurchasedAt,
+				Purchase purchase = new Purchase(SelectedShopRuleset.Shop, ImgProcessing.CurrentParsingResult.Meta.PurchasedAt,
 					_matchedItems.Select(s => new ItemPurchaseData(s.Item, s.AmountPurchased)).ToArray());
 				purchase.FinalizePurchase();
 				ClearButtonVisible = true;
@@ -30,6 +36,8 @@ namespace Igor.BillScanner.Core {
 				ClearButtonVisible = false;
 				ManualPurchaseButtonVisible = true;
 				AnalyzeButtonVisible = true;
+				UnknownItems.Clear();
+				MatchedItems.Clear();
 			});
 
 			Analyze = new ButtonCommand((obj) => {
@@ -38,13 +46,16 @@ namespace Igor.BillScanner.Core {
 				}
 				ImgProcessing.Analyze(ImageSource);
 			});
+			Instance = this;
+
+			StatusBarViewModel.CurrentShop = SelectedShopRuleset.Shop;
 		}
 
 		public MainWindowViewModel(Shop shop) : this() {
 			SelectedShopRuleset = BaseRuleset.GetRuleset(shop);
 		}
 
-
+		public object Test { get; set; }
 
 		#region BackingFields
 
@@ -60,6 +71,10 @@ namespace Igor.BillScanner.Core {
 
 		private ObservableCollection<UIItemViewModel> _matchedItems = new ObservableCollection<UIItemViewModel>();
 		private ObservableCollection<UIItemViewModel> _unknownItems = new ObservableCollection<UIItemViewModel>();
+
+		private StatusBarViewModel _statusBarViewModel = new StatusBarViewModel();
+		private ManualResolutionViewModel _manualResolveViewModel = new ManualResolutionViewModel();
+		private ItemOverlayViewModel _itemInfoOverlayViewModel = new ItemOverlayViewModel();
 
 		private string _imageSource = "/Igor.BillScanner.WPF.UI;component/Resources/Transparent.png";
 
@@ -87,8 +102,9 @@ namespace Igor.BillScanner.Core {
 		public ObservableCollection<UIItemViewModel> UnknownItems { get => _unknownItems; set { _unknownItems = value; Notify(nameof(UnknownItems)); } }
 
 
-
-		public event EventHandler OnCoreLoaded;
+		public ItemOverlayViewModel ItemInfoOverlayViewModel { get => _itemInfoOverlayViewModel; set { _itemInfoOverlayViewModel = value; Notify(nameof(ItemInfoOverlayViewModel)); } }
+		public ManualResolutionViewModel ManualResolveViewModel { get => _manualResolveViewModel; set { _manualResolveViewModel = value; Notify(nameof(ManualResolveViewModel)); } }
+		public StatusBarViewModel StatusBarViewModel { get => _statusBarViewModel; set { _statusBarViewModel = value; Notify(nameof(StatusBarViewModel)); } }
 
 		#endregion
 
@@ -102,8 +118,6 @@ namespace Igor.BillScanner.Core {
 		/// </summary>
 		public ImageProcessor ImgProcessing { get; private set; }
 
-		public StatusBarViewModel StatusBar { get; set; }
-
 		#region Actions
 
 		private void OnImageParsed(object sender, ParsingCompleteEventArgs e) {
@@ -114,11 +128,6 @@ namespace Igor.BillScanner.Core {
 			ClearButtonVisible = true;
 		}
 
-		public void CoreLoaded() {
-			OnCoreLoaded?.Invoke(this, EventArgs.Empty);
-			ServerHandler.Instance.OnImageReceived += (s, e) => { ImageSource = e; };
-			ImgProcessing.OnImageParsed += OnImageParsed;
-		}
 		#endregion
 	}
 }

@@ -7,6 +7,6 @@ namespace Igor.BillScanner.Core {
 	/// </summary>
 	[Serializable]
 	class ItemNotDefinedException : Exception {
-		public ItemNotDefinedException(string message): base(message) { /*TODO*/ }
+		public ItemNotDefinedException(string message): base(message) { }
 	}
 }

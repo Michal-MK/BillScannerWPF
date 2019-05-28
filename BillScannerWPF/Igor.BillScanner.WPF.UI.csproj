@@ -54,57 +54,57 @@
     <Reference Include="PresentationFramework" />
   </ItemGroup>
   <ItemGroup>
-    <ApplicationDefinition Include="Configurations\App.xaml">
+    <ApplicationDefinition Include="App.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Converters\BaseValueConverter.cs" />
+    <Compile Include="Converters\Base\BaseValueConverter.cs" />
     <Compile Include="Converters\BoolToVisibilityCollapseConverter.cs" />
     <Compile Include="Converters\DebugDataBindingConv.cs" />
     <Compile Include="Converters\MatchRatingToImageConverter.cs" />
     <Compile Include="ManualPurchase\ManualPurchaseHandler.cs" />
-    <Compile Include="ManualPurchase\ManualUserInput.cs" />
-    <Compile Include="XAML\DateBox.xaml.cs">
+    <Compile Include="XAML\User Controls\DateBox.xaml.cs">
       <DependentUpon>DateBox.xaml</DependentUpon>
     </Compile>
-    <Compile Include="XAML\ItemList.xaml.cs">
+    <Compile Include="XAML\User Controls\ItemList.xaml.cs">
       <DependentUpon>ItemList.xaml</DependentUpon>
     </Compile>
-    <Compile Include="XAML\ItemList_Item.xaml.cs">
+    <Compile Include="XAML\User Controls\ItemList_Item.xaml.cs">
       <DependentUpon>ItemList_Item.xaml</DependentUpon>
     </Compile>
-    <Compile Include="XAML\MainWindowTesting.cs" />
     <Compile Include="ManualPurchase\ManualPurchaseView.xaml.cs">
       <DependentUpon>ManualPurchaseView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="XAML\ManualResolveChoice.xaml.cs">
+    <Compile Include="XAML\User Controls\ManualResolveChoice.xaml.cs">
       <DependentUpon>ManualResolveChoice.xaml</DependentUpon>
     </Compile>
-    <Compile Include="XAML\ItemInfoOverlay.xaml.cs">
+    <Compile Include="XAML\User Controls\ItemInfoOverlay.xaml.cs">
       <DependentUpon>ItemInfoOverlay.xaml</DependentUpon>
     </Compile>
-    <Compile Include="XAML\UIItem.xaml.cs">
+    <Compile Include="XAML\User Controls\UIItem.xaml.cs">
       <DependentUpon>UIItem.xaml</DependentUpon>
     </Compile>
-    <Compile Include="XAML\NewItemDefinitionPanel.xaml.cs">
+    <Compile Include="XAML\User Controls\NewItemDefinitionPanel.xaml.cs">
       <DependentUpon>NewItemDefinitionPanel.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Exceptions\WindowInitExpection.cs" />
     <Compile Include="XAML\SetupWindow.xaml.cs">
       <DependentUpon>SetupWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="XAML\StatusBar.xaml.cs">
+    <Compile Include="XAML\User Controls\StatusBar.xaml.cs">
       <DependentUpon>StatusBar.xaml</DependentUpon>
     </Compile>
-    <Page Include="XAML\DateBox.xaml">
+    <Compile Include="XAML\User Controls\ValidatedTextBox.xaml.cs">
+      <DependentUpon>ValidatedTextBox.xaml</DependentUpon>
+    </Compile>
+    <Page Include="XAML\User Controls\DateBox.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="XAML\ItemList.xaml">
+    <Page Include="XAML\User Controls\ItemList.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="XAML\ItemList_Item.xaml">
+    <Page Include="XAML\User Controls\ItemList_Item.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -112,11 +112,11 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="XAML\ManualResolveChoice.xaml">
+    <Page Include="XAML\User Controls\ManualResolveChoice.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="XAML\ItemInfoOverlay.xaml">
+    <Page Include="XAML\User Controls\ItemInfoOverlay.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -124,7 +124,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Compile Include="Configurations\App.xaml.cs">
+    <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
@@ -132,11 +132,11 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="XAML\UIItem.xaml">
+    <Page Include="XAML\User Controls\UIItem.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="XAML\NewItemDefinitionPanel.xaml">
+    <Page Include="XAML\User Controls\NewItemDefinitionPanel.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -144,7 +144,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="XAML\StatusBar.xaml">
+    <Page Include="XAML\User Controls\StatusBar.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="XAML\User Controls\ValidatedTextBox.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -167,7 +171,7 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <None Include="Configurations\packages.config">
+    <None Include="packages.config">
       <SubType>Designer</SubType>
     </None>
     <None Include="Properties\Settings.settings">
@@ -179,7 +183,7 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Configurations\App.config">
+    <None Include="App.config">
       <SubType>Designer</SubType>
     </None>
   </ItemGroup>

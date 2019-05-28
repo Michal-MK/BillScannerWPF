@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
-using System.Net;
-using System.Threading;
 using System.Threading.Tasks;
 using Igor.TCP;
 
@@ -18,13 +16,11 @@ namespace Igor.BillScanner.Core {
 		#region Singleton Instance
 
 		public static ServerHandler Initialize() {
-			Instance = new ServerHandler();
-			return Instance;
+			Services.Instance.AddServerHandler(new ServerHandler());
+			return Services.Instance.ServerHandler;
 		}
 
 		private ServerHandler() { }
-
-		public static ServerHandler Instance { get; private set; }
 
 		#endregion
 
@@ -51,7 +47,7 @@ namespace Igor.BillScanner.Core {
 				try {
 					await server.Start(SimpleTCPHelper.GetActiveIPv4Address(), START_PORT);
 
-					Services.Instance.MainWindow.StatusBar.ServerOnline = true;
+					Services.Instance.MainWindow.StatusBarViewModel.ServerOnline = true;
 					server.OnClientConnected += Server_OnConnectionEstablished;
 					server.OnClientDisconnected += Server_OnClientDisconnected;
 				}
@@ -63,11 +59,11 @@ namespace Igor.BillScanner.Core {
 
 		private void Server_OnConnectionEstablished(object sender, ClientConnectedEventArgs e) {
 			server.DefineCustomPacket<byte[]>(e.clientInfo.clientID, 55, OnImageDataReceived);
-			Services.Instance.MainWindow.StatusBar.ClientConnected = true;
+			Services.Instance.MainWindow.StatusBarViewModel.ClientConnected = true;
 		}
 
 		private void Server_OnClientDisconnected(object sender, ClientDisconnectedEventArgs e) {
-			Services.Instance.MainWindow.StatusBar.ClientConnected = false;
+			Services.Instance.MainWindow.StatusBarViewModel.ClientConnected = false;
 		}
 
 		#endregion
@@ -83,6 +79,5 @@ namespace Igor.BillScanner.Core {
 				//TODO
 			}
 		}
-
 	}
 }

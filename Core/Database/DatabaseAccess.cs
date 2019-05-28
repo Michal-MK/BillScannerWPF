@@ -7,6 +7,7 @@ using Igor.BillScanner.Core.Database;
 
 namespace Igor.BillScanner.Core {
 
+	//TODO - make calls async 
 	/// <summary>
 	/// Provides methods for database IO.
 	/// </summary>
@@ -51,7 +52,7 @@ namespace Igor.BillScanner.Core {
 					return null;
 				}
 				DbItem item = connection.QueryFirst<DbItem>($"SELECT * FROM {DbItem.DName}" +
-															$"WHERE {nameof(DbItem.ID)} = \"{ID}\"");
+															$"WHERE {nameof(DbItem.ID)} = {ID}");
 				if (item == null) {
 					return null;
 				}

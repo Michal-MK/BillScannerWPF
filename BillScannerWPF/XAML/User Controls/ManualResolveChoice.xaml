@@ -6,16 +6,14 @@
              xmlns:local="clr-namespace:Igor.BillScanner.WPF.UI"
              xmlns:core="clr-namespace:Igor.BillScanner.Core;assembly=Igor.BillScanner.Core"
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800"
 			 KeyboardNavigation.TabNavigation="None">
 
-	<UserControl.DataContext>
+	<d:UserControl.DataContext>
 		<core:ManualResolutionViewModel/>
-	</UserControl.DataContext>
+	</d:UserControl.DataContext>
 
 	<UserControl.Resources>
 		<local:BoolToVisibilityCollapseConverter x:Key="BoolToVis"/>
-		<local:DebugDataBindingConv x:Key="AA"></local:DebugDataBindingConv>
 		<Style TargetType="StackPanel" x:Key="GlobalStackPanelStyle">
 			<Style.Resources>
 				<Style TargetType="Button">
@@ -27,51 +25,69 @@
 		</Style>
 	</UserControl.Resources>
 
-	<Grid>
+	<Grid Visibility="{Binding ControlVisibility, Converter={StaticResource BoolToVis}}">
 		<Grid.Background>
 			<SolidColorBrush Color="DarkRed" Opacity="0.4"/>
 		</Grid.Background>
 		<Border Background="WhiteSmoke" Margin="85">
 			<Grid Panel.ZIndex="1" Margin="10">
 				<StackPanel Style="{StaticResource GlobalStackPanelStyle}">
-					<TextBlock	Text="{Binding Header}"		Margin="0,0,0,20" FontWeight="Heavy"	FontSize="16"></TextBlock>
-					<TextBlock	Text="{Binding ErrorText}"	Margin="0,0,0,10" FontWeight="DemiBold" Foreground="Red" FocusManager.FocusedElement="{Binding}"></TextBlock>
+					<TextBlock	Text="{Binding Header}" Margin="0,0,0,20"
+								FontWeight="Heavy" FontSize="16"/>
+
+					<TextBlock	Text="{Binding ErrorText}" Margin="0,0,0,10"
+								FontWeight="DemiBold" Foreground="Red"
+								FocusManager.FocusedElement="{Binding RelativeSource={RelativeSource Mode=Self}}"/>
+					
 					<!-- Simple buttons -->
-					<Button	Content="{Binding ButtonOne}"
+					<Button	Content="{Binding ButtonOneText}"
 							Visibility="{Binding ButtonOneVisibility, Converter={StaticResource BoolToVis}}"
 							Command="{Binding ButtonOneCommand}"/>
 
-					<Button	Content="{Binding ButtonTwo}"
+					<Button	Content="{Binding ButtonTwoText}"
 							Visibility="{Binding ButtonTwoVisibility, Converter={StaticResource BoolToVis}}"
 							Command="{Binding ButtonTwoCommand}"/>
 
-					<Button	Content="{Binding ButtonThree}"
+					<Button	Content="{Binding ButtonThreeText}"
 							Visibility="{Binding ButtonThreeVisibility, Converter={StaticResource BoolToVis}}"
 							Command="{Binding ButtonThreeCommand}"/>
 
 					<!-- Manual Input of value -->
 					<Grid Visibility="{Binding SimpleInputControlVisible, Converter={StaticResource BoolToVis}}">
 						<Grid.ColumnDefinitions>
-							<ColumnDefinition Width="7*"></ColumnDefinition>
-							<ColumnDefinition Width="3*"></ColumnDefinition>
+							<ColumnDefinition Width="7*"/>
+							<ColumnDefinition Width="3*"/>
 						</Grid.ColumnDefinitions>
 
-						<Button	 Grid.Column="0" Content="{Binding ButtonStdInput}" Command="{Binding ButtonStdInputCommand}"	 Margin="4" Padding="10,2" HorizontalContentAlignment="Left"></Button>
-						<TextBox Grid.Column="1" Text="{Binding CustomInputText}"	 Margin="4" ></TextBox>
+						<Button	 Grid.Column="0" Content="{Binding ButtonStdInput}"
+								 Command="{Binding ButtonStdInputCommand}"
+								 Margin="4" Padding="10,2" HorizontalContentAlignment="Left"/>
+						<TextBox Grid.Column="1" Text="{Binding CustomInputText}" Margin="4"/>
 					</Grid>
 
 					<!-- Manual input of Date -->
 					<Grid Visibility="{Binding DateBoxControlVisible, Converter={StaticResource BoolToVis}}">
 						<Grid.ColumnDefinitions>
-							<ColumnDefinition Width="7*"></ColumnDefinition>
-							<ColumnDefinition Width="3*"></ColumnDefinition>
+							<ColumnDefinition Width="7*"/>
+							<ColumnDefinition Width="3*"/>
 						</Grid.ColumnDefinitions>
 
-						<Button			Grid.Column="0" Content="{Binding ButtonDateTimeInput}" Command="{Binding ButtonDateTimeCommand}" Margin="4" Padding="10,2" HorizontalContentAlignment="Left"></Button>
-						<local:DateBox	Grid.Column="1" ManualResolveDataContext="{Binding DataContext, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=UserControl}, Converter={StaticResource AA}}" Margin="4" ></local:DateBox>
+						<Button	Grid.Column="0" Content="{Binding ButtonDateTimeInput}"
+								Command="{Binding ButtonDateTimeCommand}" Margin="4" Padding="10,2"
+								HorizontalContentAlignment="Left"/>
+						<local:DateBox Grid.Column="1" 
+									   DataContext="{Binding DateBoxControlModel}"
+									   BindableCarretIndex="{Binding CurrentCarretIndex, Mode=TwoWay}"
+									   Margin="4"/>
 					</Grid>
 				</StackPanel>
 			</Grid>
 		</Border>
+
+		<local:ItemList Margin="85" Visibility="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=UserControl}, Path=DataContext.ItemListVisible, Converter={StaticResource BoolToVis}}"	DataContext="{Binding ItemlistViewModel}"/>
+
+		<local:NewItemDefinitionPanel Margin="85" Visibility="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=UserControl}, Path=DataContext.ItemDefinitionVisible, Converter={StaticResource BoolToVis}}"
+									  DataContext="{Binding ItemDefinitionModel}"/>
+		
 	</Grid>
 </UserControl>

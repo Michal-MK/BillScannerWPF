@@ -3,11 +3,11 @@ using System.Text.RegularExpressions;
 
 namespace Igor.BillScanner.Core.Rules {
 	class McDonaldsRuleset : BaseRuleset, IRuleset {
-		public string[] startMarkers { get { return new string[] { "qty", "item", "total", "bezny", "rezim" }; } }
+		public string[] StartMarkers { get { return new string[] { "qty", "item", "total", "bezny", "rezim" }; } }
 
-		public string[] endMarkers { get { return new string[] { "vat", "number", "tax", "bkp", "****" }; } }
+		public string[] EndMarkers { get { return new string[] { "vat", "number", "tax", "bkp", "****" }; } }
 
-		public char costPlusQuantitySeparator { get { return '\0'; } }
+		public char CostPlusQuantitySeparator { get { return '\0'; } }
 
 		public Regex correctItemLine { get; } = new Regex(@"(\d+) (.+) (\d+\.\d+) B");
 
@@ -15,7 +15,7 @@ namespace Igor.BillScanner.Core.Rules {
 
 		public Regex correctCostAndQuantityLine => genericItemPriceFormat;
 
-		public Shop shop => Shop.McDonalds;
+		public Shop Shop => Shop.McDonalds;
 
 		public int GetQuantity(string[] ocrText, int index) {
 			string[] split = ocrText[index].Split(null);

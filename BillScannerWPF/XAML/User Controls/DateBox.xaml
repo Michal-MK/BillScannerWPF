@@ -8,13 +8,14 @@
              mc:Ignorable="d" 
              d:DesignHeight="32" d:DesignWidth="100">
 
-	<UserControl.DataContext>
+	<d:UserControl.DataContext>
 		<core:DateBoxViewModel/>
-	</UserControl.DataContext>
+	</d:UserControl.DataContext>
 	
 	<Grid>
 		<Border BorderBrush="{Binding BorderColor}" Visibility="{Binding IsValidInput}" BorderThickness="2.5">
-			<TextBox TextChanged="OnTextChanged" Text="{Binding CurrentText, Mode=OneWay}" VerticalContentAlignment="Center" x:Name="DateBoxInputTextBox"></TextBox>
+			<TextBox Text="{Binding CurrentText, UpdateSourceTrigger=PropertyChanged}"
+					 VerticalContentAlignment="Center" x:Name="DateBoxInputTextBox"/>
 		</Border>
 	</Grid>
 </UserControl>

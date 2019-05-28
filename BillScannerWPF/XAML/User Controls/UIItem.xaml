@@ -30,7 +30,7 @@
 		</Grid.Background>
 		
 		<TextBlock	Grid.Column="1" Text="{Binding ItemName}" VerticalAlignment="Center" HorizontalAlignment="Left" ></TextBlock>
-		<Button		Grid.Column="2" Content="Details" Click="UITEM_ShowDetails_Click" Padding="10 0"></Button>
+		<Button		Grid.Column="2" Content="Details" Command="{Binding ShowDetailsCommand}" Padding="10 0"></Button>
 		<Image		Grid.Column="3" Source="{Binding MatchQuality, Converter={StaticResource MatchToImageConv}}" Height="32px" HorizontalAlignment="Right" Margin="10 0"/>
 	</Grid>
 </UserControl>

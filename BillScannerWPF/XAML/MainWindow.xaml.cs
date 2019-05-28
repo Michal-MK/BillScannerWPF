@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.ObjectModel;
 using System.Diagnostics;
-using System.Linq;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
@@ -14,19 +12,10 @@ namespace Igor.BillScanner.WPF.UI {
 	/// </summary>
 	public partial class MainWindow : Window {
 
-		/// <summary>
-		/// Manual bill creation without using OCR technology
-		/// </summary>
-		internal ManualPurchaseHandler ManualPurchase;
+		private MainWindowViewModel Model => DataContext as MainWindowViewModel;
 
 		/// <summary>
-		/// The container that displays currently previewed item
-		/// </summary>
-		public UIItem CurrentItemBeingInspected { get; set; }
-
-
-		/// <summary>
-		/// Create a default Albert window (Debug)
+		/// Create a default Lidl window (Debug)
 		/// </summary>
 		public MainWindow() : this(Shop.Lidl) { }
 
@@ -36,49 +25,19 @@ namespace Igor.BillScanner.WPF.UI {
 		/// <param name="selectedShop">The shop to load data for</param>
 		public MainWindow(Shop selectedShop) {
 			InitializeComponent();
-			ServerHandler.Initialize();
-
-			MainWindowViewModel model = DataContext as MainWindowViewModel;
-			model.StatusBar = StatusBar.DataContext as StatusBarViewModel;
-			model.StatusBar.CurrentShop = selectedShop;
-
-			Services.Instance.AddManualUserInput(new ManualUserInput(this));
-
-			ServerHandler.Instance.StartServer();
 			DatabaseAccess.LoadDatabase(selectedShop);
-
-
-			ManualPurchase = new ManualPurchaseHandler(selectedShop, this);
-
-			MAIN_ManualPurchase_Button.Click += ManualPurchase.Begin;
-			StatusBar.BAR_CurrentLoadedShop_Text.MouseLeftButtonDown += OnShopClicked;
-			this.Closed += OnMainWindowClose;
-
-			model.CoreLoaded();
-
-			DebugDelay();
 		}
 
 		private void OnShopClicked(object sender, MouseButtonEventArgs e) {
 			SetupWindow w = new SetupWindow();
-			MAIN_PhotoPreview_Image.Source = null;
-			App.Current.MainWindow.Close();
-			App.Current.MainWindow = w;
-			App.Current.MainWindow.Show();
-			//ServerStateManager.StoreServerInstance(server);
-		}
-
-		private void OnMainWindowClose(object sender, EventArgs e) {
-			//server.OnClientConnected -= Server_OnConnectionEstablished;
-			//server.OnClientDisconnected -= Server_OnClientDisconnected;
-
-			StatusBar.BAR_CurrentLoadedShop_Text.MouseLeftButtonDown -= OnShopClicked;
-			this.Closed -= OnMainWindowClose;
+			Close();
+			Application.Current.MainWindow = w;
+			Application.Current.MainWindow.Show();
 		}
 
 		#region Image preview container functions: Changing, Opening full view.
 
-		internal void PreviewImgMouse(object sender, MouseButtonEventArgs e) {
+		public void ImageSelectDialog(object sender, MouseButtonEventArgs e) {
 			OpenFileDialog dialog = new OpenFileDialog {
 				DefaultExt = "png",
 				InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory)
@@ -88,28 +47,20 @@ namespace Igor.BillScanner.WPF.UI {
 			}
 		}
 
-		internal void SetPreviewImage(Uri imgUri) {
+		public void SetPreviewImage(Uri imgUri) {
 			BitmapImage image = new BitmapImage();
 			image.BeginInit();
 			image.CacheOption = BitmapCacheOption.OnLoad;
 			image.UriSource = imgUri;
 			image.EndInit();
 			(DataContext as MainWindowViewModel).ImageSource = imgUri.AbsolutePath;
-
-			MAIN_PhotoPreview_Image.Source = image;
-
-			MAIN_ManualPurchase_Button.Visibility = Visibility.Collapsed;
-			//MAIN_Analyze_Button.Visibility = Visibility.Visible;
 		}
 
-		//Open Selected image in default image viewer
-		private void MAIN_PhotoPreview_RightClick(object sender, MouseButtonEventArgs e) {
-			if (string.IsNullOrEmpty((DataContext as MainWindowViewModel).ImageSource)) {
+		public void OpenImageDefault(object sender, MouseButtonEventArgs e) {
+			if (string.IsNullOrEmpty(Model.ImageSource)) {
 				return;
 			}
-			new Process {
-				StartInfo = new ProcessStartInfo((DataContext as MainWindowViewModel).ImageSource)
-			}.Start();
+			new Process { StartInfo = new ProcessStartInfo(Model.ImageSource) }.Start();
 		}
 
 		#endregion

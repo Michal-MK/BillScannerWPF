@@ -8,28 +8,28 @@ namespace Igor.BillScanner.Core.Rules {
 
 		public Regex correctItemLine { get; } = new Regex(@"(.+)( (\d+)[g0Ll1])? (\d+[,.]\d+) A");
 
-		public string[] startMarkers {
+		public string[] StartMarkers {
 			get { return new string[] { "kc", "-----", "oddil", "oddll", "oddíl", "vlozka", "vložka", "19737" }; }
 		}
 
-		public string[] endMarkers {
+		public string[] EndMarkers {
 			get { return new string[] { "vratit", "vrátit", "kod", "sazba", "DPH", "ID uctu" }; }
 		}
 
-		public char costPlusQuantitySeparator { get { return 'x'; } }
+		public char CostPlusQuantitySeparator { get { return 'x'; } }
 
 		public Regex dateTimeFormat { get { return genericDateTimeFormat; } }
 
 		public Regex correctCostAndQuantityLine => genericItemPriceFormat;
 
-		public Shop shop => Shop.Albert;
+		public Shop Shop => Shop.Albert;
 
 		public int GetQuantity(string[] ocrText, int index) {
 			if (IsSingleItem(ocrText, index)) {
 				return 1;
 			}
 			else {
-				string[] split = ocrText[index + 1].Split(costPlusQuantitySeparator);
+				string[] split = ocrText[index + 1].Split(CostPlusQuantitySeparator);
 				if (split.Length == 2) {
 					if (int.TryParse(split[0], out int result)) {
 						return result;

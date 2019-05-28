@@ -2,6 +2,8 @@
 using System.Globalization;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Igor.BillScanner.Core {
 	public class DateBoxViewModel : BaseViewModel {
@@ -10,17 +12,17 @@ namespace Igor.BillScanner.Core {
 
 		private string _borderColor = "Red";
 		private bool _isValidInput;
-		private string _currentText;
+		private string _currentText = "";
 		private readonly Regex _validDate = new Regex(@"(\d{2}):(\d{2}):(\d{4})\s(\d{2}):(\d{2}):(\d{2})");
-		private int _currentCarretIndex;
 		private string _previousText = "";
+		private int _currentCarretIndex;
 
 		#endregion
 
-		public string CurrentText { get => _currentText; set { _currentText = value; ValidateText(); Notify(nameof(CurrentText)); } }
+		public int CurrentCarretIndex { get => _currentCarretIndex; set { _currentCarretIndex = value; Notify(nameof(CurrentCarretIndex)); } }
+		public string CurrentText { get => _currentText; set { _previousText = _currentText; _currentText = value; Notify(nameof(CurrentText)); _ = ValidateText(); } }
 		public bool IsValidInput { get => _isValidInput; set { _isValidInput = value; Notify(nameof(IsValidInput)); } }
 		public string BorderColor { get => _borderColor; set { _borderColor = value; Notify(nameof(BorderColor)); } }
-		public dynamic Control { get; set; }
 
 		public bool TryGetDate(out DateTime time) {
 			if (!_validDate.IsMatch(CurrentText)) {
@@ -31,12 +33,8 @@ namespace Igor.BillScanner.Core {
 			return true;
 		}
 
-		private void ValidateText() {
-			if (Control.DateBoxInput.CaretIndex != _currentText.Length) {
-				ValidateDate(_currentText);
-				return;
-			}
-
+		private async Task ValidateText() {
+			await Task.Delay(1);
 			if (_previousText.Length + 1 == _currentText.Length) {
 				switch (_currentText.Length) {
 					case 2:
@@ -44,16 +42,25 @@ namespace Igor.BillScanner.Core {
 					case 13:
 					case 16: {
 						CurrentText += ":";
-						Control.DateBoxInput.CaretIndex = _currentText.Length;
+						CurrentCarretIndex = CurrentText.Length;
+						BorderColor = "Orange";
 						break;
 					}
 					case 10: {
 						CurrentText += " ";
-						Control.DateBoxInput.CaretIndex = _currentText.Length;
+						CurrentCarretIndex = CurrentText.Length;
+						BorderColor = "Orange";
+						break;
+					}
+					case 19: {
+						ValidateDate(CurrentText);
+						return;
+					}
+					default: {
+						BorderColor = "Orange";
 						break;
 					}
 				}
-				//ValidateDate(_currentText);
 			}
 			if (_previousText.Length - 1 == _currentText.Length) {
 				switch (_currentText.Length) {
@@ -63,19 +70,30 @@ namespace Igor.BillScanner.Core {
 					case 13:
 					case 16: {
 						CurrentText = CurrentText.Remove(_currentText.Length - 1, 1);
+						BorderColor = "Orange";
 						break;
 					}
 				}
-				Control.DateBoxInput.CaretIndex = _currentText.Length;
-				ValidateDate(_currentText);
+				CurrentCarretIndex = CurrentText.Length;
 			}
 			_previousText = _currentText;
+			ValidateDate(CurrentText);
 		}
 
 
 		private void ValidateDate(string text) {
 			int[] validColumnIndexes = new int[4] { 2, 5, 13, 16 };
 			int validSpaceIndex = 10;
+
+			if (text.Length == 19) {
+				if (!_validDate.IsMatch(text)) {
+					BorderColor = "Red";
+				}
+				else {
+					BorderColor = "Green";
+				}
+				return;
+			}
 
 			for (int i = 0; i < text.Length; i++) {
 				if (!char.IsNumber(text[i])) {
@@ -92,58 +110,45 @@ namespace Igor.BillScanner.Core {
 
 			switch (text.Length) {
 				case 3: { //Validate day
-					int number = int.Parse(text.Substring(0, 2));
-					if (number < 1 || number > 31) {
-						BorderColor = "Red";
-					}
-					else {
-						BorderColor = "Orange";
-					}
+					Validate(3, 2, 1, 31);
 					return;
 				}
 				case 6: { //Validate month
-					int number = int.Parse(text.Substring(3, 2));
-					if (number < 1 || number > 12) {
-						BorderColor = "Red";
-					}
-					else {
-						BorderColor = "Orange";
-					}
+					Validate(6, 2, 1, 12);
+					return;
+				}
+				case 11: { //Validate year
+					Validate(11, 4, 1000, 9999);
 					return;
 				}
 				case 14: { //Validate hour
-					int number = int.Parse(text.Substring(11, 2));
-					if (number < 0 || number > 23) {
-						BorderColor = "Red";
-					}
-					else {
-						BorderColor = "Orange";
-					}
+					Validate(14, 2, 0, 23);
 					return;
 				}
 				case 17: { //Validate minute
-					int number = int.Parse(text.Substring(14, 2));
-					if (number < 0 || number > 60) {
-						BorderColor = "Red";
-					}
-					else {
-						BorderColor = "Orange";
-					}
+					Validate(17, 2, 0, 59);
 					return;
 				}
 				case 19: { //Validate second
-					int number = int.Parse(text.Substring(17, 2));
-					if (number < 0 || number > 60) {
-						BorderColor = "Red";
-					}
-					else {
-						BorderColor = "Green";
-					}
+					Validate(19, 2, 0, 59);
 					return;
 				}
 				default: {
 					BorderColor = "Red";
 					return;
+				}
+			}
+
+			void Validate(int from ,int length, int min, int max) {
+				if (!int.TryParse(text.Substring(from - 3, length), out int number)) {
+					BorderColor = "Red";
+					return;
+				}
+				if (number < min || number > max) {
+					BorderColor = "Red";
+				}
+				else {
+					BorderColor = "Orange";
 				}
 			}
 		}

@@ -5,20 +5,26 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Igor.BillScanner.WPF.UI"
         mc:Ignorable="d"
-        Title="SetupWindow" Height="200" Width="400">
+        Title="SetupWindow"
+		SizeToContent="WidthAndHeight">
 	<Grid>
 		<Grid.RowDefinitions>
-			<RowDefinition Height="20"></RowDefinition>
-			<RowDefinition></RowDefinition>
-			<RowDefinition Height="20"></RowDefinition>
+			<RowDefinition Height="20"/>
+			<RowDefinition/>
+			<RowDefinition Height="20"/>
 		</Grid.RowDefinitions>
+		
 		<Grid.ColumnDefinitions>
-			<ColumnDefinition Width="20"></ColumnDefinition>
-			<ColumnDefinition Width="1*"></ColumnDefinition>
-			<ColumnDefinition Width="1*"></ColumnDefinition>
-			<ColumnDefinition Width="20"></ColumnDefinition>
+			<ColumnDefinition Width="20"/>
+			<ColumnDefinition Width="*"/>
+			<ColumnDefinition Width="20"/>
+			<ColumnDefinition Width="*"/>
+			<ColumnDefinition Width="20"/>
 		</Grid.ColumnDefinitions>
-		<ComboBox	Grid.Column="1" Grid.Row="1" x:Name="SETUP_SelectShop_Dropdown" MaxHeight="48" Margin="20,0" />
-		<Button		Grid.Column="2" Grid.Row="1" x:Name="SETUP_SwitchScene_Button" Content="Open Application" Margin="20,0"/>
+		
+		<ComboBox Grid.Column="1" Grid.Row="1"
+				  x:Name="SETUP_SelectShop_Dropdown"/>
+		<Button	Grid.Column="3" Grid.Row="1"
+				x:Name="SETUP_SwitchScene_Button" Content="Open Application" IsDefault="True"/>
 	</Grid>
 </Window>

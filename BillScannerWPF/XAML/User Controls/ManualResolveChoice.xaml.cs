@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
-using System.Windows;
+﻿using System.Collections.Generic;
 using System.Windows.Controls;
-using System.Windows.Input;
 using Igor.BillScanner.Core;
 
 namespace Igor.BillScanner.WPF.UI {
@@ -13,8 +8,6 @@ namespace Igor.BillScanner.WPF.UI {
 	/// Code for ManualResolveChoice.xaml
 	/// </summary>
 	public partial class ManualResolveChoice : UserControl {
-
-		private readonly ManualResetEventSlim evnt = new ManualResetEventSlim();
 
 		private static Dictionary<Choices, string> TextsPerOperation { get; } = new Dictionary<Choices, string>() {
 			{ Choices.NOOP, "NOOP" },
@@ -30,22 +23,8 @@ namespace Igor.BillScanner.WPF.UI {
 			{ Choices.ManuallyEnterQuantity, "Enter the amount here manually: " }
 		};
 
-		public ManualResolveChoice(ManualResolutionViewModel model) {
-			((MainWindow)App.Current.MainWindow).MAIN_Grid.Children.Add(this);
+		public ManualResolveChoice() {
 			InitializeComponent();
-			DataContext = model;
 		}
-
-		#region Choice Selection
-
-		internal async Task SelectChoiceAsync() {
-			await Task.Run(() => {
-				evnt.Wait();
-				evnt.Reset();
-			});
-			((MainWindow)App.Current.MainWindow).MAIN_Grid.Children.Remove(this);
-		}
-
-		#endregion
 	}
 }
