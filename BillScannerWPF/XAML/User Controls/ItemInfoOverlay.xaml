@@ -60,17 +60,19 @@
 
 				</StackPanel>
 
+				<Border Grid.Column="1" BorderBrush="DarkSlateBlue" BorderThickness="4" Margin="4 0"/>
+
 				<StackPanel Grid.Column ="2">
 					<TextBlock Text="Purchase Info" FontWeight="ExtraBold" FontSize="{StaticResource FontSize}"/>
 					<TextBlock Text="Item Quantity:" FontSize="{StaticResource FontSize}"/>
-					<TextBox   MinWidth="100" FontSize="{StaticResource FontSize}"/>
+					<TextBox MinWidth="100"  FontSize="{StaticResource FontSize}"/>
 					<TextBlock Text="Latest price:" FontSize="{StaticResource FontSize}"/>
-					<TextBox   MinWidth="100" FontSize="{StaticResource FontSize}"/>
+					<TextBox MinWidth="100"  FontSize="{StaticResource FontSize}"/>
 
 				</StackPanel>
 
 				<Grid Grid.Column="2"  VerticalAlignment="Bottom" HorizontalAlignment="Right">
-					<Button Content="Back" IsCancel="True" Margin="0,10,10,10" Command="{Binding CloseCommand}" Padding="20,5"  FontSize="{StaticResource FontSize}"></Button>
+					<Button Content="Back" IsCancel="True" Command="{Binding CloseCommand}" Padding="20,5"  FontSize="{StaticResource FontSize}"></Button>
 				</Grid>
 			</Grid>
 		</Grid>

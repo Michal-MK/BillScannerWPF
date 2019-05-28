@@ -32,9 +32,14 @@
 		public MatchRating MatchQuality { get; }
 
 		/// <summary>
-		/// Current price of the <see cref="Item"/>
+		/// Current price of the <see cref="Item"/> human readable
 		/// </summary>
-		public decimal CurrentPrice { get { return _currentPrice / 100m; } }
+		public decimal CurrentPriceStdBase => _currentPrice / 100m;
+		
+		/// <summary>
+		/// Current price of the <see cref="Item"/> represented in the lowest nominal value
+		/// </summary>
+		public int CurrentPriceDB => _currentPrice;
 		private int _currentPrice;
 
 

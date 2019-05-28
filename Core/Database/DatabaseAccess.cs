@@ -16,28 +16,27 @@ namespace Igor.BillScanner.Core {
 		/// <summary>
 		/// The shop that was selected at startup
 		/// </summary>
-		private Shop current;
+		private Shop Current { get; set; }
 
 		/// <summary>
 		/// Static access to database I/O
 		/// </summary>
-		public static DatabaseAccess access { get; private set; }
+		public static DatabaseAccess Access { get; private set; }
 
 
 		private string DbConnectionString => $"Data Source={WPFHelper.dataPath}ShoppingDB.db;Version=3;";
 		private string DbDateTimeFormat => "yyyy-MM-dd hh:mm:ss";
 
-		private DatabaseAccess(Shop s) {
-			string shopName = s.ToString();
-			current = s;
-			access = this;
+		private DatabaseAccess(Shop shop) {
+			Current = shop;
+			Access = this;
 		}
 
 		public static DatabaseAccess LoadDatabase(Shop shop) {
-			if (access == null || access.current != shop) {
-				access = new DatabaseAccess(shop);
+			if (Access == null || Access.Current != shop) {
+				Access = new DatabaseAccess(shop);
 			}
-			return access;
+			return Access;
 		}
 
 		/// <summary>
@@ -174,14 +173,6 @@ namespace Igor.BillScanner.Core {
 		}
 
 		/// <summary>
-		/// Allows user to register unknown item from the UI
-		/// </summary>
-		public void RegisterItemFromUI(Item item, string modifiedName, int finalPrice, DateTime purchaseTime) {
-			item.Modify(modifiedName, finalPrice);
-			WriteItemDefinitionToDatabase(item, purchaseTime);
-		}
-
-		/// <summary>
 		/// Returns all <see cref="Item"/> purchases where an <see cref="Item"/> with 'itemID' appears 
 		/// </summary>
 		public List<ItemPurchaseHistory> GetItemPuchaseHistory(int itemID) {
@@ -201,13 +192,13 @@ namespace Igor.BillScanner.Core {
 		/// <summary>
 		/// Write newly defined <see cref="Item"/> into the database
 		/// </summary>
-		public void WriteItemDefinitionToDatabase(Item newItemDefinition, DateTime purchaseTime) {
+		public int WriteItemDefinitionToDatabase(Item newItemDefinition, DateTime purchaseTime) {
 			using (IDbConnection connection = new SQLiteConnection(DbConnectionString)) {
 				connection.Open();
 				using (IDbTransaction transaction = connection.BeginTransaction()) {
 
 					connection.Execute(new CommandDefinition($"INSERT INTO {DbItem.DName} ({nameof(DbItem.Name)}, {nameof(DbItem.ShopID)}, {nameof(DbItem.Value)}) " +
-															 $"VALUES (@{nameof(newItemDefinition.ItemName)}, {(int)current}, @{nameof(newItemDefinition.CurrentPriceInt)})", newItemDefinition));
+															 $"VALUES (@{nameof(newItemDefinition.ItemName)}, {(int)Current}, @{nameof(newItemDefinition.CurrentPriceInt)})", newItemDefinition));
 
 					int latest = connection.ExecuteScalar<int>("SELECT last_insert_rowid()");
 
@@ -222,6 +213,7 @@ namespace Igor.BillScanner.Core {
 					connection.Execute(new CommandDefinition($"INSERT INTO {DbItemMetadata.DName} ({nameof(DbItemMetadata.ItemID)}, {nameof(DbItemMetadata.UnitOfMeassure)}) " +
 															 $"VALUES ({latest}, @Date)", new { Date = newItemDefinition.UnitOfMeassure.ToString() }));
 					transaction.Commit();
+					return latest;
 				}
 			}
 		}

@@ -9,8 +9,9 @@ namespace Igor.BillScanner.Core {
 
 		public NewItemDefViewModel() {
 			RegisterItemCommand = new Command(() => {
-				if (IsValid(ItemValue))
-					DatabaseAccess.access.WriteItemDefinitionToDatabase(new Item(ItemName, 100 * (int)decimal.Parse(ItemValue, NumberStyles.Currency | NumberStyles.AllowDecimalPoint)), DateTime.Now);
+				if (IsValid(ItemValue)) {
+					AssignedID = DatabaseAccess.Access.WriteItemDefinitionToDatabase(new Item(ItemName, 100 * (int)decimal.Parse(ItemValue, NumberStyles.Currency | NumberStyles.AllowDecimalPoint)), DateTime.Now);
+				}
 			});
 			MeassurementUnits = ((MeassurementUnit[])Enum.GetValues(typeof(MeassurementUnit))).ToObservable();
 		}
@@ -37,7 +38,7 @@ namespace Igor.BillScanner.Core {
 		public ICommand AbortRegistrationCommand { get => _abortRegistrationCommand; set { _abortRegistrationCommand = value; Notify(nameof(AbortRegistrationCommand)); } }
 		public MeassurementUnit SelectedMeassureUnit { get => _selectedMeassureUnit; set { _selectedMeassureUnit = value; Notify(nameof(SelectedMeassureUnit)); } }
 		public ICommand RegisterItemCommand { get => _registerItemCommand; set { _registerItemCommand = value; Notify(nameof(RegisterItemCommand)); } }
-
+		public int AssignedID { get; set; }
 
 		private bool IsValidDecimal(string text) {
 			NumberStyles style = NumberStyles.AllowDecimalPoint | NumberStyles.Currency;

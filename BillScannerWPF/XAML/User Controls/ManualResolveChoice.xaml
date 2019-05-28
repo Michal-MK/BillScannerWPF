@@ -32,13 +32,14 @@
 		<Border Background="WhiteSmoke" Margin="85">
 			<Grid Panel.ZIndex="1" Margin="10">
 				<StackPanel Style="{StaticResource GlobalStackPanelStyle}">
-					<TextBlock	Text="{Binding Header}" Margin="0,0,0,20"
-								FontWeight="Heavy" FontSize="16"/>
-
+					<Viewbox>
+						<TextBlock	Text="{Binding Header}" Margin="0,0,0,20"
+									FontWeight="Heavy" FontSize="16"/>
+					</Viewbox>
 					<TextBlock	Text="{Binding ErrorText}" Margin="0,0,0,10"
 								FontWeight="DemiBold" Foreground="Red"
 								FocusManager.FocusedElement="{Binding RelativeSource={RelativeSource Mode=Self}}"/>
-					
+
 					<!-- Simple buttons -->
 					<Button	Content="{Binding ButtonOneText}"
 							Visibility="{Binding ButtonOneVisibility, Converter={StaticResource BoolToVis}}"
@@ -88,6 +89,6 @@
 
 		<local:NewItemDefinitionPanel Margin="85" Visibility="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=UserControl}, Path=DataContext.ItemDefinitionVisible, Converter={StaticResource BoolToVis}}"
 									  DataContext="{Binding ItemDefinitionModel}"/>
-		
+
 	</Grid>
 </UserControl>

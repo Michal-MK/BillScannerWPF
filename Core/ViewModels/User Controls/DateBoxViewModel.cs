@@ -110,27 +110,27 @@ namespace Igor.BillScanner.Core {
 
 			switch (text.Length) {
 				case 3: { //Validate day
-					Validate(3, 2, 1, 31);
+					Validate(0, 2, 1, 31);
 					return;
 				}
 				case 6: { //Validate month
-					Validate(6, 2, 1, 12);
+					Validate(3, 2, 1, 12);
 					return;
 				}
 				case 11: { //Validate year
-					Validate(11, 4, 1000, 9999);
+					Validate(7, 4, 1000, 9999);
 					return;
 				}
 				case 14: { //Validate hour
-					Validate(14, 2, 0, 23);
+					Validate(11, 2, 0, 23);
 					return;
 				}
 				case 17: { //Validate minute
-					Validate(17, 2, 0, 59);
+					Validate(14, 2, 0, 59);
 					return;
 				}
 				case 19: { //Validate second
-					Validate(19, 2, 0, 59);
+					Validate(17, 2, 0, 59);
 					return;
 				}
 				default: {
@@ -140,7 +140,7 @@ namespace Igor.BillScanner.Core {
 			}
 
 			void Validate(int from ,int length, int min, int max) {
-				if (!int.TryParse(text.Substring(from - 3, length), out int number)) {
+				if (!int.TryParse(text.Substring(from, length), out int number)) {
 					BorderColor = "Red";
 					return;
 				}

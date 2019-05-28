@@ -27,7 +27,7 @@ namespace Igor.BillScanner.Core {
 			ObservableCollection<UIItemCreationInfo> matchedItems = new ObservableCollection<UIItemCreationInfo>();
 			ObservableCollection<UIItemCreationInfo> unmatchedItems = new ObservableCollection<UIItemCreationInfo>();
 
-			Item[] items = DatabaseAccess.access.GetItems(rules.Shop);
+			Item[] items = DatabaseAccess.Access.GetItems(rules.Shop);
 			DateTime purchaseTime = DateTime.MinValue;
 			(split, purchaseTime) = await CropSplit(split);
 
@@ -64,10 +64,6 @@ namespace Igor.BillScanner.Core {
 					}
 				}
 				else {
-					if (rules.correctCostAndQuantityLine.IsMatch(split[i])) {
-						//Found a price/quantity line, safely ignore
-						continue;
-					}
 					Choices selected = (Choices)(-1);
 					await Services.Instance.UserInput.PressOneOf($"This string is something else.. what is it??\n'{split[i]}'",
 						("Find the Item in database", new Command(() => selected = Choices.FindExistingItemFromList)),
@@ -88,11 +84,11 @@ namespace Igor.BillScanner.Core {
 
 						UIItemCreationInfo newlyMatched = new UIItemCreationInfo(newItem, quantity, result.DatabaseItemValue.Value, MatchRating.Success, split[i]);
 						newlyMatched.Item.SetUnitOfMeassure(result.SelectedMeassureUnit);
-						DatabaseAccess.access.WriteItemDefinitionToDatabase(newItem, purchaseTime);
+						newItem.SetNewID(result.AssignedID);
 						matchedItems.Add(newlyMatched);
 					}
 					else if (selected == Choices.FindExistingItemFromList) {
-						Item manuallyMatchedItem = await Services.Instance.UserInput.SelectOneItemFromListAsync(DatabaseAccess.access.GetItems(rules.Shop));
+						Item manuallyMatchedItem = await Services.Instance.UserInput.SelectOneItemFromListAsync(DatabaseAccess.Access.GetItems(rules.Shop));
 
 						if (manuallyMatchedItem == null) {
 							i--;
@@ -191,7 +187,7 @@ namespace Igor.BillScanner.Core {
 				}
 
 				if (!data.HasValue) {
-					return DatabaseAccess.access.GetItems()[fallbackItemIndex].CurrentPriceInt;
+					return DatabaseAccess.Access.GetItems()[fallbackItemIndex].CurrentPriceInt;
 				}
 				else {
 					return (int)data * 100;

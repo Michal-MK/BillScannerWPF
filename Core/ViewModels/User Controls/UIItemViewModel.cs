@@ -23,7 +23,8 @@ namespace Igor.BillScanner.Core {
 		public string ItemName {
 			get {
 				string ret = (int)MatchQuality <= 1 ? Item.ItemName : ItemCreation.MatchTriggerLine;
-				ret += " | Price: " + string.Format("{0:f2}", ItemCreation.CurrentPrice) + "Kč";
+				ret += " | Price: " + string.Format("{0:f2}", ItemCreation.CurrentPriceStdBase) + "Kč";
+				ret += " | Qty: " + AmountPurchased;
 				return ret;
 			}
 		}

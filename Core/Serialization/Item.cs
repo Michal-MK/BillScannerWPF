@@ -80,12 +80,12 @@ namespace Igor.BillScanner.Core {
 		/// <summary>
 		/// History of purchases of this item
 		/// </summary>
-		public List<ItemPurchaseHistory> PurchaseHistory => DatabaseAccess.access.GetItemPuchaseHistory(ID);
+		public List<ItemPurchaseHistory> PurchaseHistory => DatabaseAccess.Access.GetItemPuchaseHistory(ID);
 
 		/// <summary>
 		/// Is this item already present in the database
 		/// </summary>
-		public bool IsRegistered => DatabaseAccess.access.GetItem(ID) == null;
+		public bool IsRegistered => DatabaseAccess.Access.GetItem(ID) == null;
 
 		/// <summary>
 		/// Modify this item internally before it is added for the first time to the database
@@ -103,7 +103,7 @@ namespace Igor.BillScanner.Core {
 		/// </summary>
 		public void AddOCRName(string newOcrName) {
 			OcrNames.Add(newOcrName);
-			DatabaseAccess.access.AddOcrName(ID, newOcrName);
+			DatabaseAccess.Access.AddOcrName(ID, newOcrName);
 		}
 
 		/// <summary>
@@ -128,8 +128,15 @@ namespace Igor.BillScanner.Core {
 			PriceHistory.Add(purchaseTime, price);
 
 			if (updateDatabase) {
-				DatabaseAccess.access.UpdateNewCurrentPrice(ID, price, purchaseTime);
+				DatabaseAccess.Access.UpdateNewCurrentPrice(ID, price, purchaseTime);
 			}
+		}
+
+		/// <summary>
+		/// Set my ID to that which was given by a new registration call
+		/// </summary>
+		public void SetNewID(int assignedID) {
+			ID = assignedID;
 		}
 
 		/// <summary>
@@ -138,7 +145,7 @@ namespace Igor.BillScanner.Core {
 		public void SetUnitOfMeassure(MeassurementUnit unit, bool updateDatabase = false) {
 			UnitOfMeassure = unit;
 			if (updateDatabase) {
-				DatabaseAccess.access.UpdateUnitOfMeassure(ID, unit);
+				DatabaseAccess.Access.UpdateUnitOfMeassure(ID, unit);
 			}
 		}
 	}

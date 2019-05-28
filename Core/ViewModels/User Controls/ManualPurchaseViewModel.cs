@@ -9,7 +9,7 @@ namespace Igor.BillScanner.Core {
 		public ObservableCollection<ItemList_ItemViewModel> ManualItems { get => _items; set { _items = value; Notify(nameof(ManualItems)); } }
 
 		public ManualPurchaseViewModel() {
-			ManualItems = DatabaseAccess.access.GetItems().Select(s => new ItemList_ItemViewModel(s)).ToObservable();
+			ManualItems = DatabaseAccess.Access.GetItems().Select(s => new ItemList_ItemViewModel(s)).ToObservable();
 		}
 	}
 }

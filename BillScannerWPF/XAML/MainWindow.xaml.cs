@@ -2,7 +2,6 @@
 using System.Diagnostics;
 using System.Windows;
 using System.Windows.Input;
-using System.Windows.Media.Imaging;
 using Igor.BillScanner.Core;
 using Microsoft.Win32;
 
@@ -29,9 +28,9 @@ namespace Igor.BillScanner.WPF.UI {
 		}
 
 		private void OnShopClicked(object sender, MouseButtonEventArgs e) {
-			SetupWindow w = new SetupWindow();
+			SetupWindow setupWin = new SetupWindow();
 			Close();
-			Application.Current.MainWindow = w;
+			Application.Current.MainWindow = setupWin;
 			Application.Current.MainWindow.Show();
 		}
 
@@ -40,24 +39,16 @@ namespace Igor.BillScanner.WPF.UI {
 		public void ImageSelectDialog(object sender, MouseButtonEventArgs e) {
 			OpenFileDialog dialog = new OpenFileDialog {
 				DefaultExt = "png",
-				InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory)
+				InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory),
+				Multiselect = false,
 			};
 			if (dialog.ShowDialog() == true) {
-				SetPreviewImage(new Uri(dialog.FileName));
+				Model.ImageSource = dialog.FileName;
 			}
 		}
 
-		public void SetPreviewImage(Uri imgUri) {
-			BitmapImage image = new BitmapImage();
-			image.BeginInit();
-			image.CacheOption = BitmapCacheOption.OnLoad;
-			image.UriSource = imgUri;
-			image.EndInit();
-			(DataContext as MainWindowViewModel).ImageSource = imgUri.AbsolutePath;
-		}
-
 		public void OpenImageDefault(object sender, MouseButtonEventArgs e) {
-			if (string.IsNullOrEmpty(Model.ImageSource)) {
+			if (string.IsNullOrEmpty(Model.ImageSource) || Model.ImageSource == "/Igor.BillScanner.WPF.UI;component/Resources/Transparent.png") {
 				return;
 			}
 			new Process { StartInfo = new ProcessStartInfo(Model.ImageSource) }.Start();

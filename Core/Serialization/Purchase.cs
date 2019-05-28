@@ -30,7 +30,7 @@ namespace Igor.BillScanner.Core {
 		public Item[] AsociatedItems {
 			get {
 				if (_purchasedDbItems == null) {
-					return DatabaseAccess.access.GetItems(ID);
+					return DatabaseAccess.Access.GetItems(ID);
 				}
 				throw new Exception("This purchase does not yet have any items registered to it. Purchase must be finalized first.");
 			}
@@ -71,7 +71,7 @@ namespace Igor.BillScanner.Core {
 		/// Preforms the actual writing to the database
 		/// </summary>
 		public void FinalizePurchase() {
-			DatabaseAccess.access.RecordPurchase(this, _purchasedDbItems);
+			DatabaseAccess.Access.RecordPurchase(this, _purchasedDbItems);
 		}
 	}
 }
