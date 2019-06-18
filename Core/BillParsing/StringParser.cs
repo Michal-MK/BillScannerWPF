@@ -24,8 +24,8 @@ namespace Igor.BillScanner.Core {
 		/// Main parsing function, goes though the entire array and interprets the lines by comparing matches with the database entries
 		/// </summary>
 		public async Task<ParsingResult> ParseAsync(string[] split) {
-			ObservableCollection<UIItemCreationInfo> matchedItems = new ObservableCollection<UIItemCreationInfo>();
-			ObservableCollection<UIItemCreationInfo> unmatchedItems = new ObservableCollection<UIItemCreationInfo>();
+			ObservableCollection<UIItemViewModel> matchedItems = new ObservableCollection<UIItemViewModel>();
+			ObservableCollection<UIItemViewModel> unmatchedItems = new ObservableCollection<UIItemViewModel>();
 
 			Item[] items = DatabaseAccess.Access.GetItems(rules.Shop);
 			DateTime purchaseTime = DateTime.MinValue;
@@ -37,10 +37,13 @@ namespace Igor.BillScanner.Core {
 				(Item closest, int ocrLowestIndex, int ocrLowestDist) = FindBestResult(split, i, items);
 
 				if (ocrLowestDist <= 3) {
-					int currentPrice = await GetCurrentPriceAsync(split, i, ocrLowestIndex);
-					int quantity = await GetQuantityAsync(split, i, items[ocrLowestIndex].ItemName);
+					(int incrementA, int currentPrice) = await GetCurrentPriceAsync(split, i, ocrLowestIndex);
+					(int incrementB, int quantity) = await GetQuantityAsync(split, i, items[ocrLowestIndex].ItemName);
+					if (incrementA == 1 || incrementB == 1) {
+						i++;
+					}
 
-					UIItemCreationInfo match = new UIItemCreationInfo(items[ocrLowestIndex], quantity, currentPrice, (MatchRating)ocrLowestDist, split[i]);
+					UIItemViewModel match = new UIItemViewModel(new ItemPurchaseData(items[ocrLowestIndex], quantity), currentPrice, (MatchRating)ocrLowestDist, split[i]);
 					matchedItems.Add(match);
 					continue;
 				}
@@ -54,11 +57,15 @@ namespace Igor.BillScanner.Core {
 						("This text should be ignored", new Command(() => selected = Choices.NotAnItem)));
 
 					if (selected != Choices.NotAnItem) {
-						int currentPrice = await GetCurrentPriceAsync(split, i, ocrLowestIndex);
-						int quantity = await GetQuantityAsync(split, i, items[ocrLowestIndex].ItemName);
-						UIItemCreationInfo creationInfo = new UIItemCreationInfo(items[ocrLowestIndex], quantity, currentPrice, MatchRating.FivePlus, split[i]);
+						(int incrementA, int currentPrice) = await GetCurrentPriceAsync(split, i, ocrLowestIndex);
+						(int incrementB, int quantity) = await GetQuantityAsync(split, i, items[ocrLowestIndex].ItemName);
+						if (incrementA == 1 || incrementB == 1) {
+							i++;
+						}
+
+						UIItemViewModel creationInfo = new UIItemViewModel(new ItemPurchaseData(items[ocrLowestIndex], quantity), currentPrice, MatchRating.FivePlus, split[i]);
 						if (selected == Choices.MatchAnyway) {
-							creationInfo.Item.OcrNames.Add(split[i]);
+							creationInfo.ItemPurchase.Item.OcrNames.Add(split[i]);
 						}
 						matchedItems.Add(creationInfo);
 					}
@@ -78,12 +85,16 @@ namespace Igor.BillScanner.Core {
 							continue;
 						}
 
-						int quantity = await GetQuantityAsync(split, i, result.ItemName);
+						(int increment, int quantity) = await GetQuantityAsync(split, i, result.ItemName);
+						if (increment == 1) {
+							i++;
+						}
+
 						Item newItem = new Item(result.ItemName, result.DatabaseItemValue.Value);
 						newItem.AddOCRNameNew(split[i]);
 
-						UIItemCreationInfo newlyMatched = new UIItemCreationInfo(newItem, quantity, result.DatabaseItemValue.Value, MatchRating.Success, split[i]);
-						newlyMatched.Item.SetUnitOfMeassure(result.SelectedMeassureUnit);
+						UIItemViewModel newlyMatched = new UIItemViewModel(new ItemPurchaseData(newItem, quantity), result.DatabaseItemValue.Value, MatchRating.Success, split[i]);
+						newlyMatched.ItemPurchase.Item.SetUnitOfMeassure(result.SelectedMeassureUnit);
 						newItem.SetNewID(result.AssignedID);
 						matchedItems.Add(newlyMatched);
 					}
@@ -95,13 +106,19 @@ namespace Igor.BillScanner.Core {
 							continue;
 						}
 
-						int quantity = await GetQuantityAsync(split, i, manuallyMatchedItem.ItemName);
-						UIItemCreationInfo fromExistingMatched = new UIItemCreationInfo(manuallyMatchedItem, quantity, manuallyMatchedItem.CurrentPriceInt, MatchRating.Success, split[i]);
-						fromExistingMatched.Item.OcrNames.Add(split[i]);
+						(int increment, int quantity) = await GetQuantityAsync(split, i, manuallyMatchedItem.ItemName);
+						if (increment == 1) {
+							i++;
+						}
+						UIItemViewModel fromExistingMatched = new UIItemViewModel(
+							new ItemPurchaseData(manuallyMatchedItem, quantity), 
+							manuallyMatchedItem.CurrentPriceInt, MatchRating.Success, split[i]);
+
+						fromExistingMatched.ItemPurchase.Item.OcrNames.Add(split[i]);
 						matchedItems.Add(fromExistingMatched);
 					}
 					else if (selected == Choices.NotAnItem) {
-						unmatchedItems.Add(new UIItemCreationInfo(new Item(split[i], -1), -1, -1, MatchRating.Fail, ""));
+						unmatchedItems.Add(new UIItemViewModel(new ItemPurchaseData(new Item(split[i], -1), -1), -1, MatchRating.Fail, split[i]));
 					}
 				}
 			}
@@ -171,9 +188,9 @@ namespace Igor.BillScanner.Core {
 			return (ret, purchaseTime);
 		}
 
-		private async Task<int> GetCurrentPriceAsync(string[] split, int splitIndex, int fallbackItemIndex) {
+		private async Task<(int, int)> GetCurrentPriceAsync(string[] split, int splitIndex, int fallbackItemIndex) {
 			try {
-				return rules.GetPriceOfOne(split, ref splitIndex);
+				return rules.GetPriceOfOne(split, splitIndex);
 			}
 			catch (PriceParsingException) {
 				int? data;
@@ -183,14 +200,15 @@ namespace Igor.BillScanner.Core {
 				}
 				else {
 					data = await Services.Instance.UserInput.GetDecimalInputAsIntAsync(
-						$"Unable to get current item's price [{split[splitIndex]}]", true);
+						$"Unable to get current item's price [{split[splitIndex]}]",
+						DatabaseAccess.Access.GetItems()[fallbackItemIndex].CurrentPriceInt);
 				}
 
 				if (!data.HasValue) {
-					return DatabaseAccess.Access.GetItems()[fallbackItemIndex].CurrentPriceInt;
+					return (0, DatabaseAccess.Access.GetItems()[fallbackItemIndex].CurrentPriceInt);
 				}
 				else {
-					return (int)data * 100;
+					return (0, (int)data * 100);
 				}
 			}
 		}
@@ -200,15 +218,17 @@ namespace Igor.BillScanner.Core {
 			"Parser could not find purchase date/time in the bill.", true);
 		}
 
-		private async Task<int> GetQuantityAsync(string[] split, int splitIndex, string itemName) {
+		private async Task<(int, int)> GetQuantityAsync(string[] split, int splitIndex, string itemName) {
 			int quantity;
+			int increment;
 			try {
-				quantity = rules.GetQuantity(split, splitIndex);
+				(increment, quantity) = rules.GetQuantity(split, splitIndex);
 			}
 			catch (QuantityParsingException) {
+				increment = 0;
 				quantity = await Services.Instance.UserInput.GetIntInputAsync($"Unable to get quantity of goods purchased: Item name '{itemName}'");
 			}
-			return quantity;
+			return (increment, quantity);
 		}
 	}
 }

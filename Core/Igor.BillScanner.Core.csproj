@@ -53,10 +53,10 @@
       <HintPath>..\packages\Dapper.1.60.6\lib\net451\Dapper.dll</HintPath>
     </Reference>
     <Reference Include="Igor.Localization">
-      <HintPath>..\..\MTDB\packages\Igor.WPF\Igor.Localization.dll</HintPath>
+      <HintPath>..\packages\Igor.WPF\Igor.Localization.dll</HintPath>
     </Reference>
     <Reference Include="Igor.Models">
-      <HintPath>..\..\MTDB\packages\Igor.WPF\Igor.Models.dll</HintPath>
+      <HintPath>..\packages\Igor.WPF\Igor.Models.dll</HintPath>
     </Reference>
     <Reference Include="SimpleTCP">
       <HintPath>..\packages\SimpleTCP\SimpleTCP.dll</HintPath>
@@ -91,7 +91,6 @@
     <Compile Include="Interfaces\IManualUserInput.cs" />
     <Compile Include="BillParsing\ParsingResult.cs" />
     <Compile Include="BillParsing\StringParser.cs" />
-    <Compile Include="BillParsing\UIItemCreationInfo.cs" />
     <Compile Include="BillParsing\WordSimilarity.cs" />
     <Compile Include="Database\DatabaseAccess.cs" />
     <Compile Include="Database\FolderInit.cs" />

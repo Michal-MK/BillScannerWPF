@@ -17,7 +17,7 @@ namespace Igor.BillScanner.Core.Rules {
 
 		public Regex correctCostAndQuantityLine => genericItemPriceFormat;
 
-		public int GetQuantity(string[] ocrText, int index) {
+		public (int, int) GetQuantity(string[] ocrText, int index) {
 			if (index > ocrText.Length) { throw new IndexOutOfRangeException(nameof(index)); }
 			string quantity = ocrText[index + 1];
 			string[] split = quantity.Replace(" ", "").ToLower().Split(CostPlusQuantitySeparator);
@@ -26,12 +26,12 @@ namespace Igor.BillScanner.Core.Rules {
 			}
 
 			if (int.TryParse(split[0], out int result)) {
-				return result;
+				return (1, result);
 			}
 			else {
 				quantity = ReplaceAmbiguousToNumber(quantity);
 				if (int.TryParse(quantity.Split(CostPlusQuantitySeparator)[0], out int resultReplaced)) {
-					return resultReplaced;
+					return (1, resultReplaced);
 				}
 			}
 			throw new QuantityParsingException($"Unable to get quantity from string {ocrText[index + 1]}, subsequently modified {quantity}", ocrText[index + 1], index + 1);
@@ -56,7 +56,7 @@ namespace Igor.BillScanner.Core.Rules {
 			}
 		}
 
-		public int GetPriceOfOne(string[] ocrText, ref int index) {
+		public (int, int) GetPriceOfOne(string[] ocrText, int index) {
 			string quantity = ocrText[index + 1];
 			string modified = quantity.Replace(" ", "").ToLower().Trim();
 			string[] split = modified.Split(CostPlusQuantitySeparator);
@@ -64,7 +64,7 @@ namespace Igor.BillScanner.Core.Rules {
 				throw new PriceParsingException(ocrText[index + 1], index + 1, false);
 			}
 			if (decimal.TryParse(split[1], System.Globalization.NumberStyles.Currency | System.Globalization.NumberStyles.AllowDecimalPoint, System.Globalization.CultureInfo.InvariantCulture, out decimal result)) {
-				return (int)(result * 100);
+				return (1, (int)(result * 100));
 			}
 			else {
 				string[] linesModified = ReplaceAllAmbiguous(correctItemLine, split[1]);
@@ -72,7 +72,7 @@ namespace Igor.BillScanner.Core.Rules {
 					Match m = genericItemPriceFormat.Match(lineModified);
 					if (m.Success) {
 						if (decimal.TryParse(m.Groups[1].Value + "." + m.Groups[3].Value, System.Globalization.NumberStyles.Currency | System.Globalization.NumberStyles.AllowDecimalPoint, System.Globalization.CultureInfo.InvariantCulture, out decimal resultReplaced)) {
-							return (int)(resultReplaced * 100);
+							return (1, (int)(resultReplaced * 100));
 						}
 					}
 				}

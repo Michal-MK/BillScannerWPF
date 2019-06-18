@@ -23,7 +23,7 @@ namespace Igor.BillScanner.Core {
 
 			Finalize = new ButtonCommand((obj) => {
 				Purchase purchase = new Purchase(SelectedShopRuleset.Shop, ImgProcessing.CurrentParsingResult.Meta.PurchasedAt,
-					_matchedItems.Select(s => new ItemPurchaseData(s.Item, s.AmountPurchased)).ToArray());
+					_matchedItems.Select(s => s.ItemPurchase).ToArray());
 				purchase.FinalizePurchase();
 				ClearButtonVisible = true;
 				FinalizeButtonVisible = false;
@@ -120,8 +120,8 @@ namespace Igor.BillScanner.Core {
 		#region Actions
 
 		private void OnImageParsed(object sender, ParsingCompleteEventArgs e) {
-			MatchedItems = e.Result.MachedItems.Select(s => new UIItemViewModel(s)).ToObservable();
-			UnknownItems = e.Result.UnknownItems.Select(s => new UIItemViewModel(s)).ToObservable();
+			MatchedItems = e.Result.MachedItems.ToObservable();
+			UnknownItems = e.Result.UnknownItems.ToObservable();
 			AnalyzeButtonVisible = false;
 			FinalizeButtonVisible = true;
 			ClearButtonVisible = true;

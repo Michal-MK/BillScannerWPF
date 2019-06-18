@@ -13,7 +13,7 @@ namespace Igor.BillScanner.Core {
 
 		Task<DateTime> GetDateTimeInputAsync(string displayText, bool allowNow = true);
 
-		Task<int?> GetDecimalInputAsIntAsync(string displayText, bool allowKnown = false);
+		Task<int?> GetDecimalInputAsIntAsync(string displayText, int? knownValue = null);
 
 		Task<Item> SelectOneItemFromListAsync(Item[] items);
 

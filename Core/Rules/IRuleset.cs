@@ -12,7 +12,7 @@ namespace Igor.BillScanner.Core.Rules {
 		/// <exception cref="QuantityParsingException"></exception>
 		/// <param name="ocrText">The OCR'd text array</param>
 		/// <param name="index">The index into the array</param>
-		int GetQuantity(string[] ocrText, int index);
+		(int, int) GetQuantity(string[] ocrText, int index);
 
 		/// <summary>
 		/// Returns the name of an Item from a line
@@ -25,8 +25,8 @@ namespace Igor.BillScanner.Core.Rules {
 		/// Returns the price of one item (in case of multiple purchases of one)
 		/// </summary>
 		/// <param name="ocrText">The OCR'd text array</param>
-		/// <param name="index">The index into the array, INDEX CAN BY MODIFIED BY THIS!</param>
-		int GetPriceOfOne(string[] ocrText, ref int index);
+		/// <param name="index">The index into the array</param>
+		(int, int) GetPriceOfOne(string[] ocrText, int index);
 
 		/// <summary>
 		/// Base Regular expression that can match a valid item from this shop

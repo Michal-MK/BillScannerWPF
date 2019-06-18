@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:core="clr-namespace:Igor.BillScanner.Core;assembly=Igor.BillScanner.Core"
+             xmlns:local="clr-namespace:Igor.BillScanner.WPF.UI"
              xmlns:sys="clr-namespace:System;assembly=mscorlib"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
@@ -65,9 +66,9 @@
 				<StackPanel Grid.Column ="2">
 					<TextBlock Text="Purchase Info" FontWeight="ExtraBold" FontSize="{StaticResource FontSize}"/>
 					<TextBlock Text="Item Quantity:" FontSize="{StaticResource FontSize}"/>
-					<TextBox MinWidth="100"  FontSize="{StaticResource FontSize}"/>
+					<local:ValidatedTextBox Text="{Binding CurrentQuantity}" ValidationFunction="{Binding QuantityValidationFunc}"/>
 					<TextBlock Text="Latest price:" FontSize="{StaticResource FontSize}"/>
-					<TextBox MinWidth="100"  FontSize="{StaticResource FontSize}"/>
+					<local:ValidatedTextBox Text="{Binding CurrentPrice}" ValidationFunction="{Binding PriceValidationFunc}"/>
 
 				</StackPanel>
 
