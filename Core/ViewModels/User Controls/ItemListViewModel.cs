@@ -94,13 +94,13 @@ namespace Igor.BillScanner.Core {
 		/// Handle user selection of an item and clicking of "Select" button, repeat on unsuccessful select
 		/// </summary>
 		public async Task<ItemList_ItemViewModel> SelectItemAsync() {
+
 			while (SelectedItem == null) {
 				await Task.Run(_evnt.Wait);
 				if (Aborted) {
 					return null;
 				}
 			}
-			_evnt.Dispose();
 			return SelectedItem;
 		}
 	}

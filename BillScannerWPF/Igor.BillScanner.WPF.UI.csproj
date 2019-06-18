@@ -38,6 +38,12 @@
     <Reference Include="Igor.Controls">
       <HintPath>..\packages\Igor.WPF\Igor.Controls.dll</HintPath>
     </Reference>
+    <Reference Include="Igor.Localization">
+      <HintPath>..\packages\Igor.WPF\Igor.Localization.dll</HintPath>
+    </Reference>
+    <Reference Include="Igor.Models">
+      <HintPath>..\packages\Igor.WPF\Igor.Models.dll</HintPath>
+    </Reference>
     <Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.11.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
@@ -94,9 +100,6 @@
     <Compile Include="XAML\User Controls\StatusBar.xaml.cs">
       <DependentUpon>StatusBar.xaml</DependentUpon>
     </Compile>
-    <Compile Include="XAML\User Controls\ValidatedTextBox.xaml.cs">
-      <DependentUpon>ValidatedTextBox.xaml</DependentUpon>
-    </Compile>
     <Page Include="XAML\User Controls\ItemList.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -142,10 +145,6 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="XAML\User Controls\StatusBar.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="XAML\User Controls\ValidatedTextBox.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
