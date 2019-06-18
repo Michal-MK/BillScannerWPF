@@ -9,28 +9,27 @@
              d:DesignWidth="400">
 
 	<UserControl.Resources>
-		<local:MatchRatingToImageConverter x:Key="MatchToImageConv"></local:MatchRatingToImageConverter>
+		<local:MatchRatingToImageConverter x:Key="MatchToImageConv"/>
 	</UserControl.Resources>
 
 	<d:UserControl.DataContext>
 		<core:UIItemViewModel/>
 	</d:UserControl.DataContext>
-	
-	<Grid>
+
+	<Grid Margin="10 0">
 		<Grid.ColumnDefinitions>
-			<ColumnDefinition Width="10"></ColumnDefinition>
-			<ColumnDefinition Width="*"></ColumnDefinition>
-			<ColumnDefinition Width="auto"></ColumnDefinition>
-			<ColumnDefinition Width="auto"></ColumnDefinition>
-			<ColumnDefinition Width="10"></ColumnDefinition>
+			<ColumnDefinition Width="*"/>
+			<ColumnDefinition Width="auto"/>
+			<ColumnDefinition Width="auto"/>
 		</Grid.ColumnDefinitions>
-		
+
 		<Grid.Background>
-			<SolidColorBrush Color="LightSlateGray"></SolidColorBrush>
+			<SolidColorBrush Color="LightSlateGray"/>
 		</Grid.Background>
-		
-		<TextBlock	Grid.Column="1" Text="{Binding ItemName}" VerticalAlignment="Center" HorizontalAlignment="Left" ></TextBlock>
-		<Button		Grid.Column="2" Content="Details" Command="{Binding ShowDetailsCommand}" Padding="10 0"></Button>
-		<Image		Grid.Column="3" Source="{Binding MatchQuality, Converter={StaticResource MatchToImageConv}}" Height="32px" HorizontalAlignment="Right" Margin="10 0"/>
+
+		<TextBlock Grid.Column="0" Text="{Binding ItemName}" VerticalAlignment="Center" HorizontalAlignment="Left"/>
+		<Button Grid.Column="1" Content="Details" Command="{Binding ShowDetailsCommand}" Padding="10 0"/>
+		<Image Grid.Column="3" Source="{Binding MatchQuality, Converter={StaticResource MatchToImageConv}}" Height="32px"
+			   HorizontalAlignment="Right" Margin="10 0"/>
 	</Grid>
 </UserControl>

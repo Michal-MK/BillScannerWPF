@@ -27,12 +27,12 @@ namespace Igor.BillScanner.Core {
 		/// <summary>
 		/// Bound container that holds all matched <see cref="UIItem"/>s
 		/// </summary>
-		internal List<UIItemCreationInfo> UIItemsMatched = new List<UIItemCreationInfo>();
+		internal List<UIItemViewModel> UIItemsMatched = new List<UIItemViewModel>();
 
 		/// <summary>
 		/// Bound container that holds all unknown <see cref="UIItem"/>s
 		/// </summary>
-		internal List<UIItemCreationInfo> UIItemsUnknown = new List<UIItemCreationInfo>();
+		internal List<UIItemViewModel> UIItemsUnknown = new List<UIItemViewModel>();
 
 		/// <summary>
 		/// Parse results and other information from current scan

@@ -17,6 +17,6 @@
 		/// <summary>
 		/// How many units were bought
 		/// </summary>
-		public int Amount { get; }
+		public int Amount { get; set; }
 	}
 }

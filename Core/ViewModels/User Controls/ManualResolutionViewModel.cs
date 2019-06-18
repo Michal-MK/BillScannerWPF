@@ -3,14 +3,15 @@ using System.Globalization;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using Igor.Models;
 
 namespace Igor.BillScanner.Core {
 	public class ManualResolutionViewModel : BaseViewModel, IManualUserInput {
 
 		#region Backing Fields
 
-		private string _header = "The parser encountered a situation where it is unsure what to do!";
-		private string _errorText = "Error";
+		private string _header;
+		private string _errorText;
 
 		private string _button1Text;
 		private bool _button1Visibility;
@@ -127,7 +128,9 @@ namespace Igor.BillScanner.Core {
 					return await GetIntInputAsync(displayText);
 				}
 				ClearCommands();
+				SimpleInputControlVisible = false;
 				ControlVisibility = false;
+				CustomInputText = "";
 				return result;
 			}
 		}
@@ -142,7 +145,9 @@ namespace Igor.BillScanner.Core {
 
 				await Task.Run(evnt.Wait);
 				ClearCommands();
+				SimpleInputControlVisible = false;
 				ControlVisibility = false;
+				CustomInputText = "";
 				return CustomInputText;
 			}
 		}
@@ -194,12 +199,13 @@ namespace Igor.BillScanner.Core {
 				await Task.Run(evnt.Wait);
 				ClearCommands();
 				DateBoxControlVisible = false;
+				DateBoxControlModel.CurrentText = "";
 				ControlVisibility = false;
 				return retVal.Value;
 			}
 		}
 
-		public async Task<int?> GetDecimalInputAsIntAsync(string displayText, bool allowKnown = false) {
+		public async Task<int?> GetDecimalInputAsIntAsync(string displayText, int? knownValue = null) {
 			using (ManualResetEventSlim evnt = new ManualResetEventSlim()) {
 				ControlVisibility = true;
 				int? retVal = null;
@@ -214,14 +220,15 @@ namespace Igor.BillScanner.Core {
 					}
 				});
 
-				if (allowKnown) {
-					SetCommand("Use latest value from the database.", new Command(() => { evnt.Set(); }));
+				if (knownValue.HasValue) {
+					SetCommand($"Use latest value from the database => '{(knownValue.Value / 100m).ToString("0.00")} Kč'", new Command(() => { evnt.Set(); }));
 				}
 
 				await Task.Run(evnt.Wait);
 				ClearCommands();
 				SimpleInputControlVisible = false;
 				ControlVisibility = false;
+				CustomInputText = "";
 				return retVal;
 			}
 		}

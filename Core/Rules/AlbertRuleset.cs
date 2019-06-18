@@ -24,15 +24,15 @@ namespace Igor.BillScanner.Core.Rules {
 
 		public Shop Shop => Shop.Albert;
 
-		public int GetQuantity(string[] ocrText, int index) {
+		public (int, int) GetQuantity(string[] ocrText, int index) {
 			if (IsSingleItem(ocrText, index)) {
-				return 1;
+				return (0, 1);
 			}
 			else {
 				string[] split = ocrText[index + 1].Split(CostPlusQuantitySeparator);
 				if (split.Length == 2) {
 					if (int.TryParse(split[0], out int result)) {
-						return result;
+						return (1, result);
 					}
 				}
 				throw new QuantityParsingException("Unable to get quantity from string " + ocrText[index + 2], ocrText[index + 2], index + 2);
@@ -56,12 +56,12 @@ namespace Igor.BillScanner.Core.Rules {
 			throw new NameParsingException("Unable to get name from string: " + line, line);
 		}
 
-		public int GetPriceOfOne(string[] ocrText, ref int index) {
+		public (int, int) GetPriceOfOne(string[] ocrText, int index) {
 			if (IsSingleItem(ocrText, index)) {
 				Match single = correctItemLine.Match(ocrText[index]);
 				string final = single.Groups[4].Value;
 				if (decimal.TryParse(final, NumberStyles.Currency | NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture, out decimal result)) {
-					return (int)(result * 100);
+					return (0, (int)(result * 100));
 				}
 				else {
 					throw new PriceParsingException(ocrText[index], index, true);
@@ -71,8 +71,7 @@ namespace Igor.BillScanner.Core.Rules {
 				Match multiL = multiLineItems.Match(ocrText[index + 1]);
 				string final = multiL.Groups[2].Value.Replace(" ", ".");
 				if (decimal.TryParse(final, NumberStyles.Currency | NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture, out decimal result)) {
-					index++;
-					return (int)(result * 100);
+					return (1, (int)(result * 100));
 				}
 				else {
 					throw new PriceParsingException(ocrText[index + 1], index + 1, false);

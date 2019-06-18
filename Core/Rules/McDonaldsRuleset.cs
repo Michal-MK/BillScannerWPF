@@ -17,10 +17,10 @@ namespace Igor.BillScanner.Core.Rules {
 
 		public Shop Shop => Shop.McDonalds;
 
-		public int GetQuantity(string[] ocrText, int index) {
+		public (int, int) GetQuantity(string[] ocrText, int index) {
 			string[] split = ocrText[index].Split(null);
 			if (int.TryParse(split[0], out int result)) {
-				return result;
+				return (1, result);
 			}
 			string modified = ReplaceAmbiguousToNumber(split[0]);
 			if (modified == split[0]) {
@@ -28,17 +28,17 @@ namespace Igor.BillScanner.Core.Rules {
 			}
 			else {
 				if (int.TryParse(modified, out int resultModified)) {
-					return resultModified;
+					return (1, resultModified);
 				}
 			}
 			throw new QuantityParsingException("Unable to get quantity from string " + ocrText[index] + ", subsequently modified " + modified, ocrText[index], index);
 		}
 
-		public int GetPriceOfOne(string[] ocrText, ref int index) {
+		public (int, int) GetPriceOfOne(string[] ocrText, int index) {
 			string line = ocrText[index].Replace(',', '.');
 			Match m = correctItemLine.Match(line);
 			if (decimal.TryParse(m.Groups[3].Value, NumberStyles.Currency, CultureInfo.InvariantCulture, out decimal result)) {
-				return (int)(result * 100);
+				return (1, (int)(result * 100));
 			}
 			string modified = ReplaceAmbiguousToNumber(line);
 			if (modified == line) {
@@ -47,7 +47,7 @@ namespace Igor.BillScanner.Core.Rules {
 			else {
 				Match mm = correctItemLine.Match(modified);
 				if (decimal.TryParse(mm.Groups[3].Value, NumberStyles.Currency, CultureInfo.InvariantCulture, out decimal resultModified)) {
-					return (int)(resultModified * 100);
+					return (1, (int)(resultModified * 100));
 				}
 			}
 			throw new PriceParsingException(ocrText[index], index, false);
