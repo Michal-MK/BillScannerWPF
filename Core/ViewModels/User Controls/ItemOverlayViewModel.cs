@@ -34,6 +34,9 @@ namespace Igor.BillScanner.Core {
 
 		public ItemOverlayViewModel() {
 			SetNewSource(new UIItemViewModel(new ItemPurchaseData(new Item("NONE", -1), 0), -1, MatchRating.Fail, "NONE"), false);
+			CloseCommand = new Command(() => ControlVisible = false);
+			QuantityValidationFunc = ValidQuantity;
+			PriceValidationFunc = ValidCurrency;
 		}
 
 		public void SetNewSource(UIItemViewModel source, bool show = true) {
