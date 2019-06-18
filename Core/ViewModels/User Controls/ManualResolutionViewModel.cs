@@ -3,6 +3,7 @@ using System.Globalization;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using Igor.Models;
 
 namespace Igor.BillScanner.Core {
 	public class ManualResolutionViewModel : BaseViewModel, IManualUserInput {

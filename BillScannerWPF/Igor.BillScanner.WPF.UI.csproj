@@ -8,11 +8,12 @@
     <OutputType>WinExe</OutputType>
     <RootNamespace>Igor.BillScanner.WPF.UI</RootNamespace>
     <AssemblyName>Igor.BillScanner.WPF.UI</AssemblyName>
-    <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <WarningLevel>4</WarningLevel>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -34,6 +35,15 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Igor.Controls">
+      <HintPath>..\..\MTDB\packages\Igor.WPF\Igor.Controls.dll</HintPath>
+    </Reference>
+    <Reference Include="Igor.Localization">
+      <HintPath>..\..\MTDB\packages\Igor.WPF\Igor.Localization.dll</HintPath>
+    </Reference>
+    <Reference Include="Igor.Models">
+      <HintPath>..\..\MTDB\packages\Igor.WPF\Igor.Models.dll</HintPath>
+    </Reference>
     <Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.11.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
@@ -63,9 +73,6 @@
     <Compile Include="Converters\DebugDataBindingConv.cs" />
     <Compile Include="Converters\MatchRatingToImageConverter.cs" />
     <Compile Include="ManualPurchase\ManualPurchaseHandler.cs" />
-    <Compile Include="XAML\User Controls\DateBox.xaml.cs">
-      <DependentUpon>DateBox.xaml</DependentUpon>
-    </Compile>
     <Compile Include="XAML\User Controls\ItemList.xaml.cs">
       <DependentUpon>ItemList.xaml</DependentUpon>
     </Compile>
@@ -93,13 +100,6 @@
     <Compile Include="XAML\User Controls\StatusBar.xaml.cs">
       <DependentUpon>StatusBar.xaml</DependentUpon>
     </Compile>
-    <Compile Include="XAML\User Controls\ValidatedTextBox.xaml.cs">
-      <DependentUpon>ValidatedTextBox.xaml</DependentUpon>
-    </Compile>
-    <Page Include="XAML\User Controls\DateBox.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="XAML\User Controls\ItemList.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -145,10 +145,6 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="XAML\User Controls\StatusBar.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="XAML\User Controls\ValidatedTextBox.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
