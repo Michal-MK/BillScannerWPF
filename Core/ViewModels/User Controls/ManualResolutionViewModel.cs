@@ -43,9 +43,11 @@ namespace Igor.BillScanner.Core {
 		private ItemListViewModel _itemlistViewModel = new ItemListViewModel();
 		private bool _itemDefinitionVisible;
 		private NewItemDefViewModel _itemDefinitionModel = new NewItemDefViewModel();
+		private Action<string> _returnPress;
 
 		#endregion
 
+		public Action<string> ReturnPress { get => _returnPress; set { _returnPress = value; Notify(nameof(ReturnPress)); } }
 		public NewItemDefViewModel ItemDefinitionModel { get => _itemDefinitionModel; set { _itemDefinitionModel = value; Notify(nameof(ItemDefinitionModel)); } }
 		public bool ItemDefinitionVisible { get => _itemDefinitionVisible; set { _itemDefinitionVisible = value; Notify(nameof(ItemDefinitionVisible)); } }
 		public ItemListViewModel ItemlistViewModel { get => _itemlistViewModel; set { _itemlistViewModel = value; Notify(nameof(ItemlistViewModel)); } }
@@ -120,18 +122,23 @@ namespace Igor.BillScanner.Core {
 				Header = displayText;
 				SimpleInputControlVisible = true;
 				ButtonStdInput = "Use my value provided here:";
-				ButtonStdInputCommand = new Command(() => { evnt.Set(); });
+				int retVal = -1;
+
+				ButtonStdInputCommand = new Command(() => {
+					if (int.TryParse(CustomInputText, out retVal)) {
+						evnt.Set();
+					}
+				});
+				ReturnPress = (s) => { ButtonStdInputCommand.Execute(null); };
 
 				await Task.Run(evnt.Wait);
-				int result;
-				while (!int.TryParse(CustomInputText, out result)) {
-					return await GetIntInputAsync(displayText);
-				}
+
 				ClearCommands();
 				SimpleInputControlVisible = false;
 				ControlVisibility = false;
 				CustomInputText = "";
-				return result;
+				ReturnPress = null;
+				return retVal;
 			}
 		}
 
@@ -142,13 +149,16 @@ namespace Igor.BillScanner.Core {
 				SimpleInputControlVisible = true;
 				ButtonStdInput = "GetStringInput: ";
 				ButtonStdInputCommand = new Command(() => { evnt.Set(); });
+				ReturnPress = (s) => { evnt.Set(); };
 
 				await Task.Run(evnt.Wait);
 				ClearCommands();
 				SimpleInputControlVisible = false;
 				ControlVisibility = false;
+				string retVal = CustomInputText;
 				CustomInputText = "";
-				return CustomInputText;
+				ReturnPress = null;
+				return retVal;
 			}
 		}
 
@@ -188,6 +198,7 @@ namespace Igor.BillScanner.Core {
 					}
 				});
 				ButtonDateTimeInput = "Use my date provided here: ";
+				ReturnPress = (s) => { ButtonDateTimeCommand.Execute(null); }; 
 
 				if (allowNow) {
 					SetCommand("Use 'Today' as the date of purchase", new Command(() => {
@@ -201,6 +212,7 @@ namespace Igor.BillScanner.Core {
 				DateBoxControlVisible = false;
 				DateBoxControlModel.CurrentText = "";
 				ControlVisibility = false;
+				ReturnPress = null;
 				return retVal.Value;
 			}
 		}
@@ -219,6 +231,7 @@ namespace Igor.BillScanner.Core {
 						evnt.Set();
 					}
 				});
+				ReturnPress = (s) => { ButtonStdInputCommand.Execute(null); };
 
 				if (knownValue.HasValue) {
 					SetCommand($"Use latest value from the database => '{(knownValue.Value / 100m).ToString("0.00")} Kč'", new Command(() => { evnt.Set(); }));
@@ -229,6 +242,7 @@ namespace Igor.BillScanner.Core {
 				SimpleInputControlVisible = false;
 				ControlVisibility = false;
 				CustomInputText = "";
+				ReturnPress = null;
 				return retVal;
 			}
 		}
@@ -250,10 +264,10 @@ namespace Igor.BillScanner.Core {
 			using (ManualResetEventSlim evnt = new ManualResetEventSlim()) {
 				ControlVisibility = true;
 				ItemDefinitionVisible = true;
-				NewItemDefViewModel retVal = null;
 				ItemDefinitionModel.RegisterItemCommand = new Command(() => {
-					retVal = ItemDefinitionModel;
-					evnt.Set();
+					if (ItemDefinitionModel.DefinitionSuccess) {
+						evnt.Set();
+					}
 				});
 
 				ItemDefinitionModel.AbortRegistrationCommand = new Command(() => {
@@ -264,7 +278,7 @@ namespace Igor.BillScanner.Core {
 
 				ItemDefinitionVisible = false;
 				ControlVisibility = false;
-				return retVal;
+				return ItemDefinitionModel;
 			}
 		}
 	}

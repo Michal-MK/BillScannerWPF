@@ -7,4 +7,6 @@ Assets
 mipmap*
 */Resources/values
 *.user
-packages
+Dapper*
+System.Data.SQLite*
+Tesseract*
