@@ -7,14 +7,14 @@
              xmlns:controls="clr-namespace:Igor.Controls;assembly=Igor.Controls"
              xmlns:core="clr-namespace:Igor.BillScanner.Core;assembly=Igor.BillScanner.Core"
              mc:Ignorable="d" 
-			 KeyboardNavigation.TabNavigation="None">
+			 KeyboardNavigation.TabNavigation="Contained">
 
 	<d:UserControl.DataContext>
 		<core:ManualResolutionViewModel/>
 	</d:UserControl.DataContext>
 
 	<UserControl.Resources>
-		<local:BoolToVisibilityCollapseConverter x:Key="BoolToVis"/>
+		<controls:BoolToVisibilityConv x:Key="BoolToVis"/>
 		<Style TargetType="StackPanel" x:Key="GlobalStackPanelStyle">
 			<Style.Resources>
 				<Style TargetType="Button">
@@ -61,10 +61,10 @@
 							<ColumnDefinition Width="3*"/>
 						</Grid.ColumnDefinitions>
 
-						<Button	 Grid.Column="0" Content="{Binding ButtonStdInput}"
-								 Command="{Binding ButtonStdInputCommand}"
-								 Margin="4" Padding="10,2" HorizontalContentAlignment="Left"/>
-						<TextBox Grid.Column="1" Text="{Binding CustomInputText}" Margin="4"/>
+						<Button	Grid.Column="0" Content="{Binding ButtonStdInput}"
+								Command="{Binding ButtonStdInputCommand}"
+								Margin="4" Padding="10,2" HorizontalContentAlignment="Left"/>
+						<controls:TextBoxReturnAware Grid.Column="1" Text="{Binding CustomInputText}" Margin="4" OnEnterPress="{Binding ReturnAction}"/>
 					</Grid>
 
 					<!-- Manual input of Date -->
@@ -78,9 +78,9 @@
 								Command="{Binding ButtonDateTimeCommand}" Margin="4" Padding="10,2"
 								HorizontalContentAlignment="Left"/>
 						<controls:DateBox Grid.Column="1" 
-									   DataContext="{Binding DateBoxControlModel}"
-									   BindableCarretIndex="{Binding CurrentCarretIndex, Mode=TwoWay}"
-									   Margin="4"/>
+										  DataContext="{Binding DateBoxControlModel}"
+										  BindableCarretIndex="{Binding CurrentCarretIndex, Mode=TwoWay}"
+										  Margin="4"/>
 					</Grid>
 				</StackPanel>
 			</Grid>

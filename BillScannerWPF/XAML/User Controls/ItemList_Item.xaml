@@ -11,13 +11,13 @@
 		<core:ItemList_ItemViewModel/>
 	</d:UserControl.DataContext>
 	
-	<Grid HorizontalAlignment="Stretch">
+	<Grid HorizontalAlignment="Stretch" MouseLeftButtonDown="OnMouseClick">
 		<Grid.ColumnDefinitions>
-			<ColumnDefinition Width="*"></ColumnDefinition>
-			<ColumnDefinition Width="auto"></ColumnDefinition>
+			<ColumnDefinition Width="*"/>
+			<ColumnDefinition Width="auto"/>
 		</Grid.ColumnDefinitions>
-		
-		<TextBlock Text="{Binding ItemName}"	Grid.Column="0" VerticalAlignment="Center" Margin="5,0,0,0" ></TextBlock>
-		<TextBlock Text="{Binding ItemPrice}"	Grid.Column="2" VerticalAlignment="Center"					></TextBlock>
+
+		<TextBlock Text="{Binding ItemName}" Grid.Column="0" VerticalAlignment="Center" Margin="5,0,0,0"/>
+		<TextBlock Text="{Binding ItemPrice}" Grid.Column="2" VerticalAlignment="Center"/>
 	</Grid>
 </UserControl>

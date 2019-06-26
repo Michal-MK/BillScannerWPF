@@ -35,7 +35,7 @@ namespace Igor.BillScanner.Core {
 
 		public string ErrorOutput { get => _errorOutput; set { _errorOutput = value; Notify(nameof(ErrorOutput)); } }
 
-		public string SearchString{ get => _searchString; set { _searchString = value; Notify(nameof(SearchString)); OnSearchStringChanged(value); } }
+		public string SearchString { get => _searchString; set { _searchString = value; Notify(nameof(SearchString)); OnSearchStringChanged(value); } }
 
 		public readonly ManualResetEventSlim _evnt = new ManualResetEventSlim();
 
@@ -69,6 +69,7 @@ namespace Igor.BillScanner.Core {
 			AllItems.Clear();
 			foreach (Item item in items) {
 				ItemList_ItemViewModel i = new ItemList_ItemViewModel(item);
+				i.DoubleClickAction = () => SelectedCommand.Execute(null);
 				Items.Add(i);
 				AllItems.Add(i);
 			}
