@@ -63,8 +63,8 @@
 
 						<Button	Grid.Column="0" Content="{Binding ButtonStdInput}"
 								Command="{Binding ButtonStdInputCommand}"
-								Margin="4" Padding="10,2" HorizontalContentAlignment="Left"/>
-						<controls:TextBoxReturnAware Grid.Column="1" Text="{Binding CustomInputText}" Margin="4" OnEnterPress="{Binding ReturnAction}"/>
+								Margin="4" Padding="10,2" HorizontalContentAlignment="Left"/>>
+						<controls:TextBoxReturnAware Grid.Column="1" Text="{Binding CustomInputText, UpdateSourceTrigger=PropertyChanged}" Margin="4" OnEnterPress="{Binding ReturnPress}"/>
 					</Grid>
 
 					<!-- Manual input of Date -->
@@ -80,6 +80,7 @@
 						<controls:DateBox Grid.Column="1" 
 										  DataContext="{Binding DateBoxControlModel}"
 										  BindableCarretIndex="{Binding CurrentCarretIndex, Mode=TwoWay}"
+										  OnReturn="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=UserControl}, Path=DataContext.ReturnPress}"	
 										  Margin="4"/>
 					</Grid>
 				</StackPanel>

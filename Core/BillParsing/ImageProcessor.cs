@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using Igor.BillScanner.Core.Rules;
 using Tesseract;
 
@@ -52,7 +53,7 @@ namespace Igor.BillScanner.Core {
 		/// <summary>
 		/// Main function that starts image analysis
 		/// </summary>
-		public async void Analyze(string imagePath) {
+		public async Task Analyze(string imagePath) {
 			UIItemsMatched.Clear();
 			UIItemsUnknown.Clear();
 			if (imagePath.StartsWith("/")) {
