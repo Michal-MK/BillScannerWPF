@@ -25,7 +25,7 @@ namespace Igor.BillScanner.Core {
 
 
 		private string DbConnectionString => $"Data Source={WPFHelper.dataPath}ShoppingDB.db;Version=3;";
-		private string DbDateTimeFormat => "yyyy-MM-dd hh:mm:ss";
+		private string DbDateTimeFormat => "yyyy-MM-dd HH:mm:ss";
 
 		private DatabaseAccess(Shop shop) {
 			Current = shop;
@@ -69,7 +69,7 @@ namespace Igor.BillScanner.Core {
 		/// <summary>
 		/// Get all items that were bought in a session with selected 'purchaseID'
 		/// </summary>
-		internal Item[] GetItems(int purchaseID) {
+		public Item[] GetItems(int purchaseID) {
 			List<Item> ret = new List<Item>();
 			using (IDbConnection connection = new SQLiteConnection(DbConnectionString)) {
 				connection.Open();
@@ -91,6 +91,34 @@ namespace Igor.BillScanner.Core {
 			}
 			return ret.ToArray();
 		}
+
+		public ItemPurchaseData[] GetItemsPurchaseData(int purchaseID) {
+			List<ItemPurchaseData> ret = new List<ItemPurchaseData>();
+			using (IDbConnection connection = new SQLiteConnection(DbConnectionString)) {
+				connection.Open();
+				IEnumerator<DbItem> items = connection.Query<DbItem>($"SELECT * FROM {DbItem.DName} WHERE {DbItem.DName}.{nameof(DbItem.ID)} IN " +
+																	 $"(SELECT {DbItemPurchase.DName}.{nameof(DbItemPurchase.ItemID)} FROM {DbItemPurchase.DName} " +
+																	 $"WHERE {nameof(DbItemPurchase.PurchaseID)} = {purchaseID})").GetEnumerator();
+
+				while (items.MoveNext()) {
+					DbItem current = items.Current;
+
+					IEnumerator<string> ocrNames = connection.Query<string>($"SELECT {nameof(DbItemOcrNames.OcrName)} FROM {DbItemOcrNames.DName} " +
+																			$"WHERE {DbItemOcrNames.DName}.{nameof(DbItemOcrNames.ItemID)} = {current.ID}").GetEnumerator();
+
+
+					IEnumerator<DbItemValueHistory> pastValues = connection.Query<DbItemValueHistory>($"SELECT * FROM {DbItemValueHistory.DName} " +
+																									  $"WHERE {DbItemValueHistory.DName}.{nameof(DbItemValueHistory.ItemID)} = {current.ID}").GetEnumerator();
+
+					DbItemPurchase amounts = connection.QuerySingle<DbItemPurchase>($"SELECT * FROM {DbItemPurchase.DName} WHERE {nameof(DbItemPurchase.PurchaseID)} = {purchaseID} AND {nameof(DbItemPurchase.ItemID)} = {current.ID}");
+
+
+					ret.Add(new ItemPurchaseData(GetItem(current.ID),amounts.Amount));
+				}
+			}
+			return ret.ToArray();
+		}
+
 
 		/// <summary>
 		/// Return all items of selected <see cref="Shop"/> from the database in form of an array

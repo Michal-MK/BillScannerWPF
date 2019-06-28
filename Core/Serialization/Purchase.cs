@@ -29,7 +29,7 @@ namespace Igor.BillScanner.Core {
 		/// </summary>
 		public Item[] AsociatedItems {
 			get {
-				if (_purchasedDbItems == null) {
+				if (PurchasedDbItems == null) {
 					return DatabaseAccess.Access.GetItems(ID);
 				}
 				throw new Exception("This purchase does not yet have any items registered to it. Purchase must be finalized first.");
@@ -41,7 +41,7 @@ namespace Igor.BillScanner.Core {
 		/// </summary>
 		public Shop Shop { get; }
 
-		private ItemPurchaseData[] _purchasedDbItems;
+		public ItemPurchaseData[] PurchasedDbItems { get; }
 
 		/// <summary>
 		/// Create a purchase from database entry
@@ -59,10 +59,10 @@ namespace Igor.BillScanner.Core {
 		/// <param name="date">The date this purchase was made</param>
 		public Purchase(Shop shop, DateTime date, ItemPurchaseData[] collection) {
 			PurchaseDate = date;
-			_purchasedDbItems = collection;
+			PurchasedDbItems = collection;
 			Shop = shop;
-			for (int i = 0; i < _purchasedDbItems.Length; i++) {
-				TotalCost += _purchasedDbItems[i].Amount * _purchasedDbItems[i].Item.CurrentPriceInt;
+			for (int i = 0; i < PurchasedDbItems.Length; i++) {
+				TotalCost += PurchasedDbItems[i].Amount * PurchasedDbItems[i].Item.CurrentPriceInt;
 			}
 		}
 
@@ -71,7 +71,7 @@ namespace Igor.BillScanner.Core {
 		/// Preforms the actual writing to the database
 		/// </summary>
 		public void FinalizePurchase() {
-			DatabaseAccess.Access.RecordPurchase(this, _purchasedDbItems);
+			DatabaseAccess.Access.RecordPurchase(this, PurchasedDbItems);
 		}
 	}
 }
