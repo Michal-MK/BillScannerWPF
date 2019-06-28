@@ -42,7 +42,6 @@ namespace Igor.BillScanner.Core {
 		/// <summary>
 		/// Get the actual item by ID from the database
 		/// </summary>
-		/// <exception cref="ItemNotDefinedException"></exception>
 		/// <param name="ID">ID of the item</param>
 		public Item GetItem(int ID) {
 			using (IDbConnection connection = new SQLiteConnection(DbConnectionString)) {
@@ -50,7 +49,7 @@ namespace Igor.BillScanner.Core {
 				if(ID == -1) {
 					return null;
 				}
-				DbItem item = connection.QueryFirst<DbItem>($"SELECT * FROM {DbItem.DName}" +
+				DbItem item = connection.QueryFirst<DbItem>($"SELECT * FROM {DbItem.DName} " +
 															$"WHERE {nameof(DbItem.ID)} = {ID}");
 				if (item == null) {
 					return null;
