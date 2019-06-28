@@ -7,15 +7,11 @@
              xmlns:core="clr-namespace:Igor.BillScanner.Core;assembly=Igor.BillScanner.Core"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
-	
+
 	<d:UserControl.DataContext>
 		<core:ManualPurchaseViewModel/>
 	</d:UserControl.DataContext>
-	
-	<UserControl.Resources>
-		<local:DebugDataBindingConv x:Key="test"/>
-	</UserControl.Resources>
-	
+
 	<Grid>
 		<Grid.Background>
 			<SolidColorBrush Color="Gray" Opacity=".4"></SolidColorBrush>
@@ -43,7 +39,7 @@
 		</Grid>
 		
 		<StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="10">
-			<Button Content="Register new Item" Padding="5"></Button>
+			<Button Content="Register new Item" Padding="5"/>
 		</StackPanel>
 	</Grid>
 </UserControl>

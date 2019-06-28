@@ -69,8 +69,6 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Converters\Base\BaseValueConverter.cs" />
-    <Compile Include="Converters\BoolToVisibilityCollapseConverter.cs" />
-    <Compile Include="Converters\DebugDataBindingConv.cs" />
     <Compile Include="Converters\MatchRatingToImageConverter.cs" />
     <Compile Include="ManualPurchase\ManualPurchaseHandler.cs" />
     <Compile Include="XAML\User Controls\ItemList.xaml.cs">

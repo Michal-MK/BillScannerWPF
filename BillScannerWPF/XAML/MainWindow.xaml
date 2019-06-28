@@ -4,6 +4,7 @@
 		xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Igor.BillScanner.WPF.UI"
+        xmlns:controls="clr-namespace:Igor.Controls;assembly=Igor.Controls"
         xmlns:core="clr-namespace:Igor.BillScanner.Core;assembly=Igor.BillScanner.Core"
         mc:Ignorable="d"
         Title="Bill Scanner" MinHeight="500" MinWidth="800">
@@ -13,7 +14,7 @@
 	</Window.DataContext>
 
 	<Window.Resources>
-		<local:BoolToVisibilityCollapseConverter x:Key="BoolToVisCollapse"/>
+		<controls:BoolToVisibilityConv x:Key="BoolToVisCollapse"/>
 	</Window.Resources>
 
 	<Grid>

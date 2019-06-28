@@ -130,7 +130,6 @@ namespace Igor.BillScanner.Core {
 					}
 				});
 				ReturnPress = (s) => { ButtonStdInputCommand.Execute(null); };
-
 				await Task.Run(evnt.Wait);
 
 				ClearCommands();
@@ -149,6 +148,7 @@ namespace Igor.BillScanner.Core {
 				SimpleInputControlVisible = true;
 				ButtonStdInput = "GetStringInput: ";
 				ButtonStdInputCommand = new Command(() => { evnt.Set(); });
+
 				ReturnPress = (s) => { evnt.Set(); };
 
 				await Task.Run(evnt.Wait);
@@ -197,6 +197,7 @@ namespace Igor.BillScanner.Core {
 						evnt.Set();
 					}
 				});
+
 				ButtonDateTimeInput = "Use my date provided here: ";
 				ReturnPress = (s) => { ButtonDateTimeCommand.Execute(null); }; 
 
@@ -231,6 +232,7 @@ namespace Igor.BillScanner.Core {
 						evnt.Set();
 					}
 				});
+
 				ReturnPress = (s) => { ButtonStdInputCommand.Execute(null); };
 
 				if (knownValue.HasValue) {

@@ -7,14 +7,14 @@
              xmlns:controls="clr-namespace:Igor.Controls;assembly=Igor.Controls"
              xmlns:core="clr-namespace:Igor.BillScanner.Core;assembly=Igor.BillScanner.Core"
              mc:Ignorable="d" 
-			 KeyboardNavigation.TabNavigation="None">
+			 KeyboardNavigation.TabNavigation="Contained">
 
 	<d:UserControl.DataContext>
 		<core:ManualResolutionViewModel/>
 	</d:UserControl.DataContext>
 
 	<UserControl.Resources>
-		<local:BoolToVisibilityCollapseConverter x:Key="BoolToVis"/>
+		<controls:BoolToVisibilityConv x:Key="BoolToVis"/>
 		<Style TargetType="StackPanel" x:Key="GlobalStackPanelStyle">
 			<Style.Resources>
 				<Style TargetType="Button">
@@ -61,9 +61,9 @@
 							<ColumnDefinition Width="3*"/>
 						</Grid.ColumnDefinitions>
 
-						<Button	 Grid.Column="0" Content="{Binding ButtonStdInput}"
-								 Command="{Binding ButtonStdInputCommand}"
-								 Margin="4" Padding="10,2" HorizontalContentAlignment="Left"/>
+						<Button	Grid.Column="0" Content="{Binding ButtonStdInput}"
+								Command="{Binding ButtonStdInputCommand}"
+								Margin="4" Padding="10,2" HorizontalContentAlignment="Left"/>>
 						<controls:TextBoxReturnAware Grid.Column="1" Text="{Binding CustomInputText, UpdateSourceTrigger=PropertyChanged}" Margin="4" OnEnterPress="{Binding ReturnPress}"/>
 					</Grid>
 

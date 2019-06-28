@@ -1,4 +1,7 @@
-﻿using System.Windows.Controls;
+﻿using System;
+using System.Windows;
+using System.Windows.Controls;
+using Igor.BillScanner.Core;
 
 namespace Igor.BillScanner.WPF.UI {
 
@@ -6,12 +9,14 @@ namespace Igor.BillScanner.WPF.UI {
 	/// Code for ItemList_Item.xaml
 	/// </summary>
 	public partial class ItemList_Item : UserControl {
-
-		/// <summary>
-		/// Create a new visual representation of an item in a list
-		/// </summary>
 		public ItemList_Item() {
 			InitializeComponent();
+		}
+
+		private void OnMouseClick(object sender, System.Windows.Input.MouseButtonEventArgs e) {
+			if (e.ClickCount == 2) {
+				(DataContext as ItemList_ItemViewModel).DoubleClickAction?.Invoke();
+			}
 		}
 	}
 }
