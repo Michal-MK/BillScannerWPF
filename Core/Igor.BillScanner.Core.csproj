@@ -52,6 +52,12 @@
     <Reference Include="Dapper, Version=1.60.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Dapper.1.60.6\lib\net451\Dapper.dll</HintPath>
     </Reference>
+    <Reference Include="Igor.Configuration">
+      <HintPath>..\packages\Igor.Configuration\Igor.Configuration.dll</HintPath>
+    </Reference>
+    <Reference Include="Igor.CPC">
+      <HintPath>..\packages\Igor.CPC\Igor.CPC.dll</HintPath>
+    </Reference>
     <Reference Include="Igor.Localization">
       <HintPath>..\packages\Igor.WPF\Igor.Localization.dll</HintPath>
     </Reference>
@@ -80,10 +86,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Commands\BaseCommand.cs" />
-    <Compile Include="Commands\ButtonCommand.cs" />
-    <Compile Include="Commands\Command.cs" />
-    <Compile Include="Commands\ReturnCommand.cs" />
     <Compile Include="Events\ParsingCompleteEventArgs.cs" />
     <Compile Include="Interfaces\IItemPreview.cs" />
     <Compile Include="BillParsing\ImageProcessor.cs" />
@@ -125,10 +127,10 @@
     <Compile Include="Serialization\ItemPurchaseHistory.cs" />
     <Compile Include="Serialization\Purchase.cs" />
     <Compile Include="Serialization\PurchaseMeta.cs" />
+    <Compile Include="Server\SenderHelper.cs" />
     <Compile Include="Server\ServerHandler.cs" />
     <Compile Include="Server\ServerStateManager.cs" />
     <Compile Include="Services.cs" />
-    <Compile Include="Commands\SingleParamaterCommand.cs" />
     <Compile Include="ViewModels\Base\BaseViewModel.cs" />
     <Compile Include="ViewModels\User Controls\ItemListViewModel.cs" />
     <Compile Include="ViewModels\User Controls\ItemList_ItemViewModel.cs" />

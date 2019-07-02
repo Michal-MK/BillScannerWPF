@@ -44,7 +44,8 @@
 					<!-- Simple buttons -->
 					<Button	Content="{Binding ButtonOneText}"
 							Visibility="{Binding ButtonOneVisibility, Converter={StaticResource BoolToVis}}"
-							Command="{Binding ButtonOneCommand}"/>
+							Command="{Binding ButtonOneCommand}"
+							x:Name="buttons_firstButton"/>
 
 					<Button	Content="{Binding ButtonTwoText}"
 							Visibility="{Binding ButtonTwoVisibility, Converter={StaticResource BoolToVis}}"
@@ -63,8 +64,10 @@
 
 						<Button	Grid.Column="0" Content="{Binding ButtonStdInput}"
 								Command="{Binding ButtonStdInputCommand}"
-								Margin="4" Padding="10,2" HorizontalContentAlignment="Left"/>>
-						<controls:TextBoxReturnAware Grid.Column="1" Text="{Binding CustomInputText, UpdateSourceTrigger=PropertyChanged}" Margin="4" OnEnterPress="{Binding ReturnPress}"/>
+								Margin="4" Padding="10,2" HorizontalContentAlignment="Left"/>
+						<controls:TextBoxReturnAware Grid.Column="1" Text="{Binding CustomInputText, UpdateSourceTrigger=PropertyChanged}" 
+													 Margin="4" OnEnterPress="{Binding ReturnPress}"
+													 x:Name="values_returnAwareInput"/>
 					</Grid>
 
 					<!-- Manual input of Date -->
@@ -81,7 +84,8 @@
 										  DataContext="{Binding DateBoxControlModel}"
 										  BindableCarretIndex="{Binding CurrentCarretIndex, Mode=TwoWay}"
 										  OnReturn="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=UserControl}, Path=DataContext.ReturnPress}"	
-										  Margin="4"/>
+										  Margin="4"
+										  x:Name="values_dateTimeInput"/>
 					</Grid>
 				</StackPanel>
 			</Grid>

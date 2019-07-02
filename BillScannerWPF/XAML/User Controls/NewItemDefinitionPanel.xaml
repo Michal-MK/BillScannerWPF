@@ -11,10 +11,7 @@
 		<core:NewItemDefViewModel/>
 	</d:UserControl.DataContext>
 
-	<UserControl.Resources>
-		<controls:TestConverter x:Key="test"/>
-	</UserControl.Resources>
-
+	
 	<Grid Background="WhiteSmoke">
 		<Grid.ColumnDefinitions>
 			<ColumnDefinition MinWidth="280" Width="auto"/>
@@ -33,7 +30,9 @@
 				</Grid.ColumnDefinitions>
 				<TextBlock Grid.Column="0" Text="Name to be displayed:"/>
 				<TextBox Grid.Row="0" Grid.Column="1" HorizontalAlignment="Right"
-						 MinWidth="120" Text="{Binding ItemName, UpdateSourceTrigger=PropertyChanged}"/>
+						 MinWidth="120" Text="{Binding ItemName, UpdateSourceTrigger=PropertyChanged}"
+						 Focusable="True"
+						 x:Name="FocusMe"/>
 			</Grid>
 			<Grid Margin="0 2">
 				<Grid.ColumnDefinitions>
@@ -43,7 +42,7 @@
 				<TextBlock Grid.Column="0" Text="Value of the item:"/>
 				<controls:ValidatedTextBox Grid.Column="1" HorizontalAlignment="Right"
 										MinWidth="120" Text="Test"
-										ValidationFunction="{Binding IsValid, Converter={StaticResource test}}"/>
+										ValidationFunction="{Binding IsValid}"/>
 			</Grid>
 			<Grid Margin="0 2">
 				<Grid.ColumnDefinitions>

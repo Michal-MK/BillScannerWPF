@@ -3,6 +3,7 @@ using System.Collections.ObjectModel;
 using System.Globalization;
 using System.Threading.Tasks;
 using Igor.BillScanner.Core.Rules;
+using Igor.Models;
 
 namespace Igor.BillScanner.Core {
 

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Globalization;
 using System.Windows.Input;
+using Igor.Models;
 
 namespace Igor.BillScanner.Core {
 	public class ItemOverlayViewModel : BaseViewModel {

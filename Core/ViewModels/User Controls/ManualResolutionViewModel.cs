@@ -85,6 +85,8 @@ namespace Igor.BillScanner.Core {
 
 		public DateBoxViewModel DateBoxControlModel { get => _dateBoxControlModel; set { _dateBoxControlModel = value; Notify(nameof(DateBoxControlModel)); } }
 
+		public event EventHandler<string> GiveFocus;
+
 		public void SetCommand(string text, ICommand command) {
 			if (ButtonOneCommand == null) {
 				ButtonOneCommand = command;

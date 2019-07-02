@@ -3,6 +3,8 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Input;
 using Igor.BillScanner.Core.Rules;
+using Igor.CPC;
+using Igor.Models;
 
 namespace Igor.BillScanner.Core {
 	public class MainWindowViewModel : BaseViewModel {
@@ -21,7 +23,7 @@ namespace Igor.BillScanner.Core {
 			Services.Instance.ServerHandler.OnImageReceived += (s, e) => { ImageSource = e; };
 			ImgProcessing.OnImageParsed += OnImageParsed;
 
-			Finalize = new ButtonCommand((obj) => {
+			Finalize = new ParametrizedCommand((obj) => {
 				Purchase purchase = new Purchase(SelectedShopRuleset.Shop, ImgProcessing.CurrentParsingResult.Meta.PurchasedAt,
 					_matchedItems.Select(s => s.ItemPurchase).ToArray());
 				purchase.FinalizePurchase();
@@ -29,9 +31,10 @@ namespace Igor.BillScanner.Core {
 				FinalizeButtonVisible = false;
 			});
 
-			Clear = new ButtonCommand((obj) => {
+			Clear = new ParametrizedCommand((obj) => {
 				ImageSource = WPFHelper.resourcesPath + "Transparent.png";
 				FinalizeButtonVisible = false;
+				SendToMTDBButtonVisible = false;
 				ClearButtonVisible = false;
 				ManualPurchaseButtonVisible = true;
 				AnalyzeButtonVisible = true;
@@ -39,11 +42,20 @@ namespace Igor.BillScanner.Core {
 				MatchedItems.Clear();
 			});
 
-			Analyze = new ButtonCommand((obj) => {
+			Analyze = new ParametrizedCommand((obj) => {
 				if (string.IsNullOrEmpty(ImageSource) || ImageSource == WPFHelper.resourcesPath + "Transparent.png") {
 					return;
 				}
 				ImgProcessing.Analyze(ImageSource);
+			});
+
+			SendToMTDB = new ParametrizedCommand(async (obj) => {
+				using (CPCServer server = new CrossProcessCommunication().StartServer(5689)) {
+					server.StartListening();
+					await server.ListenForClient();
+					server.SendString(SenderHelper.GetString(ImgProcessing.CurrentParsingResult));
+					server.StopListening();
+				}
 			});
 			Instance = this;
 
@@ -77,11 +89,15 @@ namespace Igor.BillScanner.Core {
 
 		private string _imageSource = "/Igor.BillScanner.WPF.UI;component/Resources/Transparent.png";
 
+		private ICommand _sendToMTDB;
+		private bool _sendToMTDBButtonVisible;
+
 		#endregion
 
 
 		#region Properties
 
+		public ICommand SendToMTDB { get => _sendToMTDB; set { _sendToMTDB = value; Notify(nameof(SendToMTDB)); } }
 		public ICommand Finalize { get => _finalize; set { _finalize = value; Notify(nameof(Finalize)); } }
 		public ICommand Analyze { get => _analyze; set { _analyze = value; Notify(nameof(Analyze)); } }
 		public ICommand Clear { get => _clear; set { _clear = value; Notify(nameof(Clear)); } }
@@ -92,6 +108,7 @@ namespace Igor.BillScanner.Core {
 		public bool AnalyzeButtonVisible { get => _analyzeButtonVisible; set { _analyzeButtonVisible = value; Notify(nameof(AnalyzeButtonVisible)); } }
 		public bool ClearButtonVisible { get => _clearButtonVisible; set { _clearButtonVisible = value; Notify(nameof(ClearButtonVisible)); } }
 		public bool ManualPurchaseButtonVisible { get => _manualPurchaseButtonVisible; set { _manualPurchaseButtonVisible = value; Notify(nameof(ManualPurchaseButtonVisible)); } }
+		public bool SendToMTDBButtonVisible { get => _sendToMTDBButtonVisible; set { _sendToMTDBButtonVisible = value; Notify(nameof(SendToMTDBButtonVisible)); } }
 
 
 		public string ImageSource { get => _imageSource; set { _imageSource = value; Notify(nameof(ImageSource)); } }
@@ -117,6 +134,7 @@ namespace Igor.BillScanner.Core {
 		/// </summary>
 		public ImageProcessor ImgProcessing { get; private set; }
 
+
 		#region Actions
 
 		private void OnImageParsed(object sender, ParsingCompleteEventArgs e) {
@@ -124,6 +142,7 @@ namespace Igor.BillScanner.Core {
 			UnknownItems = e.Result.UnknownItems.ToObservable();
 			AnalyzeButtonVisible = false;
 			FinalizeButtonVisible = true;
+			SendToMTDBButtonVisible = true;
 			ClearButtonVisible = true;
 		}
 

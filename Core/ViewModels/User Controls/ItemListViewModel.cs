@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using Igor.Models;
 
 namespace Igor.BillScanner.Core {
 	public class ItemListViewModel : BaseViewModel {

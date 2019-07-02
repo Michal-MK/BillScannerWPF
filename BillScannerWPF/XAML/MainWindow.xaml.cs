@@ -25,6 +25,7 @@ namespace Igor.BillScanner.WPF.UI {
 		public MainWindow(Shop selectedShop) {
 			InitializeComponent();
 			DatabaseAccess.LoadDatabase(selectedShop);
+			//Model.Se
 		}
 
 		private void OnShopClicked(object sender, MouseButtonEventArgs e) {

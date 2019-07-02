@@ -1,4 +1,5 @@
 ﻿using System.Windows.Input;
+using Igor.Models;
 
 namespace Igor.BillScanner.Core {
 	public class UIItemViewModel : BaseViewModel {
