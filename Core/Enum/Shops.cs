@@ -4,7 +4,7 @@
 	/// All shops that are ready to have their bills parsed
 	/// </summary>
 	public enum Shop {
-		NotSelected,
+		None,
 		Lidl,
 		Albert,
 		Penny,

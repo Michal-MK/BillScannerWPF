@@ -16,7 +16,7 @@
 		<core:UIItemViewModel/>
 	</d:UserControl.DataContext>
 
-	<Grid Margin="10 0">
+	<Grid>
 		<Grid.ColumnDefinitions>
 			<ColumnDefinition Width="*"/>
 			<ColumnDefinition Width="auto"/>
@@ -27,9 +27,9 @@
 			<SolidColorBrush Color="LightSlateGray"/>
 		</Grid.Background>
 
-		<TextBlock Grid.Column="0" Text="{Binding ItemName}" VerticalAlignment="Center" HorizontalAlignment="Left"/>
+		<TextBlock Margin="5 0 0 0" Grid.Column="0" Text="{Binding ItemName}" VerticalAlignment="Center" HorizontalAlignment="Left"/>
 		<Button Grid.Column="1" Content="Details" Command="{Binding ShowDetailsCommand}" Padding="10 0"/>
-		<Image Grid.Column="3" Source="{Binding MatchQuality, Converter={StaticResource MatchToImageConv}}" Height="32px"
-			   HorizontalAlignment="Right" Margin="10 0"/>
+		<Image Grid.Column="3" Source="{Binding MatchQuality, Converter={StaticResource MatchToImageConv}}" Height="32px" Width="{Binding RelativeSource={RelativeSource Mode=Self}, Path=Height}"
+			   HorizontalAlignment="Right"/>
 	</Grid>
 </UserControl>

@@ -69,6 +69,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Converters\Base\BaseValueConverter.cs" />
+    <Compile Include="Converters\LoadedShopConverter.cs" />
     <Compile Include="Converters\MatchRatingToImageConverter.cs" />
     <Compile Include="ManualPurchase\ManualPurchaseHandler.cs" />
     <Compile Include="XAML\SettingsWindow.xaml.cs">
@@ -94,9 +95,6 @@
     </Compile>
     <Compile Include="XAML\User Controls\NewItemDefinitionPanel.xaml.cs">
       <DependentUpon>NewItemDefinitionPanel.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="XAML\SetupWindow.xaml.cs">
-      <DependentUpon>SetupWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="XAML\User Controls\StatusBar.xaml.cs">
       <DependentUpon>StatusBar.xaml</DependentUpon>
@@ -144,10 +142,6 @@
     <Page Include="XAML\User Controls\NewItemDefinitionPanel.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="XAML\SetupWindow.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
     </Page>
     <Page Include="XAML\User Controls\StatusBar.xaml">
       <Generator>MSBuild:Compile</Generator>

@@ -16,8 +16,8 @@ namespace Igor.BillScanner.Core {
 			Services.Instance.AddMainWindowModel(this);
 			Services.Instance.AddManualUserInput(ManualResolveViewModel);
 
-			if (SelectedShopRuleset == null)
-				SelectedShopRuleset = BaseRuleset.GetRuleset(Shop.Lidl);
+			//if (SelectedShopRuleset == null)
+			//	SelectedShopRuleset = BaseRuleset.GetRuleset(Shop.Lidl);
 
 			ImgProcessing = new ImageProcessor(SelectedShopRuleset);
 			Services.Instance.ServerHandler.StartServer();
@@ -68,13 +68,12 @@ namespace Igor.BillScanner.Core {
 			};
 
 			Instance = this;
-
-			StatusBarViewModel.CurrentShop = SelectedShopRuleset.Shop;
 		}
 
-
-		public MainWindowViewModel(Shop shop) : this() {
-			SelectedShopRuleset = BaseRuleset.GetRuleset(shop);
+		public void LoadShop(Shop selectedShop) {
+			SelectedShopRuleset = BaseRuleset.GetRuleset(selectedShop);
+			DatabaseAccess.LoadDatabase(SelectedShopRuleset.Shop);
+			ShopLoaded = true;
 		}
 
 		#region BackingFields
@@ -102,12 +101,14 @@ namespace Igor.BillScanner.Core {
 		private bool _sendToMTDBButtonVisible;
 		private Action<object, EventArgs> _onMouseLeftClickImage;
 		private Action<object, EventArgs> _onMouseRightClickImage;
+		private bool _shopLoaded;
 
 		#endregion
 
 
 		#region Properties
 
+		public bool ShopLoaded { get => _shopLoaded; set { _shopLoaded = value; Notify(nameof(ShopLoaded)); } }
 		public Action<object, EventArgs> OnMouseRightClickImage { get => _onMouseRightClickImage; set { _onMouseRightClickImage = value; Notify(nameof(OnMouseRightClickImage)); } }
 		public Action<object, EventArgs> OnMouseLeftClickImage { get => _onMouseLeftClickImage; set { _onMouseLeftClickImage = value; Notify(nameof(OnMouseLeftClickImage)); } }
 		public ICommand SendToMTDB { get => _sendToMTDB; set { _sendToMTDB = value; Notify(nameof(SendToMTDB)); } }
@@ -139,7 +140,7 @@ namespace Igor.BillScanner.Core {
 		/// <summary>
 		/// The rule-set selected at the launch of the application
 		/// </summary>
-		public IRuleset SelectedShopRuleset { get; }
+		public IRuleset SelectedShopRuleset { get; private set; }
 
 		/// <summary>
 		/// Image processing class that does the scanning and subsequent parsing of the image

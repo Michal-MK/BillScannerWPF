@@ -15,15 +15,15 @@
 	<Grid Background="WhiteSmoke">
 
 		<Grid.ColumnDefinitions>
-			<ColumnDefinition Width="10"></ColumnDefinition>
-			<ColumnDefinition Width="*"></ColumnDefinition>
-			<ColumnDefinition Width="10"></ColumnDefinition>
+			<ColumnDefinition Width="10"/>
+			<ColumnDefinition Width="*"/>
+			<ColumnDefinition Width="10"/>
 		</Grid.ColumnDefinitions>
 		<Grid.RowDefinitions>
-			<RowDefinition Height="10"></RowDefinition>
-			<RowDefinition Height="auto"></RowDefinition>
-			<RowDefinition Height="*"></RowDefinition>
-			<RowDefinition Height="auto"></RowDefinition>
+			<RowDefinition Height="10"/>
+			<RowDefinition Height="auto"/>
+			<RowDefinition Height="*"/>
+			<RowDefinition Height="auto"/>
 		</Grid.RowDefinitions>
 
 		<Grid Grid.Row="1" Grid.Column="1" Margin="0,5" >
@@ -58,10 +58,9 @@
 				<ColumnDefinition Width="auto"/>
 				<ColumnDefinition Width="auto"/>
 			</Grid.ColumnDefinitions>
-			
-			<TextBlock Grid.Column="0" Text="{Binding ErrorOutput}" Foreground="Red" VerticalAlignment="Center"></TextBlock>
-			<Button Grid.Column="2" Command="{Binding SelectedCommand}" Content="Select" Margin="0,10,10,10" Padding="20,5"></Button>
-			<Button Grid.Column="3" Command="{Binding AbortedCommand}"  Content="Back"   Margin="0,10,10,10" Padding="20,5"></Button>
+
+			<Button Grid.Column="2" Command="{Binding SelectedCommand}" Content="Select" Margin="0,10,10,10" Padding="20,5"/>
+			<Button Grid.Column="3" Command="{Binding AbortedCommand}"  Content="Back"   Margin="0 10" Padding="20,5"/>
 		</Grid>
 	</Grid>
 </UserControl>

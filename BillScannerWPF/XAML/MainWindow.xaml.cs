@@ -25,7 +25,7 @@ namespace Igor.BillScanner.WPF.UI {
 		/// <param name="selectedShop">The shop to load data for</param>
 		public MainWindow(Shop selectedShop) {
 			InitializeComponent();
-			DatabaseAccess.LoadDatabase(selectedShop);
+
 			Model.OnMouseLeftClickImage = (s, e) => {
 				OpenFileDialog dialog = new OpenFileDialog {
 					DefaultExt = "png",
@@ -37,13 +37,13 @@ namespace Igor.BillScanner.WPF.UI {
 				}
 			};
 
-			Model.StatusBarViewModel.OnShopClickCommand = new Command(() => {
-				Services.Instance.ServerHandler.StoreServer();
-				SetupWindow setupWin = new SetupWindow();
-				Application.Current.MainWindow.Close();
-				Application.Current.MainWindow = setupWin;
-				Application.Current.MainWindow.Show();
-			});
+			//Model.StatusBarViewModel.OnShopClickCommand = new Command(() => {
+			//	Services.Instance.ServerHandler.StoreServer();
+			//	SetupWindow setupWin = new SetupWindow();
+			//	Application.Current.MainWindow.Close();
+			//	Application.Current.MainWindow = setupWin;
+			//	Application.Current.MainWindow.Show();
+			//});
 		}
 
 		#region Image preview container functions: Changing, Opening full view.

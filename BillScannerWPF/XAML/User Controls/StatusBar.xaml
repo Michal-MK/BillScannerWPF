@@ -33,21 +33,24 @@
 				</DataTrigger>
 			</Style.Triggers>
 		</Style>
+
+		<local:LoadedShopConverter x:Key="LoadedShopConv"/>
 	</UserControl.Resources>
 
 	<d:UserControl.DataContext>
 		<core:StatusBarViewModel/>
 	</d:UserControl.DataContext>
 
-	<StackPanel Orientation="Horizontal" Background="LightSlateGray" VerticalAlignment="Center">
+	<StackPanel Orientation="Horizontal" Background="LightSlateGray">
 		<TextBlock Text="Server:"/>
 		<TextBlock Text="{Binding ServerOnlineString}" Margin="5,0,0,0" Style="{DynamicResource ServerStatus}"/>
 		<TextBlock Text="Client Status:" Margin="20,0,0,0"/>
 		<TextBlock Text="{Binding ClientConnectedString}" Margin="5,0,0,0" Style="{DynamicResource ClientConnection}"/>
-		<TextBlock Text="Loaded Shop:" Margin="20,0,0,0"/>
-		<Button Margin="20,0,0,0" Command="{Binding OnShopClickCommand}">
+		<TextBlock Text="Availabe Shops:" Margin="20,0,0,0"/>
+		<ComboBox ItemsSource="{Binding AllShops}" Name="selectedShop" SelectedIndex="0" SelectedValue="{Binding SelectedShop}"/>
+		<Button Margin="20,0,0,0" Command="{Binding LoadShopCommand}">
 			<Button.Content>
-				<TextBlock Text="{Binding CurrentShop}" Foreground="OrangeRed" FontWeight="DemiBold"/>
+				<TextBlock Text="{Binding ElementName=selectedShop, Path=SelectedValue, Converter={StaticResource LoadedShopConv}}" Foreground="OrangeRed" FontWeight="DemiBold"/>
 			</Button.Content>
 		</Button>
 	</StackPanel>
