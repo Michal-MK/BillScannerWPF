@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Windows.Input;
 using Igor.BillScanner.Core.Rules;
@@ -14,6 +15,7 @@ namespace Igor.BillScanner.Core {
 		public MainWindowViewModel() {
 			Services.Instance.AddMainWindowModel(this);
 			Services.Instance.AddManualUserInput(ManualResolveViewModel);
+
 			if (SelectedShopRuleset == null)
 				SelectedShopRuleset = BaseRuleset.GetRuleset(Shop.Lidl);
 
@@ -46,7 +48,7 @@ namespace Igor.BillScanner.Core {
 				if (string.IsNullOrEmpty(ImageSource) || ImageSource == WPFHelper.resourcesPath + "Transparent.png") {
 					return;
 				}
-				ImgProcessing.Analyze(ImageSource);
+				_ = ImgProcessing.Analyze(ImageSource);
 			});
 
 			SendToMTDB = new ParametrizedCommand(async (obj) => {
@@ -57,16 +59,23 @@ namespace Igor.BillScanner.Core {
 					server.StopListening();
 				}
 			});
+
+			OnMouseRightClickImage += (s, e) => {
+				if (string.IsNullOrEmpty(ImageSource) || ImageSource == "/Igor.BillScanner.WPF.UI;component/Resources/Transparent.png") {
+					return;
+				}
+				new Process { StartInfo = new ProcessStartInfo(ImageSource) }.Start();
+			};
+
 			Instance = this;
 
 			StatusBarViewModel.CurrentShop = SelectedShopRuleset.Shop;
 		}
 
+
 		public MainWindowViewModel(Shop shop) : this() {
 			SelectedShopRuleset = BaseRuleset.GetRuleset(shop);
 		}
-
-		public object Test { get; set; }
 
 		#region BackingFields
 
@@ -91,12 +100,16 @@ namespace Igor.BillScanner.Core {
 
 		private ICommand _sendToMTDB;
 		private bool _sendToMTDBButtonVisible;
+		private Action<object, EventArgs> _onMouseLeftClickImage;
+		private Action<object, EventArgs> _onMouseRightClickImage;
 
 		#endregion
 
 
 		#region Properties
 
+		public Action<object, EventArgs> OnMouseRightClickImage { get => _onMouseRightClickImage; set { _onMouseRightClickImage = value; Notify(nameof(OnMouseRightClickImage)); } }
+		public Action<object, EventArgs> OnMouseLeftClickImage { get => _onMouseLeftClickImage; set { _onMouseLeftClickImage = value; Notify(nameof(OnMouseLeftClickImage)); } }
 		public ICommand SendToMTDB { get => _sendToMTDB; set { _sendToMTDB = value; Notify(nameof(SendToMTDB)); } }
 		public ICommand Finalize { get => _finalize; set { _finalize = value; Notify(nameof(Finalize)); } }
 		public ICommand Analyze { get => _analyze; set { _analyze = value; Notify(nameof(Analyze)); } }
@@ -109,7 +122,6 @@ namespace Igor.BillScanner.Core {
 		public bool ClearButtonVisible { get => _clearButtonVisible; set { _clearButtonVisible = value; Notify(nameof(ClearButtonVisible)); } }
 		public bool ManualPurchaseButtonVisible { get => _manualPurchaseButtonVisible; set { _manualPurchaseButtonVisible = value; Notify(nameof(ManualPurchaseButtonVisible)); } }
 		public bool SendToMTDBButtonVisible { get => _sendToMTDBButtonVisible; set { _sendToMTDBButtonVisible = value; Notify(nameof(SendToMTDBButtonVisible)); } }
-
 
 		public string ImageSource { get => _imageSource; set { _imageSource = value; Notify(nameof(ImageSource)); } }
 
@@ -133,7 +145,6 @@ namespace Igor.BillScanner.Core {
 		/// Image processing class that does the scanning and subsequent parsing of the image
 		/// </summary>
 		public ImageProcessor ImgProcessing { get; private set; }
-
 
 		#region Actions
 

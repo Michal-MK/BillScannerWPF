@@ -36,6 +36,10 @@ namespace Igor.BillScanner.Core {
 			Task.Run(StartServerTask);
 		}
 
+		public void StoreServer() {
+			ServerStateManager.StoreServerInstance(server);
+		}
+
 		private async Task StartServerTask() {
 			if (ServerStateManager.isHoldingInstance) {
 				server = ServerStateManager.RestoreServerInstance();
@@ -70,7 +74,7 @@ namespace Igor.BillScanner.Core {
 
 		private void OnImageDataReceived(byte senderID, byte[] imageData) {
 			try {
-				string path = $"{WPFHelper.dataPath}current{DateTime.Now.ToString("dd.MM_hh.mm.sss")}.jpg";
+				string path = $"{WPFHelper.DataPath}current{DateTime.Now.ToString("dd.MM_hh.mm.sss")}.jpg";
 				File.WriteAllBytes(path, imageData);
 				OnImageReceived?.Invoke(this, path);
 			}

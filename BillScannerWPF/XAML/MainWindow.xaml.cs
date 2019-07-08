@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Windows;
 using System.Windows.Input;
 using Igor.BillScanner.Core;
+using Igor.Models;
 using Microsoft.Win32;
 
 namespace Igor.BillScanner.WPF.UI {
@@ -25,34 +26,34 @@ namespace Igor.BillScanner.WPF.UI {
 		public MainWindow(Shop selectedShop) {
 			InitializeComponent();
 			DatabaseAccess.LoadDatabase(selectedShop);
-			//Model.Se
-		}
+			Model.OnMouseLeftClickImage = (s, e) => {
+				OpenFileDialog dialog = new OpenFileDialog {
+					DefaultExt = "png",
+					InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory),
+					Multiselect = false,
+				};
+				if (dialog.ShowDialog() == true) {
+					Model.ImageSource = dialog.FileName;
+				}
+			};
 
-		private void OnShopClicked(object sender, MouseButtonEventArgs e) {
-			SetupWindow setupWin = new SetupWindow();
-			Close();
-			Application.Current.MainWindow = setupWin;
-			Application.Current.MainWindow.Show();
+			Model.StatusBarViewModel.OnShopClickCommand = new Command(() => {
+				Services.Instance.ServerHandler.StoreServer();
+				SetupWindow setupWin = new SetupWindow();
+				Application.Current.MainWindow.Close();
+				Application.Current.MainWindow = setupWin;
+				Application.Current.MainWindow.Show();
+			});
 		}
 
 		#region Image preview container functions: Changing, Opening full view.
 
 		public void ImageSelectDialog(object sender, MouseButtonEventArgs e) {
-			OpenFileDialog dialog = new OpenFileDialog {
-				DefaultExt = "png",
-				InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory),
-				Multiselect = false,
-			};
-			if (dialog.ShowDialog() == true) {
-				Model.ImageSource = dialog.FileName;
-			}
+			Model.OnMouseLeftClickImage.Invoke(sender, e);
 		}
 
 		public void OpenImageDefault(object sender, MouseButtonEventArgs e) {
-			if (string.IsNullOrEmpty(Model.ImageSource) || Model.ImageSource == "/Igor.BillScanner.WPF.UI;component/Resources/Transparent.png") {
-				return;
-			}
-			new Process { StartInfo = new ProcessStartInfo(Model.ImageSource) }.Start();
+			Model.OnMouseRightClickImage.Invoke(sender, e);
 		}
 
 		#endregion

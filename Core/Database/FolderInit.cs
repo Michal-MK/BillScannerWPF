@@ -13,8 +13,8 @@ namespace Igor.BillScanner.Core {
 		/// </summary>
 		/// <exception cref="IOException"></exception>
 		internal static void Initialize() {
-			if (!Directory.Exists(WPFHelper.dataPath)) {
-				Directory.CreateDirectory(WPFHelper.dataPath);
+			if (!Directory.Exists(WPFHelper.DataPath)) {
+				Directory.CreateDirectory(WPFHelper.DataPath);
 			}
 		}
 
@@ -22,9 +22,9 @@ namespace Igor.BillScanner.Core {
 		/// Copies the database file from this assembly into its proper location
 		/// </summary>
 		internal static void CopyDatabase() {
-			if (!File.Exists(WPFHelper.dataPath + WPFHelper.databaseFileName)) {
-				using (Stream s = Assembly.GetEntryAssembly().GetManifestResourceStream("Core/Database/ShoppingDB.db")) {
-					using (FileStream fs = new FileStream(WPFHelper.dataPath + "ShoppingDB.db", FileMode.CreateNew)) {
+			if (!File.Exists(WPFHelper.DataPath + WPFHelper.DatabaseFileName)) {
+				using (Stream s = Assembly.GetEntryAssembly().GetManifestResourceStream("Core/Database/" + WPFHelper.DatabaseFileName)) {
+					using (FileStream fs = new FileStream(WPFHelper.DataPath + WPFHelper.DatabaseFileName, FileMode.CreateNew)) {
 						s.CopyTo(fs);
 					}
 				}

@@ -24,7 +24,7 @@ namespace Igor.BillScanner.Core {
 		public static DatabaseAccess Access { get; private set; }
 
 
-		private string DbConnectionString => $"Data Source={WPFHelper.dataPath}ShoppingDB.db;Version=3;";
+		private string DbConnectionString => $"Data Source={WPFHelper.DataPath}ShoppingDB.db;Version=3;";
 		private string DbDateTimeFormat => "yyyy-MM-dd HH:mm:ss";
 
 		private DatabaseAccess(Shop shop) {
@@ -188,7 +188,7 @@ namespace Igor.BillScanner.Core {
 		/// </summary>		
 		/// <exception cref="PurchaseNotFoundException"></exception>
 		public Purchase GetPurchase(int ID) {
-			using (IDbConnection connection = new SQLiteConnection($@"Data Source={WPFHelper.dataPath}Database.db;Version=3;")) {
+			using (IDbConnection connection = new SQLiteConnection($@"Data Source={WPFHelper.DataPath}Database.db;Version=3;")) {
 				connection.Open();
 				DbPurchase purchase = connection.QueryFirst<DbPurchase>($"SELECT * FROM {DbPurchase.DName}" +
 																		$"WHERE {DbPurchase.DName}.{nameof(DbPurchase.ID)} = {ID}");
