@@ -16,9 +16,6 @@ namespace Igor.BillScanner.Core {
 			Services.Instance.AddMainWindowModel(this);
 			Services.Instance.AddManualUserInput(ManualResolveViewModel);
 
-			//if (SelectedShopRuleset == null)
-			//	SelectedShopRuleset = BaseRuleset.GetRuleset(Shop.Lidl);
-
 			ImgProcessing = new ImageProcessor(SelectedShopRuleset);
 			Services.Instance.ServerHandler.StartServer();
 
@@ -34,7 +31,7 @@ namespace Igor.BillScanner.Core {
 			});
 
 			Clear = new ParametrizedCommand((obj) => {
-				ImageSource = WPFHelper.resourcesPath + "Transparent.png";
+				ImageSource = ResourceNames.TRANSPARENT_IMAGE;
 				FinalizeButtonVisible = false;
 				SendToMTDBButtonVisible = false;
 				ClearButtonVisible = false;
@@ -45,7 +42,8 @@ namespace Igor.BillScanner.Core {
 			});
 
 			Analyze = new ParametrizedCommand((obj) => {
-				if (string.IsNullOrEmpty(ImageSource) || ImageSource == WPFHelper.resourcesPath + "Transparent.png") {
+				if (string.IsNullOrEmpty(ImageSource) || ImageSource == ResourceNames.TRANSPARENT_IMAGE) {
+					//TODO
 					return;
 				}
 				_ = ImgProcessing.Analyze(ImageSource);
@@ -61,7 +59,8 @@ namespace Igor.BillScanner.Core {
 			});
 
 			OnMouseRightClickImage += (s, e) => {
-				if (string.IsNullOrEmpty(ImageSource) || ImageSource == "/Igor.BillScanner.WPF.UI;component/Resources/Transparent.png") {
+				if (string.IsNullOrEmpty(ImageSource) || ImageSource == ResourceNames.TRANSPARENT_IMAGE) {
+					//TODO
 					return;
 				}
 				new Process { StartInfo = new ProcessStartInfo(ImageSource) }.Start();
@@ -95,7 +94,7 @@ namespace Igor.BillScanner.Core {
 		private ManualResolutionViewModel _manualResolveViewModel = new ManualResolutionViewModel();
 		private ItemOverlayViewModel _itemInfoOverlayViewModel = new ItemOverlayViewModel();
 
-		private string _imageSource = "/Igor.BillScanner.WPF.UI;component/Resources/Transparent.png";
+		private string _imageSource = ResourceNames.TRANSPARENT_IMAGE;
 
 		private ICommand _sendToMTDB;
 		private bool _sendToMTDBButtonVisible;

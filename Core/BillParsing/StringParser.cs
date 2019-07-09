@@ -10,15 +10,13 @@ namespace Igor.BillScanner.Core {
 	/// <summary>
 	/// Class parsing the generated string arrays from our OCR engine.
 	/// </summary>
-	internal class StringParser {
+	public class StringParser {
 
 		private IRuleset rules;
 
-		/// <summary>
-		/// Create new <see cref="StringParser"/> with selected <see cref="Shop"/>'s rule-set
-		/// </summary>
-		internal StringParser(IRuleset rules) {
-			this.rules = rules;
+
+		public void SetRuleset(IRuleset ruleset) {
+			rules = ruleset;
 		}
 
 		/// <summary>

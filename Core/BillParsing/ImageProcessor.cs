@@ -56,11 +56,16 @@ namespace Igor.BillScanner.Core {
 		public async Task Analyze(string imagePath) {
 			UIItemsMatched.Clear();
 			UIItemsUnknown.Clear();
-			if (imagePath.StartsWith("/")) {
-				return;
-			}
+
+			if (imagePath.StartsWith("/")) return;
+			//TODO notify
+			if (MainWindowViewModel.Instance.SelectedShopRuleset == null) return;
+			//TODO null
+
 			string[] lines = GetOCRLines(imagePath);
-			StringParser parser = new StringParser(_ruleset);
+			StringParser parser = new StringParser();
+
+			parser.SetRuleset(MainWindowViewModel.Instance.SelectedShopRuleset);
 
 			CurrentParsingResult = await parser.ParseAsync(lines);
 			OnImageParsed?.Invoke(this, new ParsingCompleteEventArgs(CurrentParsingResult));

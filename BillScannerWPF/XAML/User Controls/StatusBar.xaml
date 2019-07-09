@@ -6,7 +6,7 @@
              xmlns:local="clr-namespace:Igor.BillScanner.WPF.UI"
              xmlns:controls="clr-namespace:Igor.Controls;assembly=Igor.Controls"
              xmlns:core="clr-namespace:Igor.BillScanner.Core;assembly=Igor.BillScanner.Core"
-             mc:Ignorable="d" >
+             mc:Ignorable="d" d:DesignWidth="800">
 
 	<UserControl.Resources>
 
@@ -35,23 +35,39 @@
 		</Style>
 
 		<local:LoadedShopConverter x:Key="LoadedShopConv"/>
+		<controls:BoolToVisibilityConv x:Key="BoolToVis"/>
 	</UserControl.Resources>
 
 	<d:UserControl.DataContext>
 		<core:StatusBarViewModel/>
 	</d:UserControl.DataContext>
+	<Grid Background="LightSlateGray">
+		<StackPanel Orientation="Horizontal" HorizontalAlignment="Left"
+					VerticalAlignment="Center" Margin="4 0 0 0">
+			
+			<TextBlock Text="Server:"/>
+			<TextBlock Text="{Binding ServerOnlineString}" Margin="5 0 0 0" Style="{DynamicResource ServerStatus}"/>
+			<TextBlock Text="Client Status:" Margin="20 0 0 0"/>
+			<TextBlock Text="{Binding ClientConnectedString}" Margin="5 0 0 0" Style="{DynamicResource ClientConnection}"/>
+			<TextBlock Text="Shop:" Margin="20 0 0 0"/>
+			<TextBlock Text="{Binding CurrentShop}" Margin="5 0 0 0" FontWeight="Bold" Foreground="DarkBlue"/>
+		</StackPanel>
+		<StackPanel Orientation="Horizontal" Margin="0 0 4 0"
+					Visibility="{Binding LoadNewShopControlsVisible, Converter={StaticResource BoolToVis}}"
+					HorizontalAlignment="Right" VerticalAlignment="Center">
+			
+			<TextBlock Text="Available Shops:" VerticalAlignment="Center"/>
+			<ComboBox ItemsSource="{Binding AllShops}" Name="selectedShop" SelectedIndex="0" SelectedValue="{Binding SelectedShop}" MaxHeight="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=UserControl}, Path=ActualHeight}"/>
+			<Button Margin="20,0,0,0" Command="{Binding LoadShopCommand}" MinWidth="72">
+				<Button.Content>
+					<TextBlock Text="{Binding ElementName=selectedShop, Path=SelectedValue, Converter={StaticResource LoadedShopConv}}" Foreground="OrangeRed" FontWeight="DemiBold"/>
+				</Button.Content>
+			</Button>
+		</StackPanel>
+		<Button Content="Load Shop" 
+				VerticalAlignment="Center" HorizontalAlignment="Right" 
+				Visibility="{Binding LoadNewShopSimpleVisible, Converter={StaticResource BoolToVis}}"
+				Command="{Binding ShowShopLoadingControlsCommand}"/>
+	</Grid>
 
-	<StackPanel Orientation="Horizontal" Background="LightSlateGray">
-		<TextBlock Text="Server:"/>
-		<TextBlock Text="{Binding ServerOnlineString}" Margin="5,0,0,0" Style="{DynamicResource ServerStatus}"/>
-		<TextBlock Text="Client Status:" Margin="20,0,0,0"/>
-		<TextBlock Text="{Binding ClientConnectedString}" Margin="5,0,0,0" Style="{DynamicResource ClientConnection}"/>
-		<TextBlock Text="Availabe Shops:" Margin="20,0,0,0"/>
-		<ComboBox ItemsSource="{Binding AllShops}" Name="selectedShop" SelectedIndex="0" SelectedValue="{Binding SelectedShop}"/>
-		<Button Margin="20,0,0,0" Command="{Binding LoadShopCommand}">
-			<Button.Content>
-				<TextBlock Text="{Binding ElementName=selectedShop, Path=SelectedValue, Converter={StaticResource LoadedShopConv}}" Foreground="OrangeRed" FontWeight="DemiBold"/>
-			</Button.Content>
-		</Button>
-	</StackPanel>
 </UserControl>

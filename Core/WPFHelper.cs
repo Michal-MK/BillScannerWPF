@@ -21,13 +21,8 @@ namespace Igor.BillScanner.Core {
 		public const string DatabaseFileName = "ShoppingDB.db";
 
 		/// <summary>
-		/// Returns an absolute path to Resources inside the executable
-		/// </summary>
-		public const string resourcesPath = @"pack://application:,,,/Igor.BillScanner.WPF.UI;component/Resources/";
-
-		/// <summary>
 		/// Uses <see cref="resourcesPath"/> and adds part of the path to point into <see cref="MatchRating"/> images directory
 		/// </summary>
-		public static string ImageRatingResourcesPath => resourcesPath + "MatchRating/";
+		public static string ImageRatingResourcesPath => ResourceNames.RESOURCES + "MatchRating/";
 	}
 }
