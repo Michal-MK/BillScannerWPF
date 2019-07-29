@@ -57,15 +57,16 @@
 					HorizontalAlignment="Right" VerticalAlignment="Center">
 			
 			<TextBlock Text="Available Shops:" VerticalAlignment="Center"/>
-			<ComboBox ItemsSource="{Binding AllShops}" Name="selectedShop" SelectedIndex="0" SelectedValue="{Binding SelectedShop}" MaxHeight="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=UserControl}, Path=ActualHeight}"/>
-			<Button Margin="20,0,0,0" Command="{Binding LoadShopCommand}" MinWidth="72">
+			<ComboBox ItemsSource="{Binding AllShops}" Name="selectedShop" SelectedIndex="0"
+					  SelectedValue="{Binding SelectedShop}" MinWidth="100"/>
+			<Button Margin="5 0 0 0" Command="{Binding LoadShopCommand}" MinWidth="100">
 				<Button.Content>
 					<TextBlock Text="{Binding ElementName=selectedShop, Path=SelectedValue, Converter={StaticResource LoadedShopConv}}" Foreground="OrangeRed" FontWeight="DemiBold"/>
 				</Button.Content>
 			</Button>
 		</StackPanel>
-		<Button Content="Load Shop" 
-				VerticalAlignment="Center" HorizontalAlignment="Right" 
+		<Button Content="Load Shop" Padding="4 2"
+				VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0 0 4 0" 
 				Visibility="{Binding LoadNewShopSimpleVisible, Converter={StaticResource BoolToVis}}"
 				Command="{Binding ShowShopLoadingControlsCommand}"/>
 	</Grid>

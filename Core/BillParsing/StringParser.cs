@@ -36,8 +36,8 @@ namespace Igor.BillScanner.Core {
 				(Item closest, int ocrLowestIndex, int ocrLowestDist) = FindBestResult(split, i, items);
 
 				if (ocrLowestDist <= 3) {
-					(int incrementA, int currentPrice) = await GetCurrentPriceAsync(split, i, ocrLowestIndex);
-					(int incrementB, int quantity) = await GetQuantityAsync(split, i, items[ocrLowestIndex].ItemName);
+					(int incrementA, int currentPrice) = await GetCurrentPriceAsync(split, i, closest.ItemName, ocrLowestIndex);
+					(int incrementB, int quantity) = await GetQuantityAsync(split, i, closest.ItemName);
 					if (incrementA == 1 || incrementB == 1) {
 						i++;
 					}
@@ -56,15 +56,16 @@ namespace Igor.BillScanner.Core {
 						("This text should be ignored", new Command(() => selected = Choices.NotAnItem)));
 
 					if (selected != Choices.NotAnItem) {
-						(int incrementA, int currentPrice) = await GetCurrentPriceAsync(split, i, ocrLowestIndex);
+						(int incrementA, int currentPrice) = await GetCurrentPriceAsync(split, i, items[ocrLowestIndex].ItemName, ocrLowestIndex);
 						(int incrementB, int quantity) = await GetQuantityAsync(split, i, items[ocrLowestIndex].ItemName);
-						if (incrementA == 1 || incrementB == 1) {
-							i++;
-						}
+
 
 						UIItemViewModel creationInfo = new UIItemViewModel(new ItemPurchaseData(items[ocrLowestIndex], quantity), currentPrice, MatchRating.FivePlus, split[i]);
 						if (selected == Choices.MatchAnyway) {
 							creationInfo.ItemPurchase.Item.OcrNames.Add(split[i]);
+						}
+						if (incrementA == 1 || incrementB == 1) {
+							i++;
 						}
 						matchedItems.Add(creationInfo);
 					}
@@ -85,9 +86,7 @@ namespace Igor.BillScanner.Core {
 						}
 
 						(int increment, int quantity) = await GetQuantityAsync(split, i, result.ItemName);
-						if (increment == 1) {
-							i++;
-						}
+
 
 						Item newItem = new Item(result.ItemName, result.DatabaseItemValue.Value);
 						newItem.AddOCRNameNew(split[i]);
@@ -95,6 +94,9 @@ namespace Igor.BillScanner.Core {
 						UIItemViewModel newlyMatched = new UIItemViewModel(new ItemPurchaseData(newItem, quantity), result.DatabaseItemValue.Value, MatchRating.Success, split[i]);
 						newlyMatched.ItemPurchase.Item.SetUnitOfMeassure(result.SelectedMeassureUnit);
 						newItem.SetNewID(result.AssignedID);
+						if (increment == 1) {
+							i++;
+						}
 						matchedItems.Add(newlyMatched);
 					}
 					else if (selected == Choices.FindExistingItemFromList) {
@@ -106,14 +108,15 @@ namespace Igor.BillScanner.Core {
 						}
 
 						(int increment, int quantity) = await GetQuantityAsync(split, i, manuallyMatchedItem.ItemName);
-						if (increment == 1) {
-							i++;
-						}
+
 						UIItemViewModel fromExistingMatched = new UIItemViewModel(
-							new ItemPurchaseData(manuallyMatchedItem, quantity), 
+							new ItemPurchaseData(manuallyMatchedItem, quantity),
 							manuallyMatchedItem.CurrentPriceInt, MatchRating.Success, split[i]);
 
 						fromExistingMatched.ItemPurchase.Item.OcrNames.Add(split[i]);
+						if (increment == 1) {
+							i++;
+						}
 						matchedItems.Add(fromExistingMatched);
 					}
 					else if (selected == Choices.NotAnItem) {
@@ -187,7 +190,7 @@ namespace Igor.BillScanner.Core {
 			return (ret, purchaseTime);
 		}
 
-		private async Task<(int, int)> GetCurrentPriceAsync(string[] split, int splitIndex, int fallbackItemIndex) {
+		private async Task<(int, int)> GetCurrentPriceAsync(string[] split, int splitIndex, string closestItemName, int fallbackItemIndex = -1) {
 			try {
 				return rules.GetPriceOfOne(split, splitIndex);
 			}
@@ -195,11 +198,11 @@ namespace Igor.BillScanner.Core {
 				int? data;
 				if (fallbackItemIndex == -1) {
 					data = await Services.Instance.UserInput.GetDecimalInputAsIntAsync(
-										$"Unable to get current item's price [{split[splitIndex]}]");
+										$"Unable to get current item's price [{split[splitIndex]}], closest match '{closestItemName}'");
 				}
 				else {
 					data = await Services.Instance.UserInput.GetDecimalInputAsIntAsync(
-						$"Unable to get current item's price [{split[splitIndex]}]",
+						$"Unable to get current item's price [{split[splitIndex]}], closest match '{closestItemName}'",
 						DatabaseAccess.Access.GetItems()[fallbackItemIndex].CurrentPriceInt);
 				}
 

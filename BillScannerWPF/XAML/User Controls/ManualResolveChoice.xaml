@@ -7,7 +7,7 @@
              xmlns:controls="clr-namespace:Igor.Controls;assembly=Igor.Controls"
              xmlns:core="clr-namespace:Igor.BillScanner.Core;assembly=Igor.BillScanner.Core"
              mc:Ignorable="d" 
-			 KeyboardNavigation.TabNavigation="Contained">
+			 KeyboardNavigation.TabNavigation="Cycle">
 
 	<d:UserControl.DataContext>
 		<core:ManualResolutionViewModel/>
@@ -37,9 +37,8 @@
 						<TextBlock	Text="{Binding Header}" Margin="0,0,0,20"
 									FontWeight="Heavy" FontSize="16"/>
 					</Viewbox>
-					<TextBlock	Text="{Binding ErrorText}" Margin="0,0,0,10"
-								FontWeight="DemiBold" Foreground="Red"
-								FocusManager.FocusedElement="{Binding RelativeSource={RelativeSource Mode=Self}}"/>
+					<TextBlock Text="{Binding ErrorText}" Margin="0,0,0,10"
+							   FontWeight="DemiBold" Foreground="Red"/>
 
 					<!-- Simple buttons -->
 					<Button	Content="{Binding ButtonOneText}"

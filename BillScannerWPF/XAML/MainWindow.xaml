@@ -97,19 +97,19 @@
 					<Button Command="{Binding SendToMTDB}"
 						Content="Send to MTDB"
 						Visibility="{Binding SendToMTDBButtonVisible, Converter={StaticResource BoolToVisCollapse}}"
-						Padding="10 8"/>
+						Padding="10 8" Margin="0 0 2 0"/>
 					<Button Command="{Binding Finalize}"
 						Content="Finalize"
 						Visibility="{Binding FinalizeButtonVisible, Converter={StaticResource BoolToVisCollapse}}"
-						Padding="10 8"/>
+						Padding="10 8" Margin="0 0 2 0"/>
 					<Button Command="{Binding Clear}"
 						Content="Clear Contents" 
 						Visibility="{Binding ClearButtonVisible, Converter={StaticResource BoolToVisCollapse}}"
-						Padding="10 8"/>
+						Padding="10 8" Margin="0 0 2 0"/>
 					<Button Command="{Binding Analyze}"
 						Content="Analyze"
 						Visibility="{Binding AnalyzeButtonVisible, Converter={StaticResource BoolToVisCollapse}}"
-						Padding="10 8"/>
+						Padding="10 8" Margin="0 0 2 0"/>
 					<Button Command="{Binding ManualPurchase}"
 						Content="Manual Purchase" 
 						Visibility="{Binding ManualPurchaseButtonVisible, Converter={StaticResource BoolToVisCollapse}}"

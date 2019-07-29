@@ -41,7 +41,7 @@
 				</Grid.ColumnDefinitions>
 				<TextBlock Grid.Column="0" Text="Value of the item:"/>
 				<controls:ValidatedTextBox Grid.Column="1" HorizontalAlignment="Right"
-										MinWidth="120" Text="Test"
+										MinWidth="120" Text="{Binding ItemValue, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
 										ValidationFunction="{Binding IsValid}"/>
 			</Grid>
 			<Grid Margin="0 2">

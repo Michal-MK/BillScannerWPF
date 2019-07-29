@@ -45,6 +45,10 @@ namespace Igor.BillScanner.Core {
 		private NewItemDefViewModel _itemDefinitionModel = new NewItemDefViewModel();
 		private Action<string> _returnPress;
 
+		private const string _firstButtonElementName = "buttons_firstButton";
+		private const string _valueInputElementName = "values_returnAwareInput";
+		private const string _dateTimeInputElementName = "values_dateTimeInput";
+
 		#endregion
 
 		public Action<string> ReturnPress { get => _returnPress; set { _returnPress = value; Notify(nameof(ReturnPress)); } }
@@ -132,6 +136,7 @@ namespace Igor.BillScanner.Core {
 					}
 				});
 				ReturnPress = (s) => { ButtonStdInputCommand.Execute(null); };
+				GiveFocus(this, _valueInputElementName);
 				await Task.Run(evnt.Wait);
 
 				ClearCommands();
@@ -153,6 +158,7 @@ namespace Igor.BillScanner.Core {
 
 				ReturnPress = (s) => { evnt.Set(); };
 
+				GiveFocus(this, _valueInputElementName);
 				await Task.Run(evnt.Wait);
 				ClearCommands();
 				SimpleInputControlVisible = false;
@@ -179,6 +185,8 @@ namespace Igor.BillScanner.Core {
 						evnt.Set();
 					}));
 				}
+
+				GiveFocus(this, _firstButtonElementName);
 				await Task.Run(evnt.Wait);
 				ClearCommands();
 				ControlVisibility = false;
@@ -201,7 +209,7 @@ namespace Igor.BillScanner.Core {
 				});
 
 				ButtonDateTimeInput = "Use my date provided here: ";
-				ReturnPress = (s) => { ButtonDateTimeCommand.Execute(null); }; 
+				ReturnPress = (s) => { ButtonDateTimeCommand.Execute(null); };
 
 				if (allowNow) {
 					SetCommand("Use 'Today' as the date of purchase", new Command(() => {
@@ -210,6 +218,8 @@ namespace Igor.BillScanner.Core {
 					}));
 				}
 				Notify("DataContext");
+
+				GiveFocus(this, _dateTimeInputElementName);
 				await Task.Run(evnt.Wait);
 				ClearCommands();
 				DateBoxControlVisible = false;
@@ -241,6 +251,7 @@ namespace Igor.BillScanner.Core {
 					SetCommand($"Use latest value from the database => '{(knownValue.Value / 100m).ToString("0.00")} Kč'", new Command(() => { evnt.Set(); }));
 				}
 
+				GiveFocus(this, _valueInputElementName);
 				await Task.Run(evnt.Wait);
 				ClearCommands();
 				SimpleInputControlVisible = false;

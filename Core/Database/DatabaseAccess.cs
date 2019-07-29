@@ -46,7 +46,7 @@ namespace Igor.BillScanner.Core {
 		public Item GetItem(int ID) {
 			using (IDbConnection connection = new SQLiteConnection(DbConnectionString)) {
 				connection.Open();
-				if(ID == -1) {
+				if (ID == -1) {
 					return null;
 				}
 				DbItem item = connection.QueryFirst<DbItem>($"SELECT * FROM {DbItem.DName} " +
@@ -112,7 +112,7 @@ namespace Igor.BillScanner.Core {
 					DbItemPurchase amounts = connection.QuerySingle<DbItemPurchase>($"SELECT * FROM {DbItemPurchase.DName} WHERE {nameof(DbItemPurchase.PurchaseID)} = {purchaseID} AND {nameof(DbItemPurchase.ItemID)} = {current.ID}");
 
 
-					ret.Add(new ItemPurchaseData(GetItem(current.ID),amounts.Amount));
+					ret.Add(new ItemPurchaseData(GetItem(current.ID), amounts.Amount));
 				}
 			}
 			return ret.ToArray();
@@ -280,6 +280,22 @@ namespace Igor.BillScanner.Core {
 		}
 
 		/// <summary>
+		/// Update items list of OCR recognized strings using an open connection
+		/// </summary>
+		public void AddOcrName(int itemID, string ocrName, IDbConnection connection, IDbTransaction transaction) {
+			try {
+				connection.Execute(new CommandDefinition($"INSERT INTO {DbItemOcrNames.DName} ({nameof(DbItemOcrNames.ItemID)},{nameof(DbItemOcrNames.OcrName)}) " +
+														 $"VALUES ({itemID}, @OcrName)", new { OcrName = ocrName }, transaction: transaction));
+			}
+			catch (SQLiteException e) {
+				if (e.ErrorCode == 19) {
+					// UNIQUE is not satisfied, that is OK
+				}
+			}
+
+		}
+
+		/// <summary>
 		/// Updates <see cref="Item"/>'s <see cref="MeassurementUnit"/>
 		/// </summary>
 		public void UpdateUnitOfMeassure(int itemID, MeassurementUnit unit) {
@@ -327,6 +343,9 @@ namespace Igor.BillScanner.Core {
 														new ItemPurchaseHistory(purchaseID, purchasedItems[i].Amount, purchasedItems[i].Item.CurrentPriceInt),
 														purchase.PurchaseDate,
 														connection);
+						for (int j = 0; j < purchasedItems[i].Item.OcrNames.Count; j++) {
+							AddOcrName(purchasedItems[i].Item.ID, purchasedItems[i].Item.OcrNames[j], connection, transaction);
+						}
 					}
 					transaction.Commit();
 				}

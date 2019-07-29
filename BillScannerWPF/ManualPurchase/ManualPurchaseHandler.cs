@@ -17,7 +17,6 @@ namespace Igor.BillScanner.WPF.UI {
 			ManualPurchaseView view = new ManualPurchaseView();
 			DateTime pDate = await Services.Instance.UserInput.GetDateTimeInputAsync("Enter purchase date:", true);
 			Console.WriteLine(pDate);
-			//_mainWindow.MAIN_Grid.Children.Add(view);
 		}
 	}
 }
