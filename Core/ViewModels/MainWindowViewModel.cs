@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Drawing;
+using System.Drawing.Imaging;
 using System.Linq;
 using System.Windows.Input;
 using Igor.BillScanner.Core.Rules;
@@ -123,7 +125,19 @@ namespace Igor.BillScanner.Core {
 		public bool ManualPurchaseButtonVisible { get => _manualPurchaseButtonVisible; set { _manualPurchaseButtonVisible = value; Notify(nameof(ManualPurchaseButtonVisible)); } }
 		public bool SendToMTDBButtonVisible { get => _sendToMTDBButtonVisible; set { _sendToMTDBButtonVisible = value; Notify(nameof(SendToMTDBButtonVisible)); } }
 
-		public string ImageSource { get => _imageSource; set { _imageSource = value; Notify(nameof(ImageSource)); } }
+		public string ImageSource {
+			get => _imageSource;
+			set {
+				using (Bitmap image = new Bitmap(value)) {
+					if (image.Width > image.Height) {
+						image.RotateFlip(RotateFlipType.Rotate90FlipNone);
+						image.Save(value, ImageFormat.Jpeg);
+					}
+				}
+				_imageSource = value;
+				Notify(nameof(ImageSource));
+			}
+		}
 
 
 		public ObservableCollection<UIItemViewModel> MatchedItems { get => _matchedItems; set { _matchedItems = value; Notify(nameof(MatchedItems)); } }

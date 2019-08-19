@@ -62,7 +62,7 @@ namespace Igor.BillScanner.Core {
 		}
 
 		private void Server_OnConnectionEstablished(object sender, ClientConnectedEventArgs e) {
-			server.DefineCustomPacket<byte[]>(e.clientInfo.clientID, 55, OnImageDataReceived);
+			server.DefineCustomPacket<byte[]>(e.ClientInfo.ClientID, 55, OnImageDataReceived);
 			Services.Instance.MainWindow.StatusBarViewModel.ClientConnected = true;
 		}
 

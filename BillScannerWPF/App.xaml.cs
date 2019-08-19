@@ -8,6 +8,7 @@ namespace Igor.BillScanner.WPF.UI {
 	public partial class App : Application {
 		public App() {
 			Services.Initialize();
+			//TODO store server instance somewhere and add more functionality to it
 			ServerHandler.Initialize();
 		}
 	}
